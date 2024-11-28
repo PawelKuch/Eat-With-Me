@@ -13,6 +13,6 @@ public class MainController {
     @GetMapping({"/", "/index"})
     public String index() {
         LOG.debug("Index page");
-        return "index";
+        return "template";
     }
 }

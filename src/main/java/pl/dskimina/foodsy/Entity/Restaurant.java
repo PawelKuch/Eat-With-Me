@@ -15,7 +15,7 @@ public class Restaurant {
     private String restaurantId;
 
     @Column(name = "name", nullable = false, length = 512)
-    private String restaurantName;
+    private String name;
 
     @Column(name="phone", nullable = false, length = 512)
     private String phone;
@@ -37,12 +37,12 @@ public class Restaurant {
         this.restaurantId = restaurantId;
     }
 
-    public String getRestaurantName() {
-        return restaurantName;
+    public String getName() {
+        return name;
     }
 
-    public void setRestaurantName(String restaurantName) {
-        this.restaurantName = restaurantName;
+    public void setName(String restaurantName) {
+        this.name = restaurantName;
     }
 
     public String getPhone() {

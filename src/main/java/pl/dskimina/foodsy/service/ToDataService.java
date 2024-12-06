@@ -1,10 +1,10 @@
-package pl.dskimina.foodsy.Service;
+package pl.dskimina.foodsy.service;
 
 import org.springframework.stereotype.Service;
-import pl.dskimina.foodsy.Entity.MenuItem;
-import pl.dskimina.foodsy.Entity.Restaurant;
-import pl.dskimina.foodsy.EntityData.MenuItemData;
-import pl.dskimina.foodsy.EntityData.RestaurantData;
+import pl.dskimina.foodsy.entity.MenuItem;
+import pl.dskimina.foodsy.entity.Restaurant;
+import pl.dskimina.foodsy.entityData.MenuItemData;
+import pl.dskimina.foodsy.entityData.RestaurantData;
 
 import java.util.List;
 

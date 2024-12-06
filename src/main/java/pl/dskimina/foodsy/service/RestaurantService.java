@@ -1,9 +1,9 @@
-package pl.dskimina.foodsy.Service;
+package pl.dskimina.foodsy.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.dskimina.foodsy.Entity.Restaurant;
-import pl.dskimina.foodsy.Repository.RestaurantRepository;
+import pl.dskimina.foodsy.entity.Restaurant;
+import pl.dskimina.foodsy.repository.RestaurantRepository;
 
 import java.util.List;
 import java.util.UUID;

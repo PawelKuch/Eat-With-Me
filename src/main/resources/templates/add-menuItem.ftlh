@@ -14,14 +14,14 @@
 <div id="main-container" class="d-flex">
     <#include "side-navbar.ftlh">
 
-    <form method="post" action="/add-restaurant">
+    <form action="/add-menuItem" method="post">
         <div class="input-group">
             <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">nazwa</span>
             <input class="mb-2 form-control" id="name" name="name">
         </div>
         <div class="input-group">
-            <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">nr tel.</span>
-            <input class="mb-2 form-control" id="phone" name="phone">
+            <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">cena</span>
+            <input class="mb-2 form-control" id="price" name="price">
         </div>
         <div class="input-group">
             <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">opis</span>

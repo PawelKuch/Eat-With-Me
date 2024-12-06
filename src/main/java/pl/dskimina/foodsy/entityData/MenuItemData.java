@@ -1,4 +1,4 @@
-package pl.dskimina.foodsy.EntityData;
+package pl.dskimina.foodsy.entityData;
 
 public class MenuItemData {
 

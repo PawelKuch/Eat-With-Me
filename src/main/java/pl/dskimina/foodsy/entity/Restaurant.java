@@ -1,4 +1,4 @@
-package pl.dskimina.foodsy.Entity;
+package pl.dskimina.foodsy.entity;
 
 import jakarta.persistence.*;
 

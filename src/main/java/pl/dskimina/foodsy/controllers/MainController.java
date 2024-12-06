@@ -4,13 +4,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import pl.dskimina.foodsy.Service.RestaurantService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.view.RedirectView;
+import pl.dskimina.foodsy.service.RestaurantService;
 
 @Controller
 public class MainController {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainController.class);
-    private RestaurantService restaurantService;
+    RestaurantService restaurantService;
 
     public MainController(RestaurantService restaurantService) {
         this.restaurantService = restaurantService;
@@ -22,9 +25,15 @@ public class MainController {
         return "template";
     }
 
-    @GetMapping("add-restaurant")
-    public String addRestaurant(){
+    @GetMapping("/add-restaurant")
+    public String addRestaurantView(){
         return "add-restaurant";
+    }
+
+    @PostMapping("/add-restaurant")
+    public RedirectView addRestaurant(@RequestParam("name") String name, @RequestParam("phone") String phone, @RequestParam("description") String description){
+        restaurantService.addRestaurant(name, phone, description);
+        return new RedirectView("/add-restaurant");
     }
 
 }

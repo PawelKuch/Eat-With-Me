@@ -27,11 +27,6 @@ public class MenuItemService {
         menuItem.setMenuItemId(UUID.randomUUID().toString());
         menuItem.setName(name);
 
-        /*if(description == null){
-            menuItem.setDescription("No description");
-        }else {
-            menuItem.setDescription(description);
-        }*/
         menuItem.setDescription(description);
 
         menuItem.setPrice(price);

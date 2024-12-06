@@ -24,7 +24,11 @@ public class MenuItemController {
     public RedirectView addMenuItem(@RequestParam("name") String name,
                                     @RequestParam("price") double price,
                                     @RequestParam("description") String description){
-        menuItemService.addMenuItem(name, description, price);
+        if(!name.isEmpty() && price > 0){
+            if(description.isEmpty()) description = "";
+            menuItemService.addMenuItem(name, description, price);
+        }
+
         return new RedirectView("/");
     }
 

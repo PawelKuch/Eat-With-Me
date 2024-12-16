@@ -1,4 +1,4 @@
-package pl.dskimina.foodsy.entityData;
+package pl.dskimina.foodsy.entity.data;
 
 import java.util.List;
 

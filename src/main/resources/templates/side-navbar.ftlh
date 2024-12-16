@@ -19,10 +19,10 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="restaurant-dropdown-link">
                         <li class="dropdown-item">
-                            <a href="/add-restaurant" class="text-decoration-none">dodaj restaurację</a>
+                            <a href="/restaurant" class="text-decoration-none">restauracje</a>
                         </li>
                         <li class="dropdown-item">
-                            <a href="/add-menuItem" class="text-decoration-none">dodaj danie</a>
+                            <a href="/menu-item" class="text-decoration-none">dania</a>
                         </li>
                     </ul>
                 </div>

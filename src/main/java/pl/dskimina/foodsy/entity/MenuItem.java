@@ -16,6 +16,9 @@ public class MenuItem {
     @Column(name = "name", nullable = false, length = 512)
     private String name;
 
+    @Column(name = "category", nullable = false)
+    private String category;
+
     @Column(name = "description", nullable = true, length = 512)
     private String description;
 
@@ -32,6 +35,10 @@ public class MenuItem {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public void setDescription(String description) {
@@ -54,6 +61,9 @@ public class MenuItem {
         return name;
     }
 
+    public String getCategory(){
+        return category;
+    }
     public String getDescription() {
         return description;
     }

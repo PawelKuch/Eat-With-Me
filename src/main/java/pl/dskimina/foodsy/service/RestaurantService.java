@@ -27,6 +27,11 @@ public class RestaurantService {
     }
 
     @Transactional
+    public Restaurant getRestaurantByRestaurantId(String restaurantId){
+        return restaurantRepository.findByRestaurantId(restaurantId);
+    }
+
+    @Transactional
     public List<Restaurant> getRestaurants(){
         return restaurantRepository.findAll();
     }

@@ -50,4 +50,8 @@ public class MenuItemService {
     public MenuItem getMenuItemByMenuItemId(String menuItemId){
         return menuItemRepository.findByMenuItemId(menuItemId);
     }
+
+    public List<MenuItem> getMenuItemListForRestaurantId(String restaurantId){
+        return menuItemRepository.getMenuItemListForRestaurantId(restaurantId);
+    }
 }

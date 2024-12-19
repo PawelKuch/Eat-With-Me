@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name="restaurants")
 public class Restaurant {
 
     @Id
@@ -20,7 +21,7 @@ public class Restaurant {
     @Column(name="phone", nullable = false, length = 512)
     private String phone;
 
-    @Column(name="description" ,nullable = true, length = 512)
+    @Column(name="description", nullable = true, length = 512)
     private String description;
 
     @Column(name = "image", nullable = true)

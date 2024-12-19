@@ -19,6 +19,7 @@
                     <th>Nazwa</th>
                     <th>Numer tel</th>
                     <th>Dodatkowe</th>
+                    <th>Menu</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -26,6 +27,7 @@
                     <td>${restaurant.name}</td>
                     <td>${restaurant.phone}</td>
                     <td>${restaurant.description}</td>
+                    <td><a href="/restaurant-menu/${restaurant.restaurantId}">MENU</a></td>
                 </tr>
                 </tbody>
             </table>

@@ -36,7 +36,7 @@ public class MainController {
 
     @GetMapping("/restaurant")
     public String addRestaurantView(Model model){
-        model.addAttribute("restaurantList", toDataService.getRestaurants());
+        model.addAttribute("restaurantList", restaurantService.getRestaurants());
         return "restaurant";
     }
 
@@ -48,8 +48,8 @@ public class MainController {
 
     @GetMapping("/restaurant-menu/{id}")
     public String restaurantMenuView(@PathVariable String id, Model model){
-        List<MenuItemData> restaurantMenuItemList = toDataService.getMenuItemListByRestaurantId(id);
-        RestaurantData restaurant = toDataService.getRestaurantByRestaurantId(id);
+        List<MenuItemData> restaurantMenuItemList = menuItemService.getMenuItemListForRestaurantId(id);
+        RestaurantData restaurant = restaurantService.getRestaurantByRestaurantId(id);
 
         model.addAttribute("restaurantMenuItemList", restaurantMenuItemList);
         model.addAttribute("restaurant", restaurant);
@@ -68,7 +68,7 @@ public class MainController {
 
     @GetMapping("/restaurant-details/{id}")
     public String restaurantDetailsView(Model model, @PathVariable String id){
-        RestaurantData restaurant = toDataService.getRestaurantByRestaurantId(id);
+        RestaurantData restaurant = restaurantService.getRestaurantByRestaurantId(id);
         model.addAttribute("restaurant", restaurant);
         return "restaurant-details";
     }
@@ -76,6 +76,6 @@ public class MainController {
     @GetMapping("get-restaurant-list")
     @ResponseBody
     public List<RestaurantData> getRestaurantListForFetch(){
-        return toDataService.getRestaurants();
+        return restaurantService.getRestaurants();
     }
 }

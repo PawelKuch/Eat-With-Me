@@ -12,6 +12,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
 import pl.dskimina.foodsy.service.MenuItemService;
+import pl.dskimina.foodsy.service.RestaurantService;
 import pl.dskimina.foodsy.service.ToDataService;
 
 import java.util.List;
@@ -21,17 +22,19 @@ import java.util.List;
 public class MenuItemController {
     private static final Logger LOG = LoggerFactory.getLogger(MenuItemController.class.getName());
     private final ToDataService toDataService;
+    private final RestaurantService restaurantService;
     MenuItemService menuItemService;
 
-    public MenuItemController(MenuItemService menuItemService, ToDataService toDataService) {
+    public MenuItemController(MenuItemService menuItemService, ToDataService toDataService, RestaurantService restaurantService) {
         this.menuItemService = menuItemService;
         this.toDataService = toDataService;
+        this.restaurantService = restaurantService;
     }
 
     @GetMapping("/menu-item")
     public String addMenuItemView(Model model){
-        List<MenuItemData> menuItemDataList = toDataService.getMenuItems();
-        List<RestaurantData> restaurantDataList = toDataService.getRestaurants();
+        List<MenuItemData> menuItemDataList = menuItemService.getMenuItems();
+        List<RestaurantData> restaurantDataList = restaurantService.getRestaurants();
         model.addAttribute("menuItemDataList", menuItemDataList);
         model.addAttribute("restaurantDataList", restaurantDataList);
         return "menuItem";
@@ -54,7 +57,7 @@ public class MenuItemController {
 
     @GetMapping("/item-details/{id}")
     public String itemDetailsView(@PathVariable String id, Model model){
-        MenuItemData itemData = toDataService.getMenuItemByMenuItemId(id);
+        MenuItemData itemData = menuItemService.getMenuItemByMenuItemId(id);
         LOG.info("item details");
         model.addAttribute("item", itemData);
         return "item-details";

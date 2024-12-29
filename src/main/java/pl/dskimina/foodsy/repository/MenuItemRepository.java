@@ -12,7 +12,7 @@ import java.util.List;
 public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
    MenuItem findByMenuItemId(String menuItemId);
 
-   @Query("SELECT i FROM MenuItems i WHERE i.restaurantId = :restaurantId")
+   @Query("SELECT i FROM MenuItem i WHERE i.restaurant.restaurantId = :restaurantId")
    List<MenuItem> getMenuItemListForRestaurantId(@Param("restaurantId") String id);
 
 }

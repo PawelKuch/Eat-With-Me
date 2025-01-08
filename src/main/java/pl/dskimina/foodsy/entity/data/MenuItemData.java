@@ -2,19 +2,19 @@ package pl.dskimina.foodsy.entity.data;
 
 public class MenuItemData {
 
-    private String menuItemDataId;
+    private String menuItemId;
     private String name;
     private String category;
     private String description;
     private double price;
     private RestaurantData restaurant;
 
-    public String getMenuItemDataId() {
-        return menuItemDataId;
+    public String getMenuItemId() {
+        return menuItemId;
     }
 
-    public void setMenuItemDataId(String menuItemDataId) {
-        this.menuItemDataId = menuItemDataId;
+    public void setMenuItemId(String menuItemDataId) {
+        this.menuItemId = menuItemDataId;
     }
 
     public String getName() {

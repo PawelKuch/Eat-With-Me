@@ -17,13 +17,6 @@ public class ToDataService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainController.class);
 
-    MenuItemService menuItemService;
-    RestaurantService restaurantService;
-
-    public ToDataService(MenuItemService menuItemService, RestaurantService restaurantService) {
-        this.menuItemService = menuItemService;
-        this.restaurantService = restaurantService;
-    }
 
 /*    public List<RestaurantData> getRestaurants() {
         return restaurantService.getRestaurants().stream().map(this::convert).toList();
@@ -52,8 +45,9 @@ public class ToDataService {
 
     public MenuItemData convert(MenuItem menuItem) {
         MenuItemData menuItemData = new MenuItemData();
-        menuItemData.setMenuItemDataId(menuItem.getMenuItemId());
+        menuItemData.setMenuItemId(menuItem.getMenuItemId());
         menuItemData.setName(menuItem.getName());
+        menuItemData.setDescription(menuItem.getDescription());
         menuItemData.setCategory(menuItem.getCategory());
         menuItemData.setPrice(menuItem.getPrice());
         return menuItemData;

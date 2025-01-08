@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.dskimina.foodsy.entity.Restaurant;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
 import pl.dskimina.foodsy.repository.RestaurantRepository;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;

@@ -58,7 +58,7 @@
     </div>
     <div id="display-menuItem-container" style="width: 50%;">
         <#list menuItemDataList as item>
-            <a href="/item-details/${item.menuItemDataId}"> ${item.name} </a>
+            <a href="/item-details/${item.menuItemId}"> ${item.name} </a>
         </#list>
     </div>
 

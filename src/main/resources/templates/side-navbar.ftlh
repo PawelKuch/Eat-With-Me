@@ -6,26 +6,16 @@
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-                <a href="#" class="nav-link active" aria-current="page">
+                <a href="#" class="nav-link" aria-current="page">
                     <i class="bi bi-card-checklist"></i>&nbsp;
                     Zamówienia
                 </a>
             </li>
             <li>
-                <div class="dropdown">
-                    <a href="#" class="nav-link text-white dropdown-toggle" id="restaurant-dropdown-link" data-bs-toggle="dropdown">
-                        <i class="bi bi-shop"></i>&nbsp;
-                        Restauracje
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="restaurant-dropdown-link">
-                        <li class="dropdown-item">
-                            <a href="/restaurant" class="text-decoration-none">restauracje</a>
-                        </li>
-                        <li class="dropdown-item">
-                            <a href="/menu-item" class="text-decoration-none">dania</a>
-                        </li>
-                    </ul>
-                </div>
+                <a href="/restaurant" class="nav-link text-white" id="restaurant-dropdown-link">
+                    <i class="bi bi-shop"></i>&nbsp;
+                    Restauracje
+                </a>
             </li>
             <li>
                 <a href="#" class="nav-link text-white">

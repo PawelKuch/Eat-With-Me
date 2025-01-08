@@ -4,7 +4,7 @@ package pl.dskimina.foodsy.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "MenuItems")
+@Table(name = "menu_items")
 public class MenuItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

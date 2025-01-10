@@ -19,10 +19,39 @@
         <#if restaurantMenuItemList?has_content>
             <div id="display-menuItem-container" class="row w-100 justify-content-center" style="border: 1px solid green;">
                 <#list restaurantMenuItemList as menuItem>
-                    <div class="restaurant-tile row my-1 mx-1 d-flex justify-content-center">
-                        <h5 class="col-1">${menuItem.name}</h5>
+                    <div class="menuItem-tile-${menuItem.menuItemId} row my-1 mx-1 d-flex justify-content-center">
+                        <h5 class="col-1 mx-3">${menuItem.name}</h5>
                         <div class="menuItem-description col-3">${menuItem.description}</div>
                         <div class="menuItem-price col-1">${menuItem.price} zł</div>
+                        <div data-menu-item-id="${menuItem.menuItemId}" class="d-flex flex-row col-1 menuItem-actions">
+                            <a href="#" class="mx-1 text-dark update-menuItem-${menuItem.menuItemId}"><i class="bi bi-pen-fill"></i></a>
+                            <span class="mx-1 text-danger delete-menuItem-${menuItem.menuItemId}"><i class="bi bi-trash3-fill" style="cursor: pointer;"></i></span>
+                        </div>
+
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function() {
+                                document.querySelectorAll(".menuItem-actions").forEach(actionsContainer => {
+                                   let menuItemId = actionsContainer.dataset.menuItemId;
+                                   let menuItem = document.querySelector(".menuItem-tile-" + menuItemId);
+                                   let updateBtn = document.querySelector(".update-menuItem-" + menuItemId);
+                                   let deleteBtn = document.querySelector(".delete-menuItem-" + menuItemId);
+
+                                   deleteBtn.addEventListener("click", function (){
+                                      fetch("/delete-menuItem/" + menuItemId, {
+                                          method: "POST",
+                                       })
+                                          .then(response => {
+                                              if (response) {
+                                                  menuItem.remove();
+                                                  console.log("item deleted");
+                                              } else {
+                                                  console.log("deleting failed");
+                                              }
+                                          })
+                                   });
+                                });
+                            });
+                        </script>
                     </div>
                 </#list>
             </div>

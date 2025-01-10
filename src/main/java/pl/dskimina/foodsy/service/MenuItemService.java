@@ -66,4 +66,14 @@ public class MenuItemService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public boolean deleteMenuItemByMenuItemId(String menuItemId){
+        MenuItem menuItem = menuItemRepository.findByMenuItemId(menuItemId);
+        if (menuItem != null) {
+            menuItemRepository.delete(menuItem);
+            return true;
+        }
+        return false;
+    }
+
 }

@@ -2,6 +2,7 @@ package pl.dskimina.foodsy.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,5 +62,13 @@ public class MenuItemController {
         LOG.info("item details");
         model.addAttribute("item", itemData);
         return "item-details";
+    }
+
+    @PostMapping("/delete-menuItem/{id}")
+    public ResponseEntity<Void> deleteMenuItem(@PathVariable String id){
+        if(menuItemService.deleteMenuItemByMenuItemId(id)){
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

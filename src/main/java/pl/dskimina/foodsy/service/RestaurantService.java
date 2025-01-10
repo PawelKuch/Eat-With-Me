@@ -20,12 +20,14 @@ public class RestaurantService {
     }
 
     @Transactional
-    public void addRestaurant(String name, String phone, String Description){
+    public void addRestaurant(String name, String phone, String email, String address, String tags){
         Restaurant restaurant = new Restaurant();
         restaurant.setRestaurantId(UUID.randomUUID().toString());
         restaurant.setName(name);
         restaurant.setPhone(phone);
-        restaurant.setDescription(Description);
+        restaurant.setEmail(email);
+        restaurant.setAddress(address);
+        restaurant.setTags(tags);
         restaurantRepository.save(restaurant);
     }
 

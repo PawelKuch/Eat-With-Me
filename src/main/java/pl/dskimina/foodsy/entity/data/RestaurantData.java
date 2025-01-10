@@ -6,14 +6,15 @@ public class RestaurantData {
     private String restaurantId;
     private String name;
     private String phone;
-    private String description;
+    private String email;
+    private String address;
     private byte[] image;
+    private String tags;
     private List<MenuItemData> menuItems;
 
     public String getRestaurantId() {
         return restaurantId;
     }
-
     public void setRestaurantId(String restaurantId) {
         this.restaurantId = restaurantId;
     }
@@ -21,7 +22,6 @@ public class RestaurantData {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -29,31 +29,33 @@ public class RestaurantData {
     public String getPhone() {
         return phone;
     }
-
     public void setPhone(String phone) {
         this.phone = phone;
     }
 
-    public String getDescription() {
-        return description;
-    }
+    public String getEmail(){return email;}
+    public void setEmail(String email){this.email = email;}
 
-    public void setDescription(String description) {
-        this.description = description;
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public byte[] getImage() {
         return image;
     }
-
     public void setImage(byte[] image) {
         this.image = image;
     }
 
+    public void setTags(String tags) {this.tags = tags;}
+    public String getTags() {return tags;}
+
     public List<MenuItemData> getMenuItems() {
         return menuItems;
     }
-
     public void setMenuItems(List<MenuItemData> menuItems) {
         this.menuItems = menuItems;
     }

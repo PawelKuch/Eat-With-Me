@@ -19,17 +19,19 @@
     <div id="add-restaurant-container" class="d-flex flex-column align-items-center w-100 mx-1 my-1">
         <div id="display-restaurant-container" class="row w-100 justify-content-center" style="border: 3px solid green;">
             <#list restaurantList as restaurant>
-                <div class="restaurant-tile col-3 my-1 mx-1 d-flex flex-column justify-content-center" data-restaurant-id="${restaurant.restaurantId}" style="border: 1px solid black;">
+                <div class="restaurant-tile col-3 my-1 mx-1 d-flex flex-column justify-content-center" data-restaurant-id="${restaurant.restaurantId}" style="border: 1px solid black; min-height: 250px;">
                     <h5>${restaurant.name}</h5>
-                    ${restaurant.description}
+                    <span id="restaurant-address-header-${restaurant.restaurantId}">${restaurant.address}</span>
                     <div class="img-sample-${restaurant.restaurantId}" data-restaurant-id="${restaurant.restaurantId}" style="width: 120px; height: 120px; border: 1px solid black;"></div>
                     <div class="restaurant-details-${restaurant.restaurantId} my-1 mx-1 d-flex flex-row justify-content-center d-none">
                         <div class="h-100">
                             Nazwa: ${restaurant.name}<br/>
                             Nr tel.: ${restaurant.phone}<br/>
-                            Opis: ${restaurant.description}<br/>
+                            Email: ${restaurant.email}<br/>
+                            Adres: ${restaurant.getAddress()}<br/>
+                            ${restaurant.getTags()}
                         </div>
-                        <a href="restaurant-menu/${restaurant.restaurantId}" class="text-body">SPRAWDŹ MENU</a>
+                        <div class="h-25"><a href="restaurant-menu/${restaurant.restaurantId}" class="text-body">SPRAWDŹ MENU</a></div>
                     </div>
                 </div>
             </#list>
@@ -40,17 +42,22 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function (){
+
+
        document.querySelectorAll(".restaurant-tile").forEach(restaurant => {
            let restaurantId = restaurant.dataset.restaurantId;
-           let restaurantDetails = document.querySelector(".restaurant-details-"+restaurantId);
-           let restaurantImg = document.querySelector(".img-sample-"+restaurantId);
+           let restaurantDetails = document.querySelector(".restaurant-details-" + restaurantId);
+           let restaurantImg = document.querySelector(".img-sample-" + restaurantId);
+           let restaurantAddressHeader = document.querySelector("#restaurant-address-header-" + restaurantId);
            restaurant.addEventListener("click", function (){
                if(restaurantDetails.classList.contains("d-none")){
                    restaurantDetails.classList.remove("d-none");
-                   restaurantImg.classList.add("d-none")
+                   restaurantImg.classList.add("d-none");
+                   restaurantAddressHeader.classList.add("d-none");
                }else {
                    restaurantDetails.classList.add("d-none");
                    restaurantImg.classList.remove("d-none");
+                   restaurantAddressHeader.classList.remove("d-none");
                }
            });
        })
@@ -76,9 +83,14 @@
                         <input class="mb-2 form-control" id="phone" name="phone">
                     </div>
                     <div class="input-group">
-                        <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">opis</span>
-                        <input class="mb-2 form-control" id="description" name="description">
+                        <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">Email </span>
+                        <input class="mb-2 form-control" id="email" name="email">
                     </div>
+                    <div class="input-group">
+                        <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">opis</span>
+                        <input class="mb-2 form-control" id="address" name="address">
+                    </div>
+                    <textarea name="tags" cols="60" rows="5"; placeholder="#tags"></textarea><br/>
                     <button class="btn btn-outline-dark" type="submit">Dodaj</button>
                 </form>
             </div>

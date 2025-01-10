@@ -41,8 +41,12 @@ public class MainController {
     }
 
     @PostMapping("/restaurant")
-    public RedirectView addRestaurant(@RequestParam("name") String name, @RequestParam("phone") String phone, @RequestParam("description") String description){
-        restaurantService.addRestaurant(name, phone, description);
+    public RedirectView addRestaurant(@RequestParam("name") String name,
+                                      @RequestParam("phone") String phone,
+                                      @RequestParam("email") String email,
+                                      @RequestParam("address") String address,
+                                      @RequestParam("tags") String tags){
+        restaurantService.addRestaurant(name, phone,email, address, tags);
         return new RedirectView("/restaurant");
     }
 

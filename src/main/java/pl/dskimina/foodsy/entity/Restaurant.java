@@ -21,11 +21,17 @@ public class Restaurant {
     @Column(name="phone", nullable = false, length = 512)
     private String phone;
 
-    @Column(name="description", nullable = true, length = 512)
-    private String description;
+    @Column(name = "email", nullable = true)
+    private String email;
+
+    @Column(name="address", nullable = false, length = 512)
+    private String address;
 
     @Column(name = "image", nullable = true)
     private byte[] image;
+
+    @Column(name = "tags", nullable = false, length = 512)
+    private String tags;
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     private List<MenuItem> menuItems;
@@ -54,12 +60,15 @@ public class Restaurant {
         this.phone = phone;
     }
 
-    public String getDescription() {
-        return description;
+    public void setEmail(String email) {this.email = email;}
+    public String getEmail() {return email;}
+
+    public String getAddress() {
+        return address;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public byte[] getImage() {
@@ -68,6 +77,12 @@ public class Restaurant {
 
     public void setImage(byte[] image) {
         this.image = image;
+    }
+    public void setTags(String tags){
+        this.tags = tags;
+    }
+    public String getTags() {
+        return tags;
     }
 
     public List<MenuItem> getMenuItems() {

@@ -6,7 +6,7 @@
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-                <a href="#" class="nav-link" aria-current="page">
+                <a href="/order-restaurant" class="nav-link" aria-current="page">
                     <i class="bi bi-card-checklist"></i>&nbsp;
                     Zamówienia
                 </a>

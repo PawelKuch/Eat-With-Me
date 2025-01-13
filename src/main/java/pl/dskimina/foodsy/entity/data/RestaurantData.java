@@ -11,6 +11,7 @@ public class RestaurantData {
     private byte[] image;
     private String tags;
     private List<MenuItemData> menuItems;
+    private String base64LogoUrl;
 
     public String getRestaurantId() {
         return restaurantId;
@@ -48,6 +49,13 @@ public class RestaurantData {
     }
     public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    public void setBase64LogoUrl(String base64LogoUrl) {
+        this.base64LogoUrl = base64LogoUrl;
+    }
+    public String getBase64LogoUrl() {
+        return base64LogoUrl;
     }
 
     public void setTags(String tags) {this.tags = tags;}

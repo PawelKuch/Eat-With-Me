@@ -22,7 +22,7 @@
                 <div class="restaurant-tile col-3 my-1 mx-1 d-flex flex-column justify-content-center" data-restaurant-id="${restaurant.restaurantId}" style="border: 1px solid black; min-height: 250px;">
                     <h5>${restaurant.name}</h5>
                     <span id="restaurant-address-header-${restaurant.restaurantId}">${restaurant.address}</span>
-                    <div class="img-sample-${restaurant.restaurantId}" data-restaurant-id="${restaurant.restaurantId}" style="width: 120px; height: 120px; border: 1px solid black;"></div>
+                    <div class="img-sample-${restaurant.restaurantId}" data-restaurant-id="${restaurant.restaurantId}" style="width: 120px; height: 120px; border: 1px solid black;"> ${restaurant.image}</div>
                     <div class="restaurant-details-${restaurant.restaurantId} my-1 mx-1 d-flex flex-row justify-content-center d-none">
                         <div class="h-100">
                             Nazwa: ${restaurant.name}<br/>
@@ -31,7 +31,7 @@
                             Adres: ${restaurant.getAddress()}<br/>
                             ${restaurant.getTags()}
                         </div>
-                        <div class="h-25"><a href="restaurant-menu/${restaurant.restaurantId}" class="text-body">SPRAWDŹ MENU</a></div>
+                        <div class="w-75 h-25 d-flex"><a href="restaurant-menu/${restaurant.restaurantId}" class="text-body">SPRAWDŹ MENU</a></div>
                     </div>
                 </div>
             </#list>

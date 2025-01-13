@@ -28,6 +28,7 @@ public class Restaurant {
     private String address;
 
     @Column(name = "image", nullable = true)
+    @Lob
     private byte[] image;
 
     @Column(name = "tags", nullable = false, length = 512)
@@ -66,7 +67,6 @@ public class Restaurant {
     public String getAddress() {
         return address;
     }
-
     public void setAddress(String address) {
         this.address = address;
     }
@@ -74,10 +74,10 @@ public class Restaurant {
     public byte[] getImage() {
         return image;
     }
-
     public void setImage(byte[] image) {
         this.image = image;
     }
+
     public void setTags(String tags){
         this.tags = tags;
     }
@@ -88,7 +88,6 @@ public class Restaurant {
     public List<MenuItem> getMenuItems() {
         return menuItems;
     }
-
     public void setMenuItems(List<MenuItem> menuItems) {
         this.menuItems = menuItems;
     }

@@ -1,6 +1,5 @@
 package pl.dskimina.foodsy.service;
 
-import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,9 +8,6 @@ import pl.dskimina.foodsy.entity.Restaurant;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
 import pl.dskimina.foodsy.repository.RestaurantRepository;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,20 +36,16 @@ public class RestaurantService {
     }
 
     @Transactional
-    public boolean setLogoForRestaurant(String restaurantId, String logoPath){
+    public void setLogoForRestaurant(String restaurantId, byte[] logoBytes){
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-        if(logoPath == null) {LOG.error("logoPath is null");}
-        if(restaurant == null){LOG.error("restaurant is null");}
-        File file = new File(logoPath);
-        try {
-            byte[] logoBytes = Files.readAllBytes(file.toPath());
-            restaurant.setImage(logoBytes);
-            restaurantRepository.save(restaurant);
-            return true;
-        } catch (IOException ex){
-            LOG.error("Error while converting file to bytes with the exception message: " + ex.getMessage());
-            return false;
+
+        if(restaurant == null){
+            LOG.error("restaurant is null");
+            return;
         }
+
+        restaurant.setImage(logoBytes);
+        restaurantRepository.save(restaurant);
     }
 
     @Transactional
@@ -66,21 +58,5 @@ public class RestaurantService {
     public List<RestaurantData> getRestaurants(){
         List<Restaurant> restaurantList = restaurantRepository.findAll();
         return restaurantList.stream().map(toDataService::convert).collect(Collectors.toList());
-    }
-
-    @Transactional
-    @PostConstruct
-    public void setLogoForStartingRestaurants(){
-        String kfcPath = "/static/img/kfclogo.png";
-        String mcdPath = "/static/img/mcdonaldlogo.png";
-        String bklogo = "/static/img/burgerkinglogo.png";
-        String pizzeriaRinoPath = "/static/img/pizzeriarinologo.png";
-        String uPiotrusiaPath = "/static/img/upiotrusialogo.png";
-
-        setLogoForRestaurant("123azxczc1qsa", kfcPath);
-        setLogoForRestaurant("123azxcc1qsa", bklogo);
-        setLogoForRestaurant("123aczc1qsa", mcdPath);
-        setLogoForRestaurant("123azczcqsa", pizzeriaRinoPath);
-        setLogoForRestaurant("12azczc1qsa", uPiotrusiaPath);
     }
 }

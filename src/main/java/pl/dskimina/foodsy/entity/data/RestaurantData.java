@@ -8,7 +8,6 @@ public class RestaurantData {
     private String phone;
     private String email;
     private String address;
-    private byte[] image;
     private String tags;
     private List<MenuItemData> menuItems;
 
@@ -41,13 +40,6 @@ public class RestaurantData {
     }
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public byte[] getImage() {
-        return image;
-    }
-    public void setImage(byte[] image) {
-        this.image = image;
     }
 
     public void setTags(String tags) {this.tags = tags;}

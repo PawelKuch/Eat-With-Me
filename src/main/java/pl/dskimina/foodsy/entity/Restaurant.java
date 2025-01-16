@@ -37,6 +37,9 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     private List<MenuItem> menuItems;
 
+    @OneToMany(mappedBy ="restaurant", cascade = CascadeType.ALL)
+    private List<Order> orders;
+
     public String getRestaurantId() {
         return restaurantId;
     }

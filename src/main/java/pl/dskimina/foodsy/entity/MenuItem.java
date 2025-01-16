@@ -29,6 +29,10 @@ public class MenuItem {
     @JoinColumn(name = "restaurant_id", nullable = true)
     private Restaurant restaurant;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = true)
+    private Order order;
+
     public void setMenuItemId(String menuItemId) {
         this.menuItemId = menuItemId;
     }

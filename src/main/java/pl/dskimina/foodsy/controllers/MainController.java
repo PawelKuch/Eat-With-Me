@@ -89,8 +89,7 @@ public class MainController {
 
     @GetMapping("/logos/{restaurantId}")
     public ResponseEntity<byte[]> getLogoForRestaurant(@PathVariable String restaurantId){
-        RestaurantData restaurant = restaurantService.getRestaurantByRestaurantId(restaurantId);
-        byte[] restaurantLogoBytes = restaurant.getImage();
+        byte[] restaurantLogoBytes = restaurantService.getImageForRestaurantId(restaurantId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_PNG);
         return new ResponseEntity<>(restaurantLogoBytes, headers, HttpStatus.OK);

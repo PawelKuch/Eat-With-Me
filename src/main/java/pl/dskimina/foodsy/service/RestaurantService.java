@@ -57,5 +57,10 @@ public class RestaurantService {
         return restaurantList.stream().map(toDataService::convert).collect(Collectors.toList());
     }
 
+    @Transactional
+    public byte[] getImageForRestaurantId(String restaurantId){
+        return restaurantRepository.getImageByRestaurantId(restaurantId);
+    }
+
 
 }

@@ -28,7 +28,6 @@ public class ToDataService {
         restaurantData.setPhone(restaurant.getPhone());
         restaurantData.setEmail(restaurant.getEmail());
         restaurantData.setAddress(restaurant.getAddress());
-        restaurantData.setImage(restaurant.getImage());
         restaurantData.setTags(restaurant.getTags());
         List<MenuItemData> menuItemsData = restaurant.getMenuItems().stream().map(this::convert).toList();
         restaurantData.setMenuItems(menuItemsData);

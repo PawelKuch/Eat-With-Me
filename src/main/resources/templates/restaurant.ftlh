@@ -22,7 +22,7 @@
                 <div class="restaurant-tile col-3 my-1 mx-1 d-flex flex-column justify-content-center" data-restaurant-id="${restaurant.restaurantId}" style="border: 1px solid black; min-height: 250px;">
                     <h5>${restaurant.name}</h5>
                     <span id="restaurant-address-header-${restaurant.restaurantId}">${restaurant.address}</span>
-                    <div class="img-sample-${restaurant.restaurantId}" data-restaurant-id="${restaurant.restaurantId}" style="width: 120px; height: 120px; border: 1px solid black;"> ${restaurant.image}</div>
+                    <div class="img-sample-${restaurant.restaurantId}" data-restaurant-id="${restaurant.restaurantId}" style="width:40%; height: 50%; border: 1px solid black;"><img src="logos/${restaurant.restaurantId}" width="100%" height="100%"></div>
                     <div class="restaurant-details-${restaurant.restaurantId} my-1 mx-1 d-flex flex-row justify-content-center d-none">
                         <div class="h-100">
                             Nazwa: ${restaurant.name}<br/>
@@ -90,7 +90,7 @@
                         <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">opis</span>
                         <input class="mb-2 form-control" id="address" name="address">
                     </div>
-                    <textarea name="tags" cols="60" rows="5"; placeholder="#tags"></textarea><br/>
+                    <textarea name="tags" cols="60" rows="5" placeholder="#tags"></textarea><br/>
                     <button class="btn btn-outline-dark" type="submit">Dodaj</button>
                 </form>
             </div>

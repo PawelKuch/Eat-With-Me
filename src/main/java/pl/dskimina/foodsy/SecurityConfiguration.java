@@ -16,7 +16,6 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // to pozwala otwierać konsolę h2 w przeglądarce
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests((requests) -> requests
                         /*.requestMatchers("/", "/home", "/css/*", "/js/*", "/img/*").permitAll()

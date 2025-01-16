@@ -23,7 +23,7 @@
                     <div class="main-info h-100">
                     <h5>${restaurant.name}</h5>
                     <span id="restaurant-address-header-${restaurant.restaurantId}">${restaurant.address}</span>
-                    <div class="img-sample-${restaurant.restaurantId}" data-restaurant-id="${restaurant.restaurantId}" style="width: 120px; height: 120px; border: 1px solid black;"></div>
+                    <div class="img-sample-${restaurant.restaurantId}" data-restaurant-id="${restaurant.restaurantId}" style="width: 40%; height: 60%; border: 1px solid black;"><img src="/logos/${restaurant.restaurantId}" alt="${restaurant.name} logo" width="100%" height="100%"></div>
                     </div>
                     <div class="restaurant-details-${restaurant.restaurantId} mb-1 mx-1 h-100 d-flex flex-row justify-content-center align-items-start d-none">
                         <div>

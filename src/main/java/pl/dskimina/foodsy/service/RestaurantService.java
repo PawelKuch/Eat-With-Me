@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.dskimina.foodsy.entity.Restaurant;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
 import pl.dskimina.foodsy.repository.RestaurantRepository;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,12 +37,10 @@ public class RestaurantService {
     @Transactional
     public void setLogoForRestaurant(String restaurantId, byte[] logoBytes){
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-
-        if(restaurant == null){
-            LOG.error("restaurant is null");
+        if(logoBytes == null || restaurant == null){
+            LOG.error("restaurant or logo bytes is null");
             return;
         }
-
         restaurant.setImage(logoBytes);
         restaurantRepository.save(restaurant);
     }
@@ -59,4 +56,6 @@ public class RestaurantService {
         List<Restaurant> restaurantList = restaurantRepository.findAll();
         return restaurantList.stream().map(toDataService::convert).collect(Collectors.toList());
     }
+
+
 }

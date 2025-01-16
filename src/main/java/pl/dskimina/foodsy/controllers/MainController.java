@@ -2,6 +2,10 @@ package pl.dskimina.foodsy.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -81,5 +85,14 @@ public class MainController {
     @ResponseBody
     public List<RestaurantData> getRestaurantListForFetch(){
         return restaurantService.getRestaurants();
+    }
+
+    @GetMapping("/logos/{restaurantId}")
+    public ResponseEntity<byte[]> getLogoForRestaurant(@PathVariable String restaurantId){
+        RestaurantData restaurant = restaurantService.getRestaurantByRestaurantId(restaurantId);
+        byte[] restaurantLogoBytes = restaurant.getImage();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+        return new ResponseEntity<>(restaurantLogoBytes, headers, HttpStatus.OK);
     }
 }

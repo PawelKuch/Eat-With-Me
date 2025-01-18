@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" ></script>
+    <script src="static/js/order-restaurant.js"></script>
     <link rel="stylesheet" href="css/order-restaurant.css">
     <title>Restauracje</title>
 </head>
@@ -19,7 +21,7 @@
     <div id="add-restaurant-container" class="d-flex flex-column align-items-center w-100 mx-1 my-1">
         <div id="display-restaurant-container" class="row w-100 justify-content-center" style="border: 3px solid green;">
             <#list restaurantList as restaurant>
-                <div class="restaurant-tile col-3 my-1 mx-1 d-flex flex-column justify-content-center" data-restaurant-id="${restaurant.restaurantId}" style="border: 1px solid black; min-height: 300px;">
+                <div class="restaurant-tile col-3 my-1 mx-1 d-flex flex-column justify-content-center" data-restaurant-id="${restaurant.restaurantId}">
                     <div class="main-info h-100">
                     <h5>${restaurant.name}</h5>
                     <span id="restaurant-address-header-${restaurant.restaurantId}">${restaurant.address}</span>
@@ -44,31 +46,6 @@
     </div>
 </div>
 
-
-<script>
-    document.addEventListener("DOMContentLoaded", function (){
-
-
-        document.querySelectorAll(".restaurant-tile").forEach(restaurant => {
-            let restaurantId = restaurant.dataset.restaurantId;
-            let restaurantDetails = document.querySelector(".restaurant-details-" + restaurantId);
-            let restaurantImg = document.querySelector(".img-sample-" + restaurantId);
-            let restaurantAddressHeader = document.querySelector("#restaurant-address-header-" + restaurantId);
-            let detailsButton = document.querySelector(".details-button-" + restaurantId);
-            detailsButton.addEventListener("click", function (){
-                if(restaurantDetails.classList.contains("d-none")){
-                    restaurantDetails.classList.remove("d-none");
-                    restaurantImg.classList.add("d-none");
-                    restaurantAddressHeader.classList.add("d-none");
-                }else {
-                    restaurantDetails.classList.add("d-none");
-                    restaurantImg.classList.remove("d-none");
-                    restaurantAddressHeader.classList.remove("d-none");
-                }
-            });
-        })
-    });
-</script>
 
 
 

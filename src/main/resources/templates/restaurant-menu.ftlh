@@ -8,6 +8,9 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" ></script>
+
     <title>MENU</title>
 </head>
 <body>
@@ -29,26 +32,48 @@
                         </div>
 
                         <script>
+                          /*  $(document).ready(function () {
+                               $(".menuItem-actions").each(function (){
+                                   let menuItemId = $(this).data("menuItemId");
+                                   let $menuItem = $(".menuItem-tile-" + menuItemId);
+                                   let $deleteBtn = $(".delete-menuItem-" + menuItemId);
+                                   $deleteBtn.on("click", function (){
+                                       $.ajax({
+                                           url: "/delete-menuItem/" + menuItemId,
+                                           method: "POST",
+                                           success: function (response) {
+                                               if(response) {
+                                                   $menuItem.remove();
+                                                   console.log("deleting succeed")
+                                               } else {
+                                                   console.log("No response returned");
+                                               }
+                                           }
+                                       });
+                                   });
+                               }) ;
+                            });*/
+
                             document.addEventListener("DOMContentLoaded", function() {
                                 document.querySelectorAll(".menuItem-actions").forEach(actionsContainer => {
-                                   let menuItemId = actionsContainer.dataset.menuItemId;
-                                   let menuItem = document.querySelector(".menuItem-tile-" + menuItemId);
-                                   let updateBtn = document.querySelector(".update-menuItem-" + menuItemId);
-                                   let deleteBtn = document.querySelector(".delete-menuItem-" + menuItemId);
+                                    let menuItemId = actionsContainer.dataset.menuItemId;
+                                    let menuItem = document.querySelector(".menuItem-tile-" + menuItemId);
+                                    let updateBtn = document.querySelector(".update-menuItem-" + menuItemId);
+                                    let deleteBtn = document.querySelector(".delete-menuItem-" + menuItemId);
 
-                                   deleteBtn.addEventListener("click", function (){
-                                      fetch("/delete-menuItem/" + menuItemId, {
-                                          method: "POST",
-                                       })
-                                          .then(response => {
-                                              if (response) {
-                                                  menuItem.remove();
-                                                  console.log("item deleted");
-                                              } else {
-                                                  console.log("deleting failed");
-                                              }
-                                          })
-                                   });
+                                    deleteBtn.addEventListener("click", function (){
+                                        fetch("/delete-menuItem/" + menuItemId, {
+                                            method: "POST",
+                                        })
+                                            .then(response => {
+                                                if (response) {
+                                                    menuItem.remove();
+                                                    console.log("item deleted");
+                                                } else {
+                                                    console.log("deleting failed");
+                                                }
+                                            })
+                                    });
                                 });
                             });
                         </script>

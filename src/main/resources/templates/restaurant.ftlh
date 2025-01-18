@@ -9,7 +9,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="css/restaurant.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" ></script>
+    <script src="static/js/restaurant.js"></script>
+
+    <link rel="stylesheet" href="static/css/restaurant.css">
     <title>Restauracje</title>
 </head>
 <body>
@@ -40,29 +43,6 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function (){
-
-
-       document.querySelectorAll(".restaurant-tile").forEach(restaurant => {
-           let restaurantId = restaurant.dataset.restaurantId;
-           let restaurantDetails = document.querySelector(".restaurant-details-" + restaurantId);
-           let restaurantImg = document.querySelector(".img-sample-" + restaurantId);
-           let restaurantAddressHeader = document.querySelector("#restaurant-address-header-" + restaurantId);
-           restaurant.addEventListener("click", function (){
-               if(restaurantDetails.classList.contains("d-none")){
-                   restaurantDetails.classList.remove("d-none");
-                   restaurantImg.classList.add("d-none");
-                   restaurantAddressHeader.classList.add("d-none");
-               }else {
-                   restaurantDetails.classList.add("d-none");
-                   restaurantImg.classList.remove("d-none");
-                   restaurantAddressHeader.classList.remove("d-none");
-               }
-           });
-       })
-    });
-</script>
 <div class="modal fade" id="create-restaurant-modal" tabindex="-1" aria-labelledby="create-restaurant-modal">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -101,6 +81,7 @@
         </div>
     </div>
 </div>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

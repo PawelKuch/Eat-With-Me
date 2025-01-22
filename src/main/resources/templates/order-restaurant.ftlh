@@ -38,7 +38,7 @@
                         <div class="w-75 h-25 d-flex"><a href="restaurant-menu/${restaurant.restaurantId}" class="text-body">SPRAWDŹ MENU</a></div>
                     </div>
                     <div class="btn btn-primary details-button-${restaurant.restaurantId} mt-1 mb-1">Szczegóły lokalu</div>
-                    <a href="/order-menu/${restaurant.restaurantId}" class="mb-1"><div class="w-100 btn btn-primary bg-primary mt-1">Złóż zamówienie</div></a>
+                    <a href="/create-order/${restaurant.restaurantId}" class="mb-1"><div class="w-100 btn btn-primary bg-primary mt-1">Złóż zamówienie</div></a>
                 </div>
             </#list>
         </div>

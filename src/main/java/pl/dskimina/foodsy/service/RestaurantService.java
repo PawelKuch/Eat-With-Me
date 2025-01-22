@@ -62,5 +62,9 @@ public class RestaurantService {
         return restaurantRepository.getImageByRestaurantId(restaurantId);
     }
 
+    @Transactional
+    public Restaurant getRestaurantEntityByRestaurantId(String restaurantId){
+        return restaurantRepository.findByRestaurantId(restaurantId);
+    }
 
 }

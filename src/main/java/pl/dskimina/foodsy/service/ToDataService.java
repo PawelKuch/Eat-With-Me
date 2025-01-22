@@ -2,8 +2,10 @@ package pl.dskimina.foodsy.service;
 
 import org.springframework.stereotype.Service;
 import pl.dskimina.foodsy.entity.MenuItem;
+import pl.dskimina.foodsy.entity.Order;
 import pl.dskimina.foodsy.entity.Restaurant;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
+import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
 import java.util.List;
 
@@ -32,5 +34,15 @@ public class ToDataService {
         List<MenuItemData> menuItemsData = restaurant.getMenuItems().stream().map(this::convert).toList();
         restaurantData.setMenuItems(menuItemsData);
         return restaurantData;
+    }
+
+    public OrderData convert(Order order){
+        OrderData orderData = new OrderData();
+        orderData.setOrderId(order.getOrderId());
+        orderData.setValue(order.getValue());
+        orderData.setDate(order.getDate());
+        orderData.set (order.getMenuItemList().stream().map(this::convert).toList());
+        orderData.setRestaurantData(convert(order.getRestaurant()));
+        return orderData;
     }
 }

@@ -1,3 +1,4 @@
+-- RESTAURANTS
 INSERT INTO restaurants (restaurant_id, name, phone, email, address, tags)VALUES ('123azxczc1qsa', 'KFC', '1231231', 'kfc@kfc.com', 'Kościuszki 43, 47-511 Katowice', '#fastfood #friedchicken #bites');
 INSERT INTO restaurants (restaurant_id, name, phone, email, address, tags) VALUES ( '123azxcc1qsa', 'Burger King', '1231231', 'burgerking@bg.com', 'Paderewskiego 2, 00-035 Warszawa', '#fastfood #burgers');
 INSERT INTO restaurants (restaurant_id, name, phone, email, address,tags) VALUES ( '123aczc1qsa', 'McDonald', '1231231', 'mcd@mcd.com', 'Krakowska 879, 98-204 Kraków', '#fastfood #burgers #tortillas #fries');
@@ -63,3 +64,8 @@ INSERT INTO menu_items (menu_item_id, name, category, description, price, restau
 VALUES ('peter004', 'rosół', 'zupy', 'makaron, filet z kurczaka', 24.00, (SELECT id FROM restaurants WHERE restaurant_id = '12azczc1qsa'));
 INSERT INTO menu_items (menu_item_id, name, category, description, price, restaurant_id)
 VALUES ('peter005', 'sernik orzechowy', 'desery', 'sernik, orzechy, polewa mleczna', 18.90, (SELECT id FROM restaurants WHERE restaurant_id = '12azczc1qsa'));
+
+-- USERS
+INSERT INTO users (user_id, first_name, last_name) VALUES ('user1', 'Jan', 'Nowak');
+INSERT INTO users (user_id, first_name, last_name) VALUES ('user2', 'Adam', 'Kowalski');
+INSERT INTO users (user_id, first_name, last_name) VALUES ('user3', 'Jim', 'Gordon');

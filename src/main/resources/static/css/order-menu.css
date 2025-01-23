@@ -1,3 +1,11 @@
 #info-panel {
     height: 50px;
 }
+
+#user-span {
+    width: 125px;
+}
+
+#description-span {
+    width: 125px;
+}

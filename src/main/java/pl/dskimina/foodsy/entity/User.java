@@ -2,6 +2,8 @@ package pl.dskimina.foodsy.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -9,18 +11,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
-    private String user_id;
+    @Column(name = "user_id", nullable = false)
+    private String userId;
 
-    @Column(name = "first_name")
-    private String first_name;
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
 
-    @Column(name = "last_name")
-    private String last_name;
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_item_id")
-    private OrderItem orderItem;
+    @OneToMany(mappedBy = "user")
+    private List<OrderItem> orderItemList;
 
     public Long getId() {
         return id;
@@ -29,24 +30,32 @@ public class User {
         this.id = id;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
-    }
-
-    public String getFirst_name() {
-        return first_name;
-    }
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getLast_name() {
-        return last_name;
+    public String getFirstName() {
+        return firstName;
     }
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public List<OrderItem> getOrderItemList() {
+        return orderItemList;
+    }
+
+    public void setOrderItemList(List<OrderItem> orderItemList) {
+        this.orderItemList = orderItemList;
     }
 }

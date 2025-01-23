@@ -22,9 +22,8 @@ public class Order {
     @Column(name = "order_date", nullable = true)
     private LocalDateTime date;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_item_id")
-    OrderItem orderItem;
+    @OneToMany(mappedBy = "order")
+    private List<OrderItem> orderItem;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = true)
@@ -64,5 +63,13 @@ public class Order {
     }
     public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;
+    }
+
+    public List<OrderItem> getOrderItemList() {
+        return orderItem;
+    }
+
+    public void setOrderItemList(List<OrderItem> orderItem) {
+        this.orderItem = orderItem;
     }
 }

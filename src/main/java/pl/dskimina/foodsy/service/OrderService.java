@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.dskimina.foodsy.entity.MenuItem;
 import pl.dskimina.foodsy.entity.Order;
+import pl.dskimina.foodsy.entity.OrderItem;
 import pl.dskimina.foodsy.entity.Restaurant;
 import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
@@ -47,8 +48,8 @@ public class OrderService {
         order.setOrderId(UUID.randomUUID().toString());
         order.setDate(LocalDateTime.now());
         order.setValue(0.0);
-        List<MenuItem> menuItemList = new ArrayList<>();
-        order.setMenuItemList(menuItemList);
+        List<OrderItem> orderItems = new ArrayList<>();
+        order.setOrderItemList(orderItems);
         Restaurant restaurant = restaurantService.getRestaurantEntityByRestaurantId(restaurantId);
         order.setRestaurant(restaurant);
         orderRepository.save(order);
@@ -56,10 +57,10 @@ public class OrderService {
     }
 
     @Transactional
-    public void addItemToOrder(String orderId, String menuItemId) {
+    public void addOrderItemToOrderItemList(String orderId, String menuItemId) {
         Order order = orderRepository.findByOrderId(orderId);
         MenuItem menuItem = menuItemRepository.findByMenuItemId(menuItemId);
-        order.addMenuItemToOrder(menuItem);
+
         orderRepository.save(order);
     }
 }

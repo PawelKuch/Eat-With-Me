@@ -8,7 +8,7 @@ public class OrderData {
     private String orderId;
     private double value;
     private LocalDateTime date;
-    private OrderItemData orderItemData;
+    private List<OrderItemData> orderItemList;
     private RestaurantData restaurantData;
 
     public String getOrderId() {
@@ -37,5 +37,13 @@ public class OrderData {
     }
     public void setRestaurantData(RestaurantData restaurantData) {
         this.restaurantData = restaurantData;
+    }
+
+    public List<OrderItemData> getOrderItemList() {
+        return orderItemList;
+    }
+
+    public void setOrderItemList(List<OrderItemData> orderItemList) {
+        this.orderItemList = orderItemList;
     }
 }

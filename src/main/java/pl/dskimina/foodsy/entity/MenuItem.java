@@ -3,6 +3,8 @@ package pl.dskimina.foodsy.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "menu_items")
 public class MenuItem {
@@ -29,15 +31,14 @@ public class MenuItem {
     @JoinColumn(name = "restaurant_id", nullable = true)
     private Restaurant restaurant;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = true)
-    private Order order;
+    @OneToMany(mappedBy = "menuItem")
+    private List<OrderItem> orderItemList;
 
-    public Order getOrder() {
-        return order;
+    public List<OrderItem> getOrderItemList() {
+        return orderItemList;
     }
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setOrderItemList(List<OrderItem> orderItem) {
+        this.orderItemList = orderItem;
     }
 
     public Long getId() {

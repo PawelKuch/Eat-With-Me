@@ -1,12 +1,10 @@
 package pl.dskimina.foodsy.service;
 
 import org.springframework.stereotype.Service;
-import pl.dskimina.foodsy.entity.MenuItem;
-import pl.dskimina.foodsy.entity.Order;
-import pl.dskimina.foodsy.entity.Restaurant;
-import pl.dskimina.foodsy.entity.data.MenuItemData;
-import pl.dskimina.foodsy.entity.data.OrderData;
-import pl.dskimina.foodsy.entity.data.RestaurantData;
+import pl.dskimina.foodsy.entity.*;
+import pl.dskimina.foodsy.entity.data.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -41,8 +39,27 @@ public class ToDataService {
         orderData.setOrderId(order.getOrderId());
         orderData.setValue(order.getValue());
         orderData.setDate(order.getDate());
-        orderData.set (order.getMenuItemList().stream().map(this::convert).toList());
+        orderData.setOrderItemList(order.getOrderItemList().stream().map(this::convert).toList());
         orderData.setRestaurantData(convert(order.getRestaurant()));
         return orderData;
+    }
+
+    public UserData convert(User user){
+        UserData userData = new UserData();
+        userData.setUserId(user.getUserId());
+        userData.setFirstName(user.getFirstName());
+        userData.setLastName(user.getLastName());
+        //userData.setOrderItemDataList(user.getOrderItemList().stream().map(this::convert).toList());
+        return userData;
+    }
+
+    public OrderItemData convert(OrderItem orderItem){
+        OrderItemData orderItemData = new OrderItemData();
+        orderItemData.setOrderItemId(orderItem.getOrderItemId());
+        orderItemData.setPrice(orderItem.getPrice());
+        orderItemData.setUser(convert(orderItem.getUser()));
+        //orderItemData.setOrder(convert(orderItem.getOrder()));
+        orderItemData.setMenuItem(convert(orderItem.getMenuItem()));
+        return orderItemData;
     }
 }

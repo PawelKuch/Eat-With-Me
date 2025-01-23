@@ -57,15 +57,23 @@
                                                     <input name="menuItemId" type="hidden" value="${menuItem.menuItemId}">
                                                 </div>
                                                 <div class="input-group">
-                                                    <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">
+                                                    <span id="user-span" class="input-group-text mb-2 bg-dark text-white">Użytkownik</span>
+                                                    <select class="mb-2 form-control" name="userId">
+                                                        <#list users as user>
+                                                            <option value="${user.userId}"> ${user.userId} ${user.firstName} ${user.lastName}</option>
+                                                        </#list>
+                                                    </select>
+                                                </div>
+                                                <div class="input-group">
+                                                    <span id="description-span" class="input-group-text mb-2 bg-dark text-white">
                                                         Dodatkowy <br/> opis
                                                     </span>
                                                     <textarea class="mb-2 form-control" cols="60" rows="5" id="description" name="description">Dodaj opcjonalnie</textarea>
                                                 </div>
                                                 <div>
                                                     <div class="row">
-                                                        <div class="col-6 d-flex justify-content-start">Cena</div>
-                                                        <div class="col-6 d-flex justify-content-end">${menuItem.price} zł</div>
+                                                        <div class="col-6 d-flex justify-content-start fw-bold">Cena</div>
+                                                        <div class="col-6 d-flex justify-content-end fw-bold">${menuItem.price} zł</div>
                                                     </div>
                                                     <input type="hidden" name="price" value="${menuItem.price}">
                                                 </div>
@@ -87,13 +95,9 @@
             </div>
         </div>
         <div id="orders-containers">
-            <#if menuItemListForOrder?has_content>
-                <#list menuItemListForOrder as item>
-                    ${item.name} <br/>
-                </#list>
-            <#else>
-                Pusta lista
-            </#if>
+            <#list order.orderItemList as orderItem>
+                ${orderItem.menuItem.name}<br/>
+            </#list>
 
 
         </div>

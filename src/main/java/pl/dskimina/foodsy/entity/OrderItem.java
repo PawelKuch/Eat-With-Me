@@ -18,14 +18,17 @@ public class OrderItem {
     @Column(name = "price")
     private Double price;
 
-    @OneToMany(mappedBy = "user")
-    private List<User> users;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @OneToMany(mappedBy = "order")
-    private List<Order> orders;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
 
-    @OneToMany(mappedBy = "menuItem")
-    private List<MenuItem> menuItemList;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_item_id")
+    private MenuItem menuItem;
 
     public Long getId() {
         return id;
@@ -48,24 +51,24 @@ public class OrderItem {
         this.price = price;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public User getUser() {
+        return user;
     }
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public List<MenuItem> getMenuItemList() {
-        return menuItemList;
+    public Order getOrder() {
+        return order;
     }
-    public void setMenuItemList(List<MenuItem> menuItemList) {
-        this.menuItemList = menuItemList;
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public MenuItem getMenuItem() {
+        return menuItem;
+    }
+    public void setMenuItem(MenuItem menuItem) {
+        this.menuItem = menuItem;
     }
 }

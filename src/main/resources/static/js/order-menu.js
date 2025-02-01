@@ -1,7 +1,10 @@
 $(document).ready(function () {
-   let $submitFormBtn = $("#submit-form-button");
-   let $orderForm = $("#order-form");
-   $submitFormBtn.on("click", function () {
-       $orderForm.submit();
-   });
+    $('.submit-form-btn').each(function () {
+        let $submitBtn = $(this);
+        let id = $submitBtn.data("itemId");
+        let $form = $('.order-form-' + id);
+        $submitBtn.on('click', function () {
+            $form.submit();
+        });
+    });
 });

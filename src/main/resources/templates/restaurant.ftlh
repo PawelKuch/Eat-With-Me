@@ -10,36 +10,35 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js" ></script>
-    <script src="static/js/restaurant.js"></script>
 
-    <link rel="stylesheet" href="static/css/restaurant.css">
+
+    <link rel="stylesheet" href="/static/css/restaurant.css">
+    <script src="/static/js/restaurant.js"></script>
     <title>Restauracje</title>
 </head>
 <body>
-<div id="main-container" class="d-flex flex-row">
+<div id="main-container" class="d-flex flex-row w-100">
     <#include "side-navbar.ftlh">
 
-    <div id="add-restaurant-container" class="d-flex flex-column align-items-center w-100 mx-1 my-1">
-        <div id="display-restaurant-container" class="row w-100 justify-content-center" style="border: 3px solid green;">
+    <div id="restaurant-container" class="d-flex px-2 list-group">
             <#list restaurantList as restaurant>
-                <div class="restaurant-tile col-3 my-1 mx-1 d-flex flex-column justify-content-center" data-restaurant-id="${restaurant.restaurantId}" style="border: 1px solid black; min-height: 250px;">
-                    <h5>${restaurant.name}</h5>
-                    <span id="restaurant-address-header-${restaurant.restaurantId}">${restaurant.address}</span>
-                    <div class="img-sample-${restaurant.restaurantId}" data-restaurant-id="${restaurant.restaurantId}" style="width:40%; height: 50%; border: 1px solid black;"><img src="logos/${restaurant.restaurantId}" width="100%" height="100%"></div>
-                    <div class="restaurant-details-${restaurant.restaurantId} my-1 mx-1 d-flex flex-row justify-content-center d-none">
-                        <div class="h-100">
-                            Nazwa: ${restaurant.name}<br/>
-                            Nr tel.: ${restaurant.phone}<br/>
-                            Email: ${restaurant.email}<br/>
-                            Adres: ${restaurant.getAddress()}<br/>
-                            ${restaurant.getTags()}
-                        </div>
-                        <div class="w-75 h-25 d-flex"><a href="restaurant-menu/${restaurant.restaurantId}" class="text-body">SPRAWDŹ MENU</a></div>
+                <div class="restaurant-tile list-group-item d-flex flex-row align-items-center mt-3" data-restaurant-id="${restaurant.restaurantId}">
+                    <div class="col-1"><img src="/logos/${restaurant.restaurantId}" alt="${restaurant.name} logo" width="50px"></div>
+                    <div class="col-3" id="restaurant-address-header-${restaurant.restaurantId}">${restaurant.address}</div>
+                    <div class="col-2 mx-3">${restaurant.tags}</div>
+                    <div class="col-2 mx-2">
+                        <a href="/restaurant-details/${restaurant.restaurantId}" class="btn btn-primary">Szczegóły lokalu</a>
+                    </div>
+                    <div class="col-2 mx-2">
+                        <a href="/create-order/${restaurant.restaurantId}" class="btn btn-primary">Złóż zamówienie</a>
+                    </div>
+                    <div class="col-2 mx-2">
+                        <a href="/restaurant-menu/${restaurant.restaurantId}" class="btn btn-primary">Menu</a>
                     </div>
                 </div>
             </#list>
-        </div>
-        <button data-bs-toggle="modal" data-bs-target="#create-restaurant-modal" class="btn btn-dark">Dodaj restaurację</button>
+
+        <button data-bs-toggle="modal" data-bs-target="#create-restaurant-modal" class="btn btn-dark w-25 mt-3">Dodaj restaurację</button>
     </div>
 </div>
 
@@ -53,7 +52,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="/restaurant">
+                <form id="restaurant-form" method="post" action="/create-restaurant">
                     <div class="input-group">
                         <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">nazwa</span>
                         <input class="mb-2 form-control" id="name" name="name">
@@ -70,8 +69,10 @@
                         <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">opis</span>
                         <input class="mb-2 form-control" id="address" name="address">
                     </div>
+                    <div class="input-group">
+                        <input class="mb-2 form-control" type="file" id="jpg-file" name="jpg-file">
+                    </div>
                     <textarea name="tags" cols="60" rows="5" placeholder="#tags"></textarea><br/>
-                    <button class="btn btn-outline-dark" type="submit">Dodaj</button>
                 </form>
             </div>
             <div class="modal-footer">

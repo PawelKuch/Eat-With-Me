@@ -33,16 +33,23 @@ public class OrderController {
         this.userService = userService;
     }
 
-    @GetMapping("/order-restaurant")
+    @GetMapping("/restaurant11111")
     public String orderRestaurant(Model model) {
         model.addAttribute("restaurantList", restaurantService.getRestaurants());
-        return "order-restaurant";
+        return "restaurant";
     }
 
     @GetMapping("/create-order/{restaurantId}")
     public RedirectView createOrder(@PathVariable String restaurantId){
         OrderData order = orderService.createOrder(restaurantId);
         return new RedirectView("/order-menu/" + restaurantId + "/" + order.getOrderId());
+    }
+
+    @GetMapping("/orders")
+    public String orders(Model model) {
+        List<OrderData> orderList = orderService.getOrders();
+        model.addAttribute("orderList", orderList);
+        return "orders";
     }
 
     @GetMapping("/order-menu/{restaurantId}/{orderId}")
@@ -67,7 +74,7 @@ public class OrderController {
                                  @RequestParam("menuItemId") String menuItemId,
                                  @RequestParam(value = "description", required = false) String description,
                                  @RequestParam(value = "price", required = false) String price) {
-        orderItemService.createOrderItem(userId, menuItemId, price, orderId);
+        orderItemService.createOrderItem(userId, menuItemId, price, orderId, description);
 
         return new RedirectView("/order-menu/" + restaurantId + "/" + orderId);
     }

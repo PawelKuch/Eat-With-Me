@@ -67,7 +67,7 @@
                                         })
                                             .then(response => {
                                                 if (response) {
-                                                    menuItem.remove();
+                                                     menuItem.remove();
                                                     console.log("item deleted");
                                                 } else {
                                                     console.log("deleting failed");

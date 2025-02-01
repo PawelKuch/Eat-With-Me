@@ -1,12 +1,12 @@
-<nav style="height: 100vh; width: 220px;">
-    <div class="d-flex flex-column flex-shrink-1 p-3 text-white bg-dark" style="height: 100%;">
+<nav style="height: 100vh; width: 220px;" class="position-sticky top-0">
+    <div class="d-flex flex-column flex-shrink-1 p-3 text-white bg-dark" style="height: 100vh;">
         <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
             <img src="/static/img/logo.png" style="clip-path: circle(31%); width: 190px"/>
         </a>
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-                <a href="/order-restaurant" class="nav-link" aria-current="page">
+                <a href="/orders" class="nav-link" aria-current="page">
                     <i class="bi bi-card-checklist"></i>&nbsp;
                     Zamówienia
                 </a>

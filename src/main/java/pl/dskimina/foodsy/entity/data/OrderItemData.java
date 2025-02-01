@@ -5,6 +5,7 @@ import java.util.List;
 public class OrderItemData {
     private String orderItemId;
     private Double price;
+    private String description;
     private UserData user;
     private OrderData order;
     private MenuItemData menuItem;
@@ -20,9 +21,15 @@ public class OrderItemData {
     public Double getPrice() {
         return price;
     }
-
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public UserData getUser() {

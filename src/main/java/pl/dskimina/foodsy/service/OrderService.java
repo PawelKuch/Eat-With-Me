@@ -63,4 +63,10 @@ public class OrderService {
 
         orderRepository.save(order);
     }
+
+    @Transactional
+    public List<OrderData> getOrders(){
+        List<Order> orders = orderRepository.findAll();
+        return orders.stream().map(toDataService::convert).toList();
+    }
 }

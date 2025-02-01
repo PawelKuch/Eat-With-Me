@@ -18,6 +18,9 @@ public class OrderItem {
     @Column(name = "price")
     private Double price;
 
+    @Column(name = "description")
+    private String description;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -50,6 +53,9 @@ public class OrderItem {
     public void setPrice(Double price) {
         this.price = price;
     }
+
+    public String getDescription() {return description;}
+    public void setDescription(String description) {this.description = description;}
 
     public User getUser() {
         return user;

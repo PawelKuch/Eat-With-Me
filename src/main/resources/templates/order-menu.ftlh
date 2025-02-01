@@ -10,96 +10,124 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js" ></script>
-    <script src="static/js/order-menu.js"></script>
+    <script src="/static/js/order-menu.js"></script>
 
     <link rel="stylesheet" href="/static/css/order-menu.css">
     <title>Menu zamówienia</title>
 </head>
 <body>
 
-    <div id="main-container" class="d-flex flex-row">
+    <div id="main-container" class="d-flex flex-row w-100">
         <#include "side-navbar.ftlh">
-        <div class="w-100">
-            <div id="info-panel" class="sticky-top d-flex align-items-center justify-content-center bg-dark text-white row">
-                <span class="col-3 d-flex justify-content-center">21:33:00</span>
-                <span class="col-6 d-flex justify-content-center"><b>${restaurant.name}</b></span>
-                <span class="col-3 d-flex justify-content-center">
-                    <i class="bi bi-cart4"></i>
-                    <i id="cart-circle" style="position: absolute; top: 25px; right: 170px; font-size: 10px;" class="bi bi-circle-fill text-danger"></i>
-                </span>
-            </div>
-            <div class="d-flex flex-column align-items-center w-100">
-                <#if menuItemList?has_content>
-                    <div id="display-menuItem-container" class="row w-100 justify-content-center" style="border: 1px solid green;">
-                        <#list menuItemList as menuItem>
-                            <div class="menuItem-tile-${menuItem.menuItemId} row my-1 mx-1 d-flex justify-content-center">
-                                <h5 class="col-3 mx-3">${menuItem.name}</h5>
-                                <div class="menuItem-description col-3">${menuItem.description}</div>
-                                <div class="menuItem-price col-1">${menuItem.price} zł</div>
-                                <div data-menu-item-id="${menuItem.menuItemId}" class="d-flex flex-row col-1 menuItem-actions">
-                                    <button data-bs-toggle="modal" data-bs-target="#add-item-to-order-modal-${menuItem.menuItemId}" class="mx-1 btn btn-dark text-white update-menuItem-${menuItem.menuItemId}"><i class="bi bi-basket3-fill"></i></button>
+        <div class="align-items-start w-100">
+            <div id="container" class="row w-100">
+                <div class="col-7 d-flex flex-column">
+                    <#if menuItemList?has_content>
+                        <div id="display-menuItem-container" class="list-group justify-content-center">
+                            <#if menuItemList?has_content>
+                                <div class="group-list row justify-content-center fw-bold fs-5">
+                                    <span class="col-3">Danie</span>
+                                    <span class="col-3">Opis</span>
+                                    <span class="col-1">Cena</span>
+                                    <span class="col-1">Czynność</span>
                                 </div>
-                            </div>
+                            <#list menuItemList as menuItem>
+                                <div class="menuItem-tile-${menuItem.menuItemId} list-group-item my-1 mx-1 d-flex justify-content-center">
+                                    <h5 class="col-3 mx-3">${menuItem.name}</h5>
+                                    <div class="menuItem-description col-3">${menuItem.description}</div>
+                                    <div class="menuItem-price col-1">${menuItem.price} zł</div>
+                                    <div data-menu-item-id="${menuItem.menuItemId}" class="d-flex flex-row col-1 menuItem-actions justify-content-center">
+                                        <button data-bs-toggle="modal" data-bs-target="#add-item-to-order-modal-${menuItem.menuItemId}" class="mx-1 btn btn-dark text-white update-menuItem-${menuItem.menuItemId}"><i class="bi bi-basket3-fill"></i></button>
+                                    </div>
+                                </div>
 
-                            <div class="modal fade" id="add-item-to-order-modal-${menuItem.menuItemId}" tabindex="-1" aria-labelledby="add-item-to-order-modal">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <div id="modal-title-div">
-                                                <h1 class="modal-title fs-5">Dodaj do zamówienia</h1>
+                                <div class="modal fade" id="add-item-to-order-modal-${menuItem.menuItemId}" tabindex="-1" aria-labelledby="add-item-to-order-modal">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <div id="modal-title-div">
+                                                    <h1 class="modal-title fs-5">Dodaj do zamówienia</h1>
+                                                </div>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form id="order-form" method="post" action="/order-menu/add-menu-item-to-order/${restaurantId}/${order.orderId}">
-                                                <div class="input-group">
-                                                    <h5>${menuItem.name}</h5>
-                                                    <input name="menuItemId" type="hidden" value="${menuItem.menuItemId}">
-                                                </div>
-                                                <div class="input-group">
-                                                    <span id="user-span" class="input-group-text mb-2 bg-dark text-white">Użytkownik</span>
-                                                    <select class="mb-2 form-control" name="userId">
-                                                        <#list users as user>
-                                                            <option value="${user.userId}"> ${user.userId} ${user.firstName} ${user.lastName}</option>
-                                                        </#list>
-                                                    </select>
-                                                </div>
-                                                <div class="input-group">
-                                                    <span id="description-span" class="input-group-text mb-2 bg-dark text-white">
-                                                        Dodatkowy <br/> opis
-                                                    </span>
-                                                    <textarea class="mb-2 form-control" cols="60" rows="5" id="description" name="description">Dodaj opcjonalnie</textarea>
-                                                </div>
-                                                <div>
-                                                    <div class="row">
-                                                        <div class="col-6 d-flex justify-content-start fw-bold">Cena</div>
-                                                        <div class="col-6 d-flex justify-content-end fw-bold">${menuItem.price} zł</div>
+                                            <div class="modal-body">
+                                                <form class="order-form-${menuItem.menuItemId}" method="post" action="/order-menu/add-menu-item-to-order/${restaurantId}/${order.orderId}">
+                                                    <div class="input-group">
+                                                        <h5>${menuItem.name}</h5>
+                                                        <input name="menuItemId" type="hidden" value="${menuItem.menuItemId}">
                                                     </div>
-                                                    <input type="hidden" name="price" value="${menuItem.price}">
-                                                </div>
-                                                <button type="submit">Wyslij</button>
-                                            </form>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button id="submit-form-button" class="btn btn-outline-dark mb-3" type="submit">Dodaj</button>
-                                            <button type="button" class="btn btn-secondary mb-3" data-bs-dismiss="modal">Zamknij</button>
+                                                    <div class="input-group">
+                                                        <span id="user-span" class="input-group-text mb-2 bg-dark text-white">Użytkownik</span>
+                                                        <select class="mb-2 form-control" name="userId">
+                                                            <#list users as user>
+                                                                <option value="${user.userId}">${user.firstName} ${user.lastName}</option>
+                                                            </#list>
+                                                        </select>
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <span id="description-span" class="input-group-text mb-2 bg-dark text-white">
+                                                            Dodatkowy <br/> opis
+                                                        </span>
+                                                        <textarea class="mb-2 form-control" cols="60" rows="5" id="description" name="description" placeholder="Dodaj opcjonalnie"></textarea>
+                                                    </div>
+                                                    <div>
+                                                        <div class="row">
+                                                            <div class="col-6 d-flex justify-content-start fw-bold">Cena</div>
+                                                            <div class="col-6 d-flex justify-content-end fw-bold">${menuItem.price} zł</div>
+                                                        </div>
+                                                        <input type="hidden" name="price" value="${menuItem.price}">
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button data-item-id="${menuItem.menuItemId}" class="btn btn-outline-dark mb-3 submit-form-btn" type="submit">Dodaj</button>
+                                                <button type="button" class="btn btn-secondary mb-3" data-bs-dismiss="modal">Zamknij</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </#list>
+                            </#list>
+                            </#if>
+                        </div>
+
+                    <#else>
+                        <h5> Brak danych do wyświetlenia</h5>
+                    </#if>
+                </div>
+
+                <div id="orders-containers" class="col-5 d-flex flex-column border-start border-dark">
+                    <#if order.orderItemList?has_content>
+                    <div class="row fw-bold border-bottom p-2">
+                        <span class="col-3">Danie</span>
+                        <span class="col-1">Cena</span>
+                        <span class="col-3">Opis</span>
+                        <span class="col-3">Pracownik</span>
+                        <span class="col-2">Czynność</span>
                     </div>
-                <#else>
-                    <h5> Brak danych do wyświetlenia</h5>
-                </#if>
+                    <div class="list-group-flush row d-flex">
+                        <#list order.orderItemList as orderItem>
+                            <span class="list-group-item col-3">${orderItem.menuItem.name}</span>
+                            <span class="list-group-item col-1">${orderItem.menuItem.price}</span>
+                            <span class="list-group-item col-3">${orderItem.description}</span>
+                            <span class="list-group-item col-3">${orderItem.user.firstName} ${orderItem.user.lastName}</span>
+                            <span class="list-group-item col-2 d-flex flex-row">
+                                <button class="btn btn-dark justify-content-center me-1">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                                <button class="btn btn-dark justify-content-center">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </button>
+                            </span>
+                        </#list>
+                        <span class="col-8 fw-bold">Wartość całkowita</span>
+                        <span class="col-4 fw-bold d-flex justify-content-end">${order.value} zł</span>
+                    </div>
+                    <#else>
+                        <div class="alert alert-warning text-center mt-3">Brak pozycji w zamówieniu</div>
+                    </#if>
+                </div>
             </div>
-        </div>
-        <div id="orders-containers">
-            <#list order.orderItemList as orderItem>
-                ${orderItem.menuItem.name}<br/>
-            </#list>
-
-
         </div>
     </div>
 

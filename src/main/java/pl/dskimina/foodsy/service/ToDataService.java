@@ -49,7 +49,6 @@ public class ToDataService {
         userData.setUserId(user.getUserId());
         userData.setFirstName(user.getFirstName());
         userData.setLastName(user.getLastName());
-        //userData.setOrderItemDataList(user.getOrderItemList().stream().map(this::convert).toList());
         return userData;
     }
 
@@ -57,8 +56,8 @@ public class ToDataService {
         OrderItemData orderItemData = new OrderItemData();
         orderItemData.setOrderItemId(orderItem.getOrderItemId());
         orderItemData.setPrice(orderItem.getPrice());
+        orderItemData.setDescription(orderItem.getDescription());
         orderItemData.setUser(convert(orderItem.getUser()));
-        //orderItemData.setOrder(convert(orderItem.getOrder()));
         orderItemData.setMenuItem(convert(orderItem.getMenuItem()));
         return orderItemData;
     }

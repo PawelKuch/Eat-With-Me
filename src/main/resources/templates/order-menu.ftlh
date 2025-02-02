@@ -36,7 +36,7 @@
                                     <h5 class="col-3 mx-3">${menuItem.name}</h5>
                                     <div class="menuItem-description col-3">${menuItem.description}</div>
                                     <div class="menuItem-price col-1">${menuItem.price} zł</div>
-                                    <div data-menu-item-id="${menuItem.menuItemId}" class="d-flex flex-row col-1 menuItem-actions justify-content-center">
+                                    <div data-menu-item-id="${menuItem.menuItemId}" class="col-1 menuItem-actions justify-content-center">
                                         <button data-bs-toggle="modal" data-bs-target="#add-item-to-order-modal-${menuItem.menuItemId}" class="mx-1 btn btn-dark text-white update-menuItem-${menuItem.menuItemId}"><i class="bi bi-basket3-fill"></i></button>
                                     </div>
                                 </div>
@@ -99,29 +99,26 @@
                 <div id="orders-containers" class="col-5 d-flex flex-column border-start border-dark">
                     <#if order.orderItemList?has_content>
                     <div class="row fw-bold border-bottom p-2">
-                        <span class="col-3">Danie</span>
-                        <span class="col-1">Cena</span>
-                        <span class="col-3">Opis</span>
-                        <span class="col-3">Pracownik</span>
-                        <span class="col-2">Czynność</span>
+                        <div class="col-3">Danie</div>
+                        <div class="col-1">Cena</div>
+                        <div class="col-3 d-flex justify-content-center">Opis</div>
+                        <div class="col-3">Pracownik</div>
+                        <div class="col-2">Czynność</div>
                     </div>
                     <div class="list-group-flush row d-flex">
                         <#list order.orderItemList as orderItem>
-                            <span class="list-group-item col-3">${orderItem.menuItem.name}</span>
-                            <span class="list-group-item col-1">${orderItem.menuItem.price}</span>
-                            <span class="list-group-item col-3">${orderItem.description}</span>
-                            <span class="list-group-item col-3">${orderItem.user.firstName} ${orderItem.user.lastName}</span>
-                            <span class="list-group-item col-2 d-flex flex-row">
-                                <button class="btn btn-dark justify-content-center me-1">
+                            <div class="list-group-item col-3">${orderItem.menuItem.name}</div>
+                            <div class="list-group-item col-1">${orderItem.menuItem.price}</div>
+                            <div class="list-group-item col-3">${orderItem.description}</div>
+                            <div class="list-group-item col-3">${orderItem.user.firstName} ${orderItem.user.lastName}</div>
+                            <div class="list-group-item col-2">
+                                <a href="/delete-order-item/${restaurant.restaurantId}/${order.orderId}/${orderItem.orderItemId}" class="btn btn-dark justify-content-center me-1">
                                     <i class="bi bi-trash-fill"></i>
-                                </button>
-                                <button class="btn btn-dark justify-content-center">
-                                    <i class="bi bi-pencil-fill"></i>
-                                </button>
-                            </span>
+                                </a>
+                            </div>
                         </#list>
-                        <span class="col-8 fw-bold">Wartość całkowita</span>
-                        <span class="col-4 fw-bold d-flex justify-content-end">${order.value} zł</span>
+                        <div class="col-8 fw-bold">Wartość całkowita</div>
+                        <div class="col-4 fw-bold d-flex justify-content-end">${order.value} zł</div>
                     </div>
                     <#else>
                         <div class="alert alert-warning text-center mt-3">Brak pozycji w zamówieniu</div>

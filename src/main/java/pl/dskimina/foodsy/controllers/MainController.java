@@ -81,12 +81,12 @@ public class MainController {
         return "restaurant-details";
     }
 
-    @GetMapping("get-restaurant-list")
+    /*@GetMapping("get-restaurant-list")
     @ResponseBody
     public List<RestaurantData> getRestaurantListForFetch(){
         return restaurantService.getRestaurants();
     }
-
+*/
     @GetMapping("/logos/{restaurantId}")
     public ResponseEntity<byte[]> getLogoForRestaurant(@PathVariable String restaurantId){
         byte[] restaurantLogoBytes = restaurantService.getImageForRestaurantId(restaurantId);
@@ -94,4 +94,14 @@ public class MainController {
         headers.setContentType(MediaType.IMAGE_PNG);
         return new ResponseEntity<>(restaurantLogoBytes, headers, HttpStatus.OK);
     }
+
+    @PostMapping("/update-restaurant/{restaurantId}")
+    public RedirectView updatePhoneForRestaurant(@PathVariable String restaurantId, @RequestParam(value = "phone", required = false) String phone,
+                                                 @RequestParam(value = "tags", required = false) String tags,
+                                                 @RequestParam(value = "email", required = false) String email,
+                                                 @RequestParam(value = "address", required = false) String address){
+        restaurantService.updateRestaurant(restaurantId, phone, address, email, tags);
+        return new RedirectView("/restaurant-details/" + restaurantId);
+    }
+
 }

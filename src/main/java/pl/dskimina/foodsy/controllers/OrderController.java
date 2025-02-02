@@ -40,7 +40,7 @@ public class OrderController {
     }
 
     @GetMapping("/create-order/{restaurantId}")
-    public RedirectView createOrder(@PathVariable String restaurantId){
+    public RedirectView createOrder(@PathVariable String restaurantId) {
         OrderData order = orderService.createOrder(restaurantId);
         return new RedirectView("/order-menu/" + restaurantId + "/" + order.getOrderId());
     }
@@ -78,4 +78,11 @@ public class OrderController {
 
         return new RedirectView("/order-menu/" + restaurantId + "/" + orderId);
     }
+
+    @GetMapping("/delete-order-item/{restaurantId}/{orderId}/{orderItemId}")
+    public RedirectView deleteOrderItem(@PathVariable String restaurantId, @PathVariable String orderId, @PathVariable String orderItemId) {
+        orderItemService.deleteOrderItem(orderItemId);
+        return new RedirectView("/order-menu/" + restaurantId + "/" + orderId);
+    }
+
 }

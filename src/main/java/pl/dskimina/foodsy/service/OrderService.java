@@ -9,6 +9,7 @@ import pl.dskimina.foodsy.entity.Restaurant;
 import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
 import pl.dskimina.foodsy.repository.MenuItemRepository;
+import pl.dskimina.foodsy.repository.OrderItemRepository;
 import pl.dskimina.foodsy.repository.OrderRepository;
 import pl.dskimina.foodsy.repository.RestaurantRepository;
 
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class OrderService {
 
     private final ToDataService toDataService;
+    private final OrderItemRepository orderItemRepository;
     public OrderRepository orderRepository;
     public RestaurantRepository restaurantRepository;
     public MenuItemRepository menuItemRepository;
@@ -28,12 +30,13 @@ public class OrderService {
 
     public OrderService(OrderRepository orderRepository, RestaurantRepository restaurantRepository,
                         MenuItemRepository menuItemRepository, ToDataService toDataService,
-                        RestaurantService restaurantService) {
+                        RestaurantService restaurantService, OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
         this.restaurantRepository = restaurantRepository;
         this.menuItemRepository = menuItemRepository;
         this.toDataService = toDataService;
         this.restaurantService = restaurantService;
+        this.orderItemRepository = orderItemRepository;
     }
 
     @Transactional
@@ -69,4 +72,6 @@ public class OrderService {
         List<Order> orders = orderRepository.findAll();
         return orders.stream().map(toDataService::convert).toList();
     }
+
+
 }

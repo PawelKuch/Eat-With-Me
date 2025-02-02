@@ -55,4 +55,10 @@ public class OrderItemService {
         order.setValue(value);
         orderRepository.save(order);
     }
+
+    @Transactional
+    public void deleteOrderItem(String orderItemId){
+        OrderItem orderItem = orderItemRepository.findByOrderItemId(orderItemId);
+        orderItemRepository.delete(orderItem);
+    }
 }

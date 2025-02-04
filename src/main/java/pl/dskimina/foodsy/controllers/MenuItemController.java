@@ -5,16 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
+import pl.dskimina.foodsy.entity.User;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
-import pl.dskimina.foodsy.service.MenuItemService;
-import pl.dskimina.foodsy.service.RestaurantService;
-import pl.dskimina.foodsy.service.ToDataService;
+import pl.dskimina.foodsy.entity.data.UserData;
+import pl.dskimina.foodsy.service.*;
 
 import java.util.List;
 ;
@@ -25,11 +22,22 @@ public class MenuItemController {
     private final ToDataService toDataService;
     private final RestaurantService restaurantService;
     MenuItemService menuItemService;
+    private final SessionService sessionService;
+    private final UserService userService;
 
-    public MenuItemController(MenuItemService menuItemService, ToDataService toDataService, RestaurantService restaurantService) {
+    public MenuItemController(MenuItemService menuItemService, ToDataService toDataService, RestaurantService restaurantService,
+                              SessionService sessionService, UserService userService) {
         this.menuItemService = menuItemService;
         this.toDataService = toDataService;
         this.restaurantService = restaurantService;
+        this.sessionService = sessionService;
+        this.userService = userService;
+    }
+
+    @ModelAttribute
+    public void fillMode(Model modelMap){
+        modelMap.addAttribute("users", userService.getUsers());
+        modelMap.addAttribute("currentUser", sessionService.getCurrentUser());
     }
 
     @GetMapping("/menu-item")

@@ -36,8 +36,8 @@
                                     <h5 class="col-3 mx-3">${menuItem.name}</h5>
                                     <div class="menuItem-description col-3">${menuItem.description}</div>
                                     <div class="menuItem-price col-1">${menuItem.price} zł</div>
-                                    <div data-menu-item-id="${menuItem.menuItemId}" class="col-1 menuItem-actions justify-content-center">
-                                        <button data-bs-toggle="modal" data-bs-target="#add-item-to-order-modal-${menuItem.menuItemId}" class="mx-1 btn btn-dark text-white update-menuItem-${menuItem.menuItemId}"><i class="bi bi-basket3-fill"></i></button>
+                                    <div data-menu-item-id="${menuItem.menuItemId}" class="col-1 menuItem-actions">
+                                        <#if currentUser?has_content><button data-bs-toggle="modal" data-bs-target="#add-item-to-order-modal-${menuItem.menuItemId}" class="mx-1 btn btn-dark text-white"><i class="bi bi-basket3-fill"></i></button><#else><div class="mx-1 w-100 d-flex justify-content-end"> - </div></#if>
                                     </div>
                                 </div>
 
@@ -56,14 +56,7 @@
                                                         <h5>${menuItem.name}</h5>
                                                         <input name="menuItemId" type="hidden" value="${menuItem.menuItemId}">
                                                     </div>
-                                                    <div class="input-group">
-                                                        <span id="user-span" class="input-group-text mb-2 bg-dark text-white">Użytkownik</span>
-                                                        <select class="mb-2 form-control" name="userId">
-                                                            <#list users as user>
-                                                                <option value="${user.userId}">${user.firstName} ${user.lastName}</option>
-                                                            </#list>
-                                                        </select>
-                                                    </div>
+                                                        <#if currentUser?has_content> <input type="hidden" name="userId" value="${currentUser.userId}"></#if>
                                                     <div class="input-group">
                                                         <span id="description-span" class="input-group-text mb-2 bg-dark text-white">
                                                             Dodatkowy <br/> opis
@@ -97,6 +90,7 @@
                 </div>
 
                 <div id="orders-containers" class="col-5 d-flex flex-column border-start border-dark">
+                    <div class="d-flex justify-content-center"><img src="/logos/${restaurant.restaurantId}" alt="restaurant logo ${restaurant.restaurantId}" width="200px" height="200px"></div>
                     <#if order.orderItemList?has_content>
                     <div class="row fw-bold border-bottom p-2">
                         <div class="col-3">Danie</div>
@@ -112,9 +106,13 @@
                             <div class="list-group-item col-3">${orderItem.description}</div>
                             <div class="list-group-item col-3">${orderItem.user.firstName} ${orderItem.user.lastName}</div>
                             <div class="list-group-item col-2">
-                                <a href="/delete-order-item/${restaurant.restaurantId}/${order.orderId}/${orderItem.orderItemId}" class="btn btn-dark justify-content-center me-1">
-                                    <i class="bi bi-trash-fill"></i>
-                                </a>
+                                <#if currentUser?has_content && (orderItem.user.userId == currentUser.userId)>
+                                    <a href="/delete-order-item/${restaurant.restaurantId}/${order.orderId}/${orderItem.orderItemId}" class="btn btn-dark justify-content-center me-1">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                <#else>
+                                    <div class="me-1"> - </div>
+                                </#if>
                             </div>
                         </#list>
                         <div class="col-8 fw-bold">Wartość całkowita</div>

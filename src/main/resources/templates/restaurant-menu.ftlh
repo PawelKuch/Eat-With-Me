@@ -58,7 +58,6 @@
                                 document.querySelectorAll(".menuItem-actions").forEach(actionsContainer => {
                                     let menuItemId = actionsContainer.dataset.menuItemId;
                                     let menuItem = document.querySelector(".menuItem-tile-" + menuItemId);
-                                    let updateBtn = document.querySelector(".update-menuItem-" + menuItemId);
                                     let deleteBtn = document.querySelector(".delete-menuItem-" + menuItemId);
 
                                     deleteBtn.addEventListener("click", function (){

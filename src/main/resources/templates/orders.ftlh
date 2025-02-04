@@ -45,8 +45,9 @@
                 </div>
             </div>
         <#else>
-            <div class="d-flex justify-content-center align-items-center h-100">
+            <div class="d-flex justify-content-center flex-column align-items-center h-100">
                 <span class="alert alert-warning text-dark">Brak zamówień do wyświetlenia</span>
+                <a href="/restaurant" class="text-decoration-none mt-2"><button class="btn btn-dark">Dodaj zamówienie</button></a>
             </div>
         </#if>
     </div>

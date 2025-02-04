@@ -20,25 +20,18 @@
 <div id="main-container" class="d-flex flex-row w-100">
     <#include "side-navbar.ftlh">
 
-    <div id="restaurant-container" class="d-flex px-2 list-group">
+    <div id="restaurant-container" class="d-flex px-2 list-group w-100">
+        <button data-bs-toggle="modal" data-bs-target="#create-restaurant-modal" class="btn btn-dark col-2 mt-3">Dodaj restaurację</button>
             <#list restaurantList as restaurant>
-                <div class="restaurant-tile list-group-item d-flex flex-row align-items-center mt-3" data-restaurant-id="${restaurant.restaurantId}">
-                    <div class="col-1"><img src="/logos/${restaurant.restaurantId}" alt="${restaurant.name} logo" width="50px"></div>
-                    <div class="col-3" id="restaurant-address-header-${restaurant.restaurantId}">${restaurant.address}</div>
-                    <div class="col-2 mx-3">${restaurant.tags}</div>
-                    <div class="col-2 mx-2">
-                        <a href="/restaurant-details/${restaurant.restaurantId}" class="btn btn-primary">Szczegóły lokalu</a>
-                    </div>
-                    <div class="col-2 mx-2">
-                        <a href="/create-order/${restaurant.restaurantId}" class="btn btn-primary">Złóż zamówienie</a>
-                    </div>
-                    <div class="col-2 mx-2">
-                        <a href="/restaurant-menu/${restaurant.restaurantId}" class="btn btn-primary">Menu</a>
-                    </div>
-                </div>
-            </#list>
+                <a href="/restaurant-details/${restaurant.restaurantId}" class="text-decoration-none"><div class="restaurant-tile list-group-item d-flex flex-row align-items-center mt-3" data-restaurant-id="${restaurant.restaurantId}">
+                    <div class="col-2"><img src="/logos/${restaurant.restaurantId}" alt="${restaurant.name} logo" width="50px" height="50px"></div>
+                    <div class="col-2">${restaurant.name}</div>
+                    <div class="col-4">${restaurant.address}</div>
+                    <div class="col-4 mx-3">${restaurant.tags}</div>
 
-        <button data-bs-toggle="modal" data-bs-target="#create-restaurant-modal" class="btn btn-dark w-25 mt-3">Dodaj restaurację</button>
+                </div>
+                </a>
+            </#list>
     </div>
 </div>
 

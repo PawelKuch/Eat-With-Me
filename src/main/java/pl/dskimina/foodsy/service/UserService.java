@@ -22,4 +22,9 @@ public class UserService {
         List<User> users = userRepository.findAll();
         return users.stream().map(toDataService::convert).toList();
     }
+
+    public UserData getUserById(String userId){
+        User user = userRepository.findByUserId(userId);
+        return toDataService.convert(user);
+    }
 }

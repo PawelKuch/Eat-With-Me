@@ -84,8 +84,25 @@
                     </div>
                 </div>
             </div>
+            <div class="mt-2 mx-2 px-3">
+                <a href="/create-order/${restaurant.restaurantId}" class="btn btn-primary">Złóż zamówienie</a>
+            </div>
         </div>
 
+
+        <div id="display-menuItem-container" class="row d-flex justify-content-center mt-3">
+            <div class="d-flex justify-content-center"><h3>MENU</h3></div>
+            <div class="list-group px-3">
+                <#list restaurantMenuItemList as menuItem>
+                    <div class="my-1 d-flex flex-row justify-content-center align-items-center list-group-item">
+                        <h5 class="col-4">${menuItem.name}</h5>
+                        <div class="col-4">${menuItem.description}</div>
+                        <div class="col-2">${menuItem.price} zł</div>
+                    </div>
+                </#list>
+            </div>
+        </div>
+        <div class="px-2"><a href="/restaurant-menu/${restaurant.restaurantId}" class="mx-2"><button class="btn btn-dark mt-2">Edytuj menu</button></a></div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

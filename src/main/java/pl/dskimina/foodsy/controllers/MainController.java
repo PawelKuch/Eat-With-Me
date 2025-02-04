@@ -10,13 +10,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
+import pl.dskimina.foodsy.entity.User;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
-import pl.dskimina.foodsy.service.MenuItemService;
-import pl.dskimina.foodsy.service.RestaurantService;
-import pl.dskimina.foodsy.service.ToDataService;
+import pl.dskimina.foodsy.entity.data.UserData;
+import pl.dskimina.foodsy.service.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class MainController {
@@ -25,14 +27,26 @@ public class MainController {
     private final MenuItemService menuItemService;
     RestaurantService restaurantService;
     ToDataService toDataService;
+    UserService userService;
+    SessionService sessionService;
 
-    public MainController(RestaurantService restaurantService, ToDataService toDataService, MenuItemService menuItemService) {
+    public MainController(RestaurantService restaurantService, ToDataService toDataService, MenuItemService menuItemService,
+                          UserService userService, SessionService sessionService) {
         this.restaurantService = restaurantService;
         this.toDataService = toDataService;
         this.menuItemService = menuItemService;
+        this.userService = userService;
+        this.sessionService = sessionService;
     }
 
-    @GetMapping({"/", "/index"})
+    @ModelAttribute
+    public void fillMode(Model modelMap){
+        modelMap.addAttribute("users", userService.getUsers());
+        modelMap.addAttribute("currentUser", sessionService.getCurrentUser());
+    }
+
+
+    @GetMapping("/index")
     public String index() {
         LOG.debug("Index page");
         return "template";
@@ -78,15 +92,20 @@ public class MainController {
     public String restaurantDetailsView(Model model, @PathVariable String id){
         RestaurantData restaurant = restaurantService.getRestaurantByRestaurantId(id);
         model.addAttribute("restaurant", restaurant);
+        model.addAttribute("restaurantMenuItemList", restaurant.getMenuItems());
         return "restaurant-details";
     }
 
-    /*@GetMapping("get-restaurant-list")
+   /* @GetMapping("get-restaurant-list")
     @ResponseBody
-    public List<RestaurantData> getRestaurantListForFetch(){
-        return restaurantService.getRestaurants();
-    }
-*/
+    public Map<String, Object> getRestaurantListForFetch(){
+        Map<String, Object> response = new HashMap<>();
+        response.put("restaurants: ", restaurantService.getRestaurants());
+        response.put("restaurants amount: ", restaurantService.getRestaurants().size());
+        return response;
+    }*/
+
+
     @GetMapping("/logos/{restaurantId}")
     public ResponseEntity<byte[]> getLogoForRestaurant(@PathVariable String restaurantId){
         byte[] restaurantLogoBytes = restaurantService.getImageForRestaurantId(restaurantId);
@@ -104,4 +123,15 @@ public class MainController {
         return new RedirectView("/restaurant-details/" + restaurantId);
     }
 
+    @GetMapping("/sign-out")
+    public RedirectView logout(){
+        sessionService.logOut();
+        return new RedirectView("/");
+    }
+
+    @PostMapping("/sign-in")
+    public RedirectView signIn(@RequestParam("userId") String userId){
+        sessionService.setCurrentUser(userId);
+        return new RedirectView("/");
+    }
 }

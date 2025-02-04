@@ -2,19 +2,14 @@ package pl.dskimina.foodsy.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
+import pl.dskimina.foodsy.entity.User;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
 import pl.dskimina.foodsy.entity.data.UserData;
-import pl.dskimina.foodsy.service.OrderItemService;
-import pl.dskimina.foodsy.service.OrderService;
-import pl.dskimina.foodsy.service.RestaurantService;
-import pl.dskimina.foodsy.service.UserService;
+import pl.dskimina.foodsy.service.*;
 
 import java.util.List;
 
@@ -24,13 +19,21 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderItemService orderItemService;
     private final UserService userService;
+    private final SessionService sessionService;
 
     public OrderController(RestaurantService restaurantService, OrderService orderService,
-                           OrderItemService orderItemService, UserService userService) {
+                           OrderItemService orderItemService, UserService userService, SessionService sessionService) {
         this.restaurantService = restaurantService;
         this.orderService = orderService;
         this.orderItemService = orderItemService;
         this.userService = userService;
+        this.sessionService = sessionService;
+    }
+
+    @ModelAttribute
+    public void fillMode(Model modelMap){
+        modelMap.addAttribute("users", userService.getUsers());
+        modelMap.addAttribute("currentUser", sessionService.getCurrentUser());
     }
 
     @GetMapping("/restaurant11111")
@@ -45,7 +48,7 @@ public class OrderController {
         return new RedirectView("/order-menu/" + restaurantId + "/" + order.getOrderId());
     }
 
-    @GetMapping("/orders")
+    @GetMapping({"/orders", "/"})
     public String orders(Model model) {
         List<OrderData> orderList = orderService.getOrders();
         model.addAttribute("orderList", orderList);

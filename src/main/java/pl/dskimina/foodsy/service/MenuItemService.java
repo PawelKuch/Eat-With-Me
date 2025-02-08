@@ -2,9 +2,10 @@ package pl.dskimina.foodsy.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.web.access.WebInvocationPrivilegeEvaluator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.dskimina.foodsy.controllers.MainController;
+import pl.dskimina.foodsy.controllers.RestaurantController;
 import pl.dskimina.foodsy.entity.MenuItem;
 import pl.dskimina.foodsy.entity.Restaurant;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
@@ -20,14 +21,16 @@ public class MenuItemService {
     private final RestaurantRepository restaurantRepository;
     private final MenuItemRepository menuItemRepository;
     private final ToDataService toDataService;
+    private final WebInvocationPrivilegeEvaluator privilegeEvaluator;
 
-    public MenuItemService(MenuItemRepository menuItemRepository, RestaurantRepository restaurantRepository, ToDataService toDataService) {
+    public MenuItemService(MenuItemRepository menuItemRepository, RestaurantRepository restaurantRepository, ToDataService toDataService, WebInvocationPrivilegeEvaluator privilegeEvaluator) {
         this.menuItemRepository = menuItemRepository;
         this.restaurantRepository = restaurantRepository;
         this.toDataService = toDataService;
+        this.privilegeEvaluator = privilegeEvaluator;
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(MainController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RestaurantController.class);
 
     @Transactional
     public void addMenuItem(String name, String category, String description, double price, String restaurantId) {
@@ -76,4 +79,13 @@ public class MenuItemService {
         return false;
     }
 
+    @Transactional
+    public void updateMenuItem(String menuItemId, String name, String description, String price) {
+        MenuItem menuItem = menuItemRepository.findByMenuItemId(menuItemId);
+        double newPrice = Double.parseDouble(price);
+        menuItem.setName(name);
+        menuItem.setDescription(description);
+        menuItem.setPrice(newPrice);
+        menuItemRepository.save(menuItem);
+    }
 }

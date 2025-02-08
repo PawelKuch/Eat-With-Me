@@ -3,8 +3,8 @@ package pl.dskimina.foodsy.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-import pl.dskimina.foodsy.entity.User;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
@@ -31,20 +31,15 @@ public class OrderController {
     }
 
     @ModelAttribute
-    public void fillMode(Model modelMap){
+    public void fillModel(Model modelMap){
         modelMap.addAttribute("users", userService.getUsers());
         modelMap.addAttribute("currentUser", sessionService.getCurrentUser());
+        modelMap.addAttribute("isActiveOrders", true);
     }
 
-    @GetMapping("/restaurant11111")
-    public String orderRestaurant(Model model) {
-        model.addAttribute("restaurantList", restaurantService.getRestaurants());
-        return "restaurant";
-    }
-
-    @GetMapping("/create-order/{restaurantId}")
-    public RedirectView createOrder(@PathVariable String restaurantId) {
-        OrderData order = orderService.createOrder(restaurantId);
+    @GetMapping("/create-order/{restaurantId}/{userId}")
+    public RedirectView createOrder(@PathVariable String restaurantId, @PathVariable String userId) {
+        OrderData order = orderService.createOrder(restaurantId, userId);
         return new RedirectView("/order-menu/" + restaurantId + "/" + order.getOrderId());
     }
 
@@ -86,6 +81,29 @@ public class OrderController {
     public RedirectView deleteOrderItem(@PathVariable String restaurantId, @PathVariable String orderId, @PathVariable String orderItemId) {
         orderItemService.deleteOrderItem(orderItemId);
         return new RedirectView("/order-menu/" + restaurantId + "/" + orderId);
+    }
+
+    @GetMapping("/order-summary/{orderId}")
+    public String orderSummary(@PathVariable String orderId, Model model) {
+        OrderData order = orderService.getOrderByOrderId(orderId);
+        RestaurantData restaurant = order.getRestaurantData();
+        model.addAttribute("restaurant", restaurant);
+        model.addAttribute("order", order);
+        return "order-summary";
+    }
+
+    @PostMapping("/order-summary/{orderId}")
+    public RedirectView setFinalValueAndCloseOrder(@PathVariable String orderId,
+                                                   @RequestParam(value = "cashDiscount", required = false) String cashDiscount,
+                                                   @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
+                                                   @RequestParam(value = "extraPayment", required = false) String extraPayment,
+                                                   RedirectAttributes ra) {
+        if(extraPayment != null) {orderService.addExtraPayment(orderId, extraPayment);}
+        if(cashDiscount != null) {orderService.addCashDiscount(orderId, cashDiscount);}
+        if(percentageDiscount != null) {orderService.addPercentageDiscount(orderId, percentageDiscount);}
+        orderService.closeOrder(orderId);
+        ra.addFlashAttribute("order", orderService.getOrderByOrderId(orderId));
+        return new RedirectView("/order-summary/" + orderId);
     }
 
 }

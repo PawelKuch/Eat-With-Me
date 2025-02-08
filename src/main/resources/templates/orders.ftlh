@@ -11,6 +11,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js" ></script>
 
+    <script src="/static/js/side-navbar.js"></script>
     <link rel="stylesheet" href="/static/css/order-menu.css">
     <title>Menu zamówienia</title>
 </head>
@@ -20,26 +21,37 @@
     <#include "side-navbar.ftlh">
     <div id="container" class="w-100">
         <#if orderList?has_content>
+            <div class="d-flex justify-content-start">
+                <a href="/restaurant"><button class="btn btn-dark">Dodaj</button></a>
+            </div>
             <div id="orders-containers" class="row d-flex justify-content-center align-items-center">
                 <div class="row col-12">
-                    <div class="col-3 fw-bold"> Restauracja </div>
+                    <div class="col-2 fw-bold"> Restauracja </div>
                     <div class="col-3 fw-bold"> Data zamknięcia</div>
-                    <div class="col-3 fw-bold"> Wartość</div>
-                    <div class="col-3 fw-bold"> Szczegóły</div>
+                    <div class="col-2 fw-bold"> Wartość</div>
+                    <div class="col-2 fw-bold"> Szczegóły</div>
+                    <div class="col-1 fw-bold"> Status</div>
+                    <div class="col-2 fw-bold"> Właściciel</div>
                 </div>
                 <div class="row">
                     <#list orderList as order>
-                        <div class="col-3">
+                        <div class="col-2">
                             ${order.restaurantData.name}
                         </div>
                         <div class="col-3">
                             ${order.date}
                         </div>
-                        <div class="col-3">
+                        <div class="col-2">
                             ${order.value}
                         </div>
-                        <div class="col-3">
+                        <div class="col-2">
                             <a href="/order-menu/${order.restaurantData.restaurantId}/${order.orderId}">Szczegóły</a>
+                        </div>
+                        <div class="col-1">
+                            <#if order.isClosed>Zamknięte<#else>Otwarte</#if>
+                        </div>
+                        <div class="col-2">
+                            <a href="#" id="user-details">${order.owner.firstName} ${order.owner.lastName}</a>
                         </div>
                     </#list>
                 </div>
@@ -47,7 +59,9 @@
         <#else>
             <div class="d-flex justify-content-center flex-column align-items-center h-100">
                 <span class="alert alert-warning text-dark">Brak zamówień do wyświetlenia</span>
-                <a href="/restaurant" class="text-decoration-none mt-2"><button class="btn btn-dark">Dodaj zamówienie</button></a>
+                <#if currentUser?has_content>
+                    <a href="/restaurant" class="text-decoration-none mt-2"><button class="btn btn-dark">Dodaj zamówienie</button></a>
+                </#if>
             </div>
         </#if>
     </div>

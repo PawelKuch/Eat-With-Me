@@ -17,18 +17,16 @@ import java.util.UUID;
 @Service
 public class OrderItemService {
 
-    private final OrderService orderService;
-    OrderItemRepository orderItemRepository;
-    UserRepository userRepository;
-    OrderRepository orderRepository;
-    MenuItemRepository menuItemRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
+    private final MenuItemRepository menuItemRepository;
 
-    public OrderItemService(OrderItemRepository orderItemRepository, UserRepository userRepository, OrderRepository orderRepository, MenuItemRepository menuItemRepository, OrderService orderService) {
+    public OrderItemService(OrderItemRepository orderItemRepository, UserRepository userRepository, OrderRepository orderRepository, MenuItemRepository menuItemRepository) {
         this.orderItemRepository = orderItemRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.menuItemRepository = menuItemRepository;
-        this.orderService = orderService;
     }
 
     @Transactional

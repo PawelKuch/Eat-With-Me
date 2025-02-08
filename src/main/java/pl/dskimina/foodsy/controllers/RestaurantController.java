@@ -1,7 +1,5 @@
 package pl.dskimina.foodsy.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,46 +8,33 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
-import pl.dskimina.foodsy.entity.User;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
-import pl.dskimina.foodsy.entity.data.UserData;
 import pl.dskimina.foodsy.service.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
-public class MainController {
+public class RestaurantController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MainController.class);
     private final MenuItemService menuItemService;
-    RestaurantService restaurantService;
-    ToDataService toDataService;
-    UserService userService;
-    SessionService sessionService;
+    private final RestaurantService restaurantService;
+    private final UserService userService;
+    private final SessionService sessionService;
 
-    public MainController(RestaurantService restaurantService, ToDataService toDataService, MenuItemService menuItemService,
-                          UserService userService, SessionService sessionService) {
+    public RestaurantController(RestaurantService restaurantService, MenuItemService menuItemService,
+                                UserService userService, SessionService sessionService) {
         this.restaurantService = restaurantService;
-        this.toDataService = toDataService;
         this.menuItemService = menuItemService;
         this.userService = userService;
         this.sessionService = sessionService;
     }
 
     @ModelAttribute
-    public void fillMode(Model modelMap){
+    public void fillModel(Model modelMap){
         modelMap.addAttribute("users", userService.getUsers());
         modelMap.addAttribute("currentUser", sessionService.getCurrentUser());
-    }
-
-
-    @GetMapping("/index")
-    public String index() {
-        LOG.debug("Index page");
-        return "template";
+        modelMap.addAttribute("isActiveRestaurants", true);
     }
 
     @GetMapping("/restaurant")
@@ -66,26 +51,6 @@ public class MainController {
                                       @RequestParam("tags") String tags){
         restaurantService.addRestaurant(name, phone,email, address, tags);
         return new RedirectView("/restaurant");
-    }
-
-    @GetMapping("/restaurant-menu/{id}")
-    public String restaurantMenuView(@PathVariable String id, Model model){
-        List<MenuItemData> restaurantMenuItemList = menuItemService.getMenuItemListForRestaurantId(id);
-        RestaurantData restaurant = restaurantService.getRestaurantByRestaurantId(id);
-
-        model.addAttribute("restaurantMenuItemList", restaurantMenuItemList);
-        model.addAttribute("restaurant", restaurant);
-        return "restaurant-menu";
-    }
-
-    @PostMapping("/restaurant-menu")
-    public RedirectView restaurantMenu(@RequestParam("name") String name,
-                                       @RequestParam("price") double price,
-                                       @RequestParam("description") String description,
-                                       @RequestParam("category") String category,
-                                       @RequestParam("restaurantId") String restaurantId){
-        menuItemService.addMenuItem(name, category, description, price, restaurantId);
-        return new RedirectView("/restaurant-menu/" + restaurantId);
     }
 
     @GetMapping("/restaurant-details/{id}")
@@ -123,15 +88,4 @@ public class MainController {
         return new RedirectView("/restaurant-details/" + restaurantId);
     }
 
-    @GetMapping("/sign-out")
-    public RedirectView logout(){
-        sessionService.logOut();
-        return new RedirectView("/");
-    }
-
-    @PostMapping("/sign-in")
-    public RedirectView signIn(@RequestParam("userId") String userId){
-        sessionService.setCurrentUser(userId);
-        return new RedirectView("/");
-    }
 }

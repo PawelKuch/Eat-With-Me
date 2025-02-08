@@ -23,6 +23,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<OrderItem> orderItemList;
 
+    @OneToMany(mappedBy = "owner")
+    private List<Order> orderList;
+
     public Long getId() {
         return id;
     }
@@ -57,5 +60,13 @@ public class User {
 
     public void setOrderItemList(List<OrderItem> orderItemList) {
         this.orderItemList = orderItemList;
+    }
+
+    public List<Order> getOrderList() {
+        return orderList;
+    }
+
+    public void setOrderList(List<Order> orderList) {
+        this.orderList = orderList;
     }
 }

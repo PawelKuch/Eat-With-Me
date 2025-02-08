@@ -1,3 +1,4 @@
+
 <nav style="height: 100vh; width: 220px;" class="position-sticky top-0">
     <div class="d-flex flex-column flex-shrink-1 p-3 text-white bg-dark" style="height: 100vh;">
         <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
@@ -6,13 +7,13 @@
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-                <a href="/orders" class="nav-link" aria-current="page">
+                <a href="/orders" class="nav-link text-white <#if isActiveOrders?has_content>active</#if>" aria-current="page">
                     <i class="bi bi-card-checklist"></i>&nbsp;
                     Zamówienia
                 </a>
             </li>
             <li>
-                <a href="/restaurant" class="nav-link text-white" id="restaurant-dropdown-link">
+                <a href="/restaurant" class="nav-link text-white <#if isActiveRestaurants?has_content>active</#if>" id="restaurant-dropdown-link" >
                     <i class="bi bi-shop"></i>&nbsp;
                     Restauracje
                 </a>
@@ -64,17 +65,22 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id=sign-in-form" method="post" action="/sign-in">
-                    <select name="userId">
-                        <#list users as user>
-                            <option value="${user.userId}">${user.firstName} ${user.lastName}</option>
-                        </#list>
-                    </select>
-                    <button class="btn btn-dark" type="submit">Zaloguj</button>
+                <form id="sign-in-form" method="post" action="/sign-in">
+                    <div class="d-flex justify-content-center">
+                    <div class="input-group d-flex flex-row">
+                        <span class="input-group-text w-25">Użytkownik</span>
+                        <select class="form-control" name="userId">
+                            <option selected> - </option>
+                            <#list users as user>
+                                <option value="${user.userId}">${user.firstName} ${user.lastName}</option>
+                            </#list>
+                        </select>
+                    </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="submit-form-button" class="btn btn-outline-dark mb-3" type="submit">Dodaj</button>
+                <button id="submit-sign-in-form-button" class="btn btn-dark mb-3">Zaloguj</button>
                 <button type="button" class="btn btn-secondary mb-3" data-bs-dismiss="modal">Zamknij</button>
             </div>
         </div>

@@ -11,7 +11,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js" ></script>
 
-
+    <script src="/static/js/side-navbar.js"></script>
     <link rel="stylesheet" href="/static/css/restaurant.css">
     <script src="/static/js/restaurant.js"></script>
     <title>Restauracje</title>

@@ -7,6 +7,7 @@ public class UserData {
     private String firstName;
     private String lastName;
     private List<OrderItemData> orderItemDataList;
+    private List<OrderData> orderList;
 
     public String getUserId() {
         return userId;
@@ -38,5 +39,13 @@ public class UserData {
 
     public void setOrderItemDataList(List<OrderItemData> orderItemDataList) {
         this.orderItemDataList = orderItemDataList;
+    }
+
+    public List<OrderData> getOrderList() {
+        return orderList;
+    }
+
+    public void setOrderList(List<OrderData> orderList) {
+        this.orderList = orderList;
     }
 }

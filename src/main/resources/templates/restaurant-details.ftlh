@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js" ></script>
-
+    <script src="/static/js/side-navbar.js"></script>
     <title>Dodaj nową restaurację</title>
 
 
@@ -84,9 +84,11 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-2 mx-2 px-3">
-                <a href="/create-order/${restaurant.restaurantId}" class="btn btn-primary">Złóż zamówienie</a>
-            </div>
+            <#if currentUser?has_content>
+                <div class="mt-2 mx-2 px-3">
+                    <a href="/create-order/${restaurant.restaurantId}/${currentUser.userId}" class="btn btn-primary">Złóż zamówienie</a>
+                </div>
+            </#if>
         </div>
 
 
@@ -94,15 +96,28 @@
             <div class="d-flex justify-content-center"><h3>MENU</h3></div>
             <div class="list-group px-3">
                 <#list restaurantMenuItemList as menuItem>
-                    <div class="my-1 d-flex flex-row justify-content-center align-items-center list-group-item">
+                    <div class="my-1 d-flex flex-row justify-content-center align-items-center list-group-item menu-item-${menuItem.menuItemId}">
                         <h5 class="col-4">${menuItem.name}</h5>
                         <div class="col-4">${menuItem.description}</div>
-                        <div class="col-2">${menuItem.price} zł</div>
+                        <div class="col-2" >${menuItem.price} zł</div>
+                        <div class="col-2">
+                            <button data-menu-item-id="${menuItem.menuItemId}" class="btn btn-dark change-menu-item-btn"><i class="bi bi-pencil-fill"></i></button>
+                            <a href="/delete-menuItem/${restaurant.restaurantId}/${menuItem.menuItemId}"><button class="btn btn-dark"><i class="bi bi-trash3-fill"></i></button></a>
+                        </div>
                     </div>
+
+                <form method="post" action="/update-menu-item/${restaurant.restaurantId}/${menuItem.menuItemId}" class="my-1 d-none flex-row justify-content-center align-items-center list-group-item update-menu-item-form-${menuItem.menuItemId}">
+                    <div class="col-4"><textarea class="name-${menuItem.menuItemId}" cols="35" rows="1" name="name">${menuItem.name}</textarea></div>
+                    <div class="col-4"><textarea class="description-${menuItem.menuItemId}" cols="50" rows="1" name="description">${menuItem.description}</textarea></div>
+                    <div class="col-2"><textarea class="price-${menuItem.menuItemId}" cols="8" rows="1" name="price">${menuItem.price}</textarea></div>
+                    <div class="col-2">
+                        <button class="btn btn-dark" type="submit">OK</button>
+                        <div class="btn btn-dark discard-button-${menuItem.menuItemId}">X</div>
+                    </div>
+                </form>
                 </#list>
             </div>
         </div>
-        <div class="px-2"><a href="/restaurant-menu/${restaurant.restaurantId}" class="mx-2"><button class="btn btn-dark mt-2">Edytuj menu</button></a></div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

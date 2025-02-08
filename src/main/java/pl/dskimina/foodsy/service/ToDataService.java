@@ -3,8 +3,6 @@ package pl.dskimina.foodsy.service;
 import org.springframework.stereotype.Service;
 import pl.dskimina.foodsy.entity.*;
 import pl.dskimina.foodsy.entity.data.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -39,7 +37,9 @@ public class ToDataService {
         orderData.setOrderId(order.getOrderId());
         orderData.setValue(order.getValue());
         orderData.setDate(order.getDate());
-        orderData.setOrderItemList(order.getOrderItemList().stream().map(this::convert).toList());
+        orderData.setIsClosed(order.getIsClosed());
+        orderData.setOwner(convert(order.getOwner()));
+        orderData.setOrderItemList(order.getOrderItemList().stream().map(this::convert). toList());
         orderData.setRestaurantData(convert(order.getRestaurant()));
         return orderData;
     }

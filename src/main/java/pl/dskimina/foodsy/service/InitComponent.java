@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Base64;
 
 @Component
 public class InitComponent {
@@ -36,10 +35,5 @@ public class InitComponent {
     public byte[] getBytesImage(String path) throws IOException {
         File file = new File(path);
         return Files.readAllBytes(file.toPath());
-    }
-
-    public String getBase64Image(String path) throws IOException {
-        byte [] imageBytes = getBytesImage(path);
-        return Base64.getEncoder().encodeToString(imageBytes);
     }
 }

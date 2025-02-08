@@ -2,7 +2,6 @@ package pl.dskimina.foodsy.service;
 
 
 import org.springframework.stereotype.Service;
-import pl.dskimina.foodsy.entity.User;
 import pl.dskimina.foodsy.entity.data.UserData;
 
 @Service

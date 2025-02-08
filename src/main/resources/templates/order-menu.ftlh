@@ -21,7 +21,7 @@
         <#include "side-navbar.ftlh">
         <div class="align-items-start w-100">
             <div id="container" class="row w-100">
-                <div class="col-7 d-flex flex-column">
+                <div class="col-6 d-flex flex-column">
                     <#if menuItemList?has_content>
                         <div id="display-menuItem-container" class="list-group justify-content-center">
                             <#if menuItemList?has_content>
@@ -29,7 +29,7 @@
                                     <span class="col-3">Danie</span>
                                     <span class="col-3">Opis</span>
                                     <span class="col-1">Cena</span>
-                                    <span class="col-1">Czynność</span>
+                                    <#if !order.isClosed><span class="col-1">Czynność</span></#if>
                                 </div>
                             <#list menuItemList as menuItem>
                                 <div class="menuItem-tile-${menuItem.menuItemId} list-group-item my-1 mx-1 d-flex justify-content-center">
@@ -37,7 +37,13 @@
                                     <div class="menuItem-description col-3">${menuItem.description}</div>
                                     <div class="menuItem-price col-1">${menuItem.price} zł</div>
                                     <div data-menu-item-id="${menuItem.menuItemId}" class="col-1 menuItem-actions">
-                                        <#if currentUser?has_content><button data-bs-toggle="modal" data-bs-target="#add-item-to-order-modal-${menuItem.menuItemId}" class="mx-1 btn btn-dark text-white"><i class="bi bi-basket3-fill"></i></button><#else><div class="mx-1 w-100 d-flex justify-content-end"> - </div></#if>
+                                        <#if !order.isClosed>
+                                            <#if currentUser?has_content>
+                                                <button data-bs-toggle="modal" data-bs-target="#add-item-to-order-modal-${menuItem.menuItemId}" class="mx-1 btn btn-dark text-white"><i class="bi bi-basket3-fill"></i></button>
+                                            <#else>
+                                                <div class="mx-1 w-100 d-flex justify-content-end"> - </div>
+                                            </#if>
+                                        </#if>
                                     </div>
                                 </div>
 
@@ -89,15 +95,15 @@
                     </#if>
                 </div>
 
-                <div id="orders-containers" class="col-5 d-flex flex-column border-start border-dark">
+                <div id="orders-containers" class="col-6 d-flex flex-column border-start border-dark">
                     <div class="d-flex justify-content-center"><img src="/logos/${restaurant.restaurantId}" alt="restaurant logo ${restaurant.restaurantId}" width="200px" height="200px"></div>
                     <#if order.orderItemList?has_content>
-                    <div class="row fw-bold border-bottom p-2">
+                    <div class="row fw-bold border-bottom py-2">
                         <div class="col-3">Danie</div>
                         <div class="col-1">Cena</div>
                         <div class="col-3 d-flex justify-content-center">Opis</div>
                         <div class="col-3">Pracownik</div>
-                        <div class="col-2">Czynność</div>
+                        <#if !order.isClosed><div class="col-1">Czynność</div></#if>
                     </div>
                     <div class="list-group-flush row d-flex">
                         <#list order.orderItemList as orderItem>
@@ -105,13 +111,15 @@
                             <div class="list-group-item col-1">${orderItem.menuItem.price}</div>
                             <div class="list-group-item col-3">${orderItem.description}</div>
                             <div class="list-group-item col-3">${orderItem.user.firstName} ${orderItem.user.lastName}</div>
-                            <div class="list-group-item col-2">
-                                <#if currentUser?has_content && (orderItem.user.userId == currentUser.userId)>
-                                    <a href="/delete-order-item/${restaurant.restaurantId}/${order.orderId}/${orderItem.orderItemId}" class="btn btn-dark justify-content-center me-1">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </a>
-                                <#else>
-                                    <div class="me-1"> - </div>
+                            <div class="list-group-item col-1">
+                                <#if !order.isClosed>
+                                    <#if currentUser?has_content && (orderItem.user.userId == currentUser.userId)>
+                                        <a href="/delete-order-item/${restaurant.restaurantId}/${order.orderId}/${orderItem.orderItemId}" class="btn btn-dark justify-content-center me-1">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </a>
+                                    <#else>
+                                        <div class="me-1"> - </div>
+                                    </#if>
                                 </#if>
                             </div>
                         </#list>
@@ -120,6 +128,11 @@
                     </div>
                     <#else>
                         <div class="alert alert-warning text-center mt-3">Brak pozycji w zamówieniu</div>
+                    </#if>
+                    <#if currentUser.userId == order.owner.userId>
+                        <div class="d-flex justify-content-end">
+                            <a href="/order-summary/${order.orderId}"><button class="btn btn-dark mt-3"> Podsumowanie zamówienia </button></a>
+                        </div>
                     </#if>
                 </div>
             </div>

@@ -8,8 +8,10 @@ public class OrderData {
     private String orderId;
     private double value;
     private LocalDateTime date;
+    private boolean isClosed;
     private List<OrderItemData> orderItemList;
     private RestaurantData restaurantData;
+    private UserData owner;
 
     public String getOrderId() {
         return orderId;
@@ -32,6 +34,9 @@ public class OrderData {
         this.date = date;
     }
 
+    public boolean getIsClosed(){return isClosed;}
+    public void setIsClosed(boolean isClosed){this.isClosed = isClosed;}
+
     public RestaurantData getRestaurantData() {
         return restaurantData;
     }
@@ -45,5 +50,13 @@ public class OrderData {
 
     public void setOrderItemList(List<OrderItemData> orderItemList) {
         this.orderItemList = orderItemList;
+    }
+
+    public UserData getOwner() {
+        return owner;
+    }
+
+    public void setOwner(UserData owner) {
+        this.owner = owner;
     }
 }

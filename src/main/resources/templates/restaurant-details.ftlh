@@ -85,15 +85,18 @@
                 </div>
             </div>
             <#if currentUser?has_content>
-                <div class="mt-2 mx-2 px-3">
+                <div class="mt-2 ms-2 ps-3">
                     <a href="/create-order/${restaurant.restaurantId}/${currentUser.userId}" class="btn btn-primary">Złóż zamówienie</a>
                 </div>
             </#if>
         </div>
 
 
+
+
         <div id="display-menuItem-container" class="row d-flex justify-content-center mt-3">
             <div class="d-flex justify-content-center"><h3>MENU</h3></div>
+            <div class="d-flex justify-content-start mb-3 ms-5 ps-3"><button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#add-menu-item-modal">Dodaj danie</button></div>
             <div class="list-group px-3">
                 <#list restaurantMenuItemList as menuItem>
                     <div class="my-1 d-flex flex-row justify-content-center align-items-center list-group-item menu-item-${menuItem.menuItemId}">
@@ -116,6 +119,55 @@
                     </div>
                 </form>
                 </#list>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="add-menu-item-modal" tabindex="-1" aria-labelledby="add-menu-item-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div id="modal-title-div">
+                        <h1 class="modal-title fs-5">DODAJ DANIE</h1>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/items" method="post">
+                        <input name="restaurantId" value="${restaurant.restaurantId}" type="hidden">
+
+                        <div class="input-group">
+                            <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">nazwa</span>
+                            <input class="mb-2 form-control" id="name" name="name">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">kategoria</span>
+                            <select id="category" name="category" class="form-control mb-2">
+                                <option value="breakfast">śniadania</option>
+                                <option value="apetizers">przystawki</option>
+                                <option value="soups">zupy</option>
+                                <option value="main_courses">dania główne</option>
+                                <option value="salads">sałatki</option>
+                                <option value="desserts">desery</option>
+                                <option value="snacks">przekąski</option>
+                                <option value="beverages">napoje</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">cena</span>
+                            <input class="mb-2 form-control" type="number" id="price" name="price">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">opis</span>
+                            <input class="mb-2 form-control" id="description" name="description">
+                        </div>
+                        <button class="btn btn-outline-dark" type="submit">dodaj</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="submit-sign-in-form-button" class="btn btn-dark mb-3">Zaloguj</button>
+                    <button type="button" class="btn btn-secondary mb-3" data-bs-dismiss="modal">Zamknij</button>
+                </div>
             </div>
         </div>
     </div>

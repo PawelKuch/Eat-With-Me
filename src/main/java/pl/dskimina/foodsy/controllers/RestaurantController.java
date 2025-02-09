@@ -37,7 +37,7 @@ public class RestaurantController {
         modelMap.addAttribute("isActiveRestaurants", true);
     }
 
-    @GetMapping("/restaurant")
+    @GetMapping("/restaurants")
     public String addRestaurantView(Model model){
         model.addAttribute("restaurantList", restaurantService.getRestaurants());
         return "restaurant";
@@ -53,9 +53,9 @@ public class RestaurantController {
         return new RedirectView("/restaurant");
     }
 
-    @GetMapping("/restaurant-details/{id}")
-    public String restaurantDetailsView(Model model, @PathVariable String id){
-        RestaurantData restaurant = restaurantService.getRestaurantByRestaurantId(id);
+    @GetMapping("/restaurants/{restaurantId}")
+    public String restaurantDetailsView(Model model, @PathVariable String restaurantId){
+        RestaurantData restaurant = restaurantService.getRestaurantByRestaurantId(restaurantId);
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("restaurantMenuItemList", restaurant.getMenuItems());
         return "restaurant-details";

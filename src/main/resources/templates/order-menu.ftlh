@@ -57,7 +57,7 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <form class="order-form-${menuItem.menuItemId}" method="post" action="/order-menu/add-menu-item-to-order/${restaurantId}/${order.orderId}">
+                                                <form class="order-form-${menuItem.menuItemId}" method="post" action="/orders/${order.orderId}/addMenuItem">
                                                     <div class="input-group">
                                                         <h5>${menuItem.name}</h5>
                                                         <input name="menuItemId" type="hidden" value="${menuItem.menuItemId}">
@@ -114,7 +114,7 @@
                             <div class="list-group-item col-1">
                                 <#if !order.isClosed>
                                     <#if currentUser?has_content && (orderItem.user.userId == currentUser.userId)>
-                                        <a href="/delete-order-item/${restaurant.restaurantId}/${order.orderId}/${orderItem.orderItemId}" class="btn btn-dark justify-content-center me-1">
+                                        <a href="/delete-order-item/${order.orderId}/${orderItem.orderItemId}" class="btn btn-dark justify-content-center me-1">
                                             <i class="bi bi-trash-fill"></i>
                                         </a>
                                     <#else>
@@ -131,7 +131,7 @@
                     </#if>
                     <#if currentUser.userId == order.owner.userId>
                         <div class="d-flex justify-content-end">
-                            <a href="/order-summary/${order.orderId}"><button class="btn btn-dark mt-3"> Podsumowanie zamówienia </button></a>
+                            <a href="/orders/${order.orderId}/summary"><button class="btn btn-dark mt-3"> Podsumowanie zamówienia </button></a>
                         </div>
                     </#if>
                 </div>

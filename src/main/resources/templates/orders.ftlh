@@ -22,7 +22,7 @@
     <div id="container" class="w-100">
         <#if orderList?has_content>
             <div class="d-flex justify-content-start">
-                <a href="/restaurant"><button class="btn btn-dark">Dodaj</button></a>
+                <a href="/restaurants"><button class="btn btn-dark">Dodaj</button></a>
             </div>
             <div id="orders-containers" class="row d-flex justify-content-center align-items-center">
                 <div class="row col-12">
@@ -45,7 +45,7 @@
                             ${order.value}
                         </div>
                         <div class="col-2">
-                            <a href="/order-menu/${order.restaurantData.restaurantId}/${order.orderId}">Szczegóły</a>
+                            <a href="/orders/${order.orderId}/items">Szczegóły</a>
                         </div>
                         <div class="col-1">
                             <#if order.isClosed>Zamknięte<#else>Otwarte</#if>
@@ -60,7 +60,7 @@
             <div class="d-flex justify-content-center flex-column align-items-center h-100">
                 <span class="alert alert-warning text-dark">Brak zamówień do wyświetlenia</span>
                 <#if currentUser?has_content>
-                    <a href="/restaurant" class="text-decoration-none mt-2"><button class="btn btn-dark">Dodaj zamówienie</button></a>
+                    <a href="/restaurants" class="text-decoration-none mt-2"><button class="btn btn-dark">Dodaj zamówienie</button></a>
                 </#if>
             </div>
         </#if>

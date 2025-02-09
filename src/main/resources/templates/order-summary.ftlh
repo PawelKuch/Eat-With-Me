@@ -45,7 +45,7 @@
                         </div>
                     </div>
                     <#if !order.isClosed>
-                    <form id="extra-payment-discount-form" action="/order-summary/${order.orderId}" method="post">
+                    <form id="extra-payment-discount-form" action="/orders/${order.orderId}/summary" method="post">
                         <div class="d-flex flex-column align-items-center">
                             <div class="input-group w-25 mb-3">
                                 <span class="input-group-text">Rabat [zł]</span>

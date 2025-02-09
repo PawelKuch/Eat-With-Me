@@ -8,22 +8,19 @@ import org.springframework.web.servlet.view.RedirectView;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
-import pl.dskimina.foodsy.entity.data.UserData;
 import pl.dskimina.foodsy.service.*;
 
 import java.util.List;
 
 @Controller
 public class OrderController {
-    private final RestaurantService restaurantService;
     private final OrderService orderService;
     private final OrderItemService orderItemService;
     private final UserService userService;
     private final SessionService sessionService;
 
-    public OrderController(RestaurantService restaurantService, OrderService orderService,
+    public OrderController(OrderService orderService,
                            OrderItemService orderItemService, UserService userService, SessionService sessionService) {
-        this.restaurantService = restaurantService;
         this.orderService = orderService;
         this.orderItemService = orderItemService;
         this.userService = userService;
@@ -40,7 +37,7 @@ public class OrderController {
     @GetMapping("/create-order/{restaurantId}/{userId}")
     public RedirectView createOrder(@PathVariable String restaurantId, @PathVariable String userId) {
         OrderData order = orderService.createOrder(restaurantId, userId);
-        return new RedirectView("/order-menu/" + restaurantId + "/" + order.getOrderId());
+        return new RedirectView("/orders/" + order.getOrderId() + "/items");
     }
 
     @GetMapping({"/orders", "/"})
@@ -50,40 +47,35 @@ public class OrderController {
         return "orders";
     }
 
-    @GetMapping("/order-menu/{restaurantId}/{orderId}")
-    public String orderMenu(@PathVariable("restaurantId") String restaurantId,
-                            @PathVariable("orderId") String orderId, Model model) {
-        RestaurantData restaurant = restaurantService.getRestaurantByRestaurantId(restaurantId);
+    @GetMapping("/orders/{orderId}/items")
+    public String orderMenu(@PathVariable("orderId") String orderId, Model model) {
         OrderData order = orderService.getOrderByOrderId(orderId);
+        RestaurantData restaurant = order.getRestaurantData();
         List<MenuItemData> menuItemForRestaurant = restaurant.getMenuItems();
-        List<UserData> userList = userService.getUsers();
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("menuItemList", menuItemForRestaurant);
         model.addAttribute("order", order);
-        model.addAttribute("users", userList);
-        //model.addAttribute("orderItemListForOrder", order.getOrderItemList());
         return "order-menu";
     }
 
-    @PostMapping("/order-menu/add-menu-item-to-order/{restaurantId}/{orderId}")
-    public RedirectView addOrder(@PathVariable("restaurantId") String restaurantId,
-                                 @PathVariable("orderId") String orderId,
+    @PostMapping("/orders/{orderId}/addMenuItem")
+    public RedirectView addOrder(@PathVariable("orderId") String orderId,
                                  @RequestParam("userId") String userId,
                                  @RequestParam("menuItemId") String menuItemId,
                                  @RequestParam(value = "description", required = false) String description,
                                  @RequestParam(value = "price", required = false) String price) {
         orderItemService.createOrderItem(userId, menuItemId, price, orderId, description);
 
-        return new RedirectView("/order-menu/" + restaurantId + "/" + orderId);
+        return new RedirectView("/orders/" + orderId + "/items");
     }
 
-    @GetMapping("/delete-order-item/{restaurantId}/{orderId}/{orderItemId}")
-    public RedirectView deleteOrderItem(@PathVariable String restaurantId, @PathVariable String orderId, @PathVariable String orderItemId) {
+    @GetMapping("/delete-order-item/{orderId}/{orderItemId}")
+    public RedirectView deleteOrderItem(@PathVariable String orderId, @PathVariable String orderItemId) {
         orderItemService.deleteOrderItem(orderItemId);
-        return new RedirectView("/order-menu/" + restaurantId + "/" + orderId);
+        return new RedirectView("/orders/" + orderId + "/items");
     }
 
-    @GetMapping("/order-summary/{orderId}")
+    @GetMapping("/orders/{orderId}/summary")
     public String orderSummary(@PathVariable String orderId, Model model) {
         OrderData order = orderService.getOrderByOrderId(orderId);
         RestaurantData restaurant = order.getRestaurantData();
@@ -92,7 +84,7 @@ public class OrderController {
         return "order-summary";
     }
 
-    @PostMapping("/order-summary/{orderId}")
+    @PostMapping("/orders/{orderId}/summary")
     public RedirectView setFinalValueAndCloseOrder(@PathVariable String orderId,
                                                    @RequestParam(value = "cashDiscount", required = false) String cashDiscount,
                                                    @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
@@ -103,7 +95,7 @@ public class OrderController {
         if(percentageDiscount != null) {orderService.addPercentageDiscount(orderId, percentageDiscount);}
         orderService.closeOrder(orderId);
         ra.addFlashAttribute("order", orderService.getOrderByOrderId(orderId));
-        return new RedirectView("/order-summary/" + orderId);
+        return new RedirectView("/orders/" + orderId + "/summary");
     }
 
 }

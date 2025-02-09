@@ -13,7 +13,7 @@
                 </a>
             </li>
             <li>
-                <a href="/restaurant" class="nav-link text-white <#if isActiveRestaurants?has_content>active</#if>" id="restaurant-dropdown-link" >
+                <a href="/restaurants" class="nav-link text-white <#if isActiveRestaurants?has_content>active</#if>" id="restaurant-dropdown-link" >
                     <i class="bi bi-shop"></i>&nbsp;
                     Restauracje
                 </a>

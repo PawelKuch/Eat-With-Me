@@ -23,7 +23,7 @@
     <div id="restaurant-container" class="d-flex px-2 list-group w-100">
         <button data-bs-toggle="modal" data-bs-target="#create-restaurant-modal" class="btn btn-dark col-2 mt-3">Dodaj restaurację</button>
             <#list restaurantList as restaurant>
-                <a href="/restaurant-details/${restaurant.restaurantId}" class="text-decoration-none"><div class="restaurant-tile list-group-item d-flex flex-row align-items-center mt-3" data-restaurant-id="${restaurant.restaurantId}">
+                <a href="/restaurants/${restaurant.restaurantId}" class="text-decoration-none"><div class="restaurant-tile list-group-item d-flex flex-row align-items-center mt-3" data-restaurant-id="${restaurant.restaurantId}">
                     <div class="col-2"><img src="/logos/${restaurant.restaurantId}" alt="${restaurant.name} logo" width="50px" height="50px"></div>
                     <div class="col-2">${restaurant.name}</div>
                     <div class="col-4">${restaurant.address}</div>

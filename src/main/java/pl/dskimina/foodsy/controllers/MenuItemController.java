@@ -34,42 +34,24 @@ public class MenuItemController {
         modelMap.addAttribute("currentUser", sessionService.getCurrentUser());
     }
 
-    @GetMapping("/menu-item")
-    public String addMenuItemView(Model model){
-        List<MenuItemData> menuItemDataList = menuItemService.getMenuItems();
-        List<RestaurantData> restaurantDataList = restaurantService.getRestaurants();
-        model.addAttribute("menuItemDataList", menuItemDataList);
-        model.addAttribute("restaurantDataList", restaurantDataList);
-        return "menuItem";
-    }
-
-    @PostMapping("/menu-item")
+    @PostMapping("/items")
     public RedirectView addMenuItem(@RequestParam("name") String name,
                                     @RequestParam("price") double price,
                                     @RequestParam("description") String description,
                                     @RequestParam("category") String category,
                                     @RequestParam("restaurantId") String restaurantId){
-
         if(!name.isEmpty()){
             if(description.isEmpty()) description = "";
             menuItemService.addMenuItem(name, category, description, price, restaurantId);
             LOG.info("Item has been created");
         }
-        return new RedirectView("/menu-item");
-    }
-
-    @GetMapping("/item-details/{id}")
-    public String itemDetailsView(@PathVariable String id, Model model){
-        MenuItemData itemData = menuItemService.getMenuItemByMenuItemId(id);
-        LOG.info("item details");
-        model.addAttribute("item", itemData);
-        return "item-details";
+        return new RedirectView("/restaurants/" + restaurantId);
     }
 
     @GetMapping("/delete-menuItem/{restaurantId}/{menuItemId}")
     public RedirectView deleteMenuItem(@PathVariable String restaurantId, @PathVariable String menuItemId){
         if(menuItemService.deleteMenuItemByMenuItemId(menuItemId)){
-            return new RedirectView("/restaurant-details/" + restaurantId);
+            return new RedirectView("/restaurants/" + restaurantId);
         }
         throw new RuntimeException();
     }
@@ -79,6 +61,6 @@ public class MenuItemController {
                                        @RequestParam("name") String name, @RequestParam("description") String description,
                                        @RequestParam("price") String price) {
         menuItemService.updateMenuItem(menuItemId, name, description, price);
-        return new RedirectView("/restaurant-details/" + restaurantId);
+        return new RedirectView("/restaurants/" + restaurantId);
     }
 }

@@ -8,24 +8,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
-import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
 import pl.dskimina.foodsy.service.*;
 
-import java.util.List;
 
 @Controller
 public class RestaurantController {
 
-    private final MenuItemService menuItemService;
     private final RestaurantService restaurantService;
     private final UserService userService;
     private final SessionService sessionService;
 
-    public RestaurantController(RestaurantService restaurantService, MenuItemService menuItemService,
+    public RestaurantController(RestaurantService restaurantService,
                                 UserService userService, SessionService sessionService) {
         this.restaurantService = restaurantService;
-        this.menuItemService = menuItemService;
         this.userService = userService;
         this.sessionService = sessionService;
     }

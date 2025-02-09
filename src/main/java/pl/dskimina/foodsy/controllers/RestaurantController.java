@@ -46,7 +46,7 @@ public class RestaurantController {
                                       @RequestParam("address") String address,
                                       @RequestParam("tags") String tags){
         restaurantService.addRestaurant(name, phone,email, address, tags);
-        return new RedirectView("/restaurant");
+        return new RedirectView("/restaurants");
     }
 
     @GetMapping("/restaurants/{restaurantId}")
@@ -80,8 +80,8 @@ public class RestaurantController {
                                                  @RequestParam(value = "tags", required = false) String tags,
                                                  @RequestParam(value = "email", required = false) String email,
                                                  @RequestParam(value = "address", required = false) String address){
-        restaurantService.updateRestaurant(restaurantId, phone, address, email, tags);
-        return new RedirectView("/restaurant-details/" + restaurantId);
+        restaurantService.updateRestaurant(restaurantId, phone, email, address, tags);
+        return new RedirectView("/restaurants/" + restaurantId);
     }
 
 }

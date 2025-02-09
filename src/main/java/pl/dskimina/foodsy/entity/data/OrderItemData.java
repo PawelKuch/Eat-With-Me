@@ -1,7 +1,5 @@
 package pl.dskimina.foodsy.entity.data;
 
-import java.util.List;
-
 public class OrderItemData {
     private String orderItemId;
     private Double price;

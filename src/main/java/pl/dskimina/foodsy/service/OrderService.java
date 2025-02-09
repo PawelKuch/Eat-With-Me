@@ -7,7 +7,6 @@ import pl.dskimina.foodsy.entity.OrderItem;
 import pl.dskimina.foodsy.entity.Restaurant;
 import pl.dskimina.foodsy.entity.User;
 import pl.dskimina.foodsy.entity.data.OrderData;
-import pl.dskimina.foodsy.entity.data.UserData;
 import pl.dskimina.foodsy.repository.OrderRepository;
 
 import java.time.LocalDateTime;

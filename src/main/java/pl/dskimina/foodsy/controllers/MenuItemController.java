@@ -1,29 +1,21 @@
 package pl.dskimina.foodsy.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
-import pl.dskimina.foodsy.entity.data.MenuItemData;
-import pl.dskimina.foodsy.entity.data.RestaurantData;
 import pl.dskimina.foodsy.service.*;
 
-import java.util.List;
 
 @Controller
 public class MenuItemController {
-    private static final Logger LOG = LoggerFactory.getLogger(MenuItemController.class.getName());
-    private final RestaurantService restaurantService;
     MenuItemService menuItemService;
     private final SessionService sessionService;
     private final UserService userService;
 
-    public MenuItemController(MenuItemService menuItemService, RestaurantService restaurantService,
+    public MenuItemController(MenuItemService menuItemService,
                               SessionService sessionService, UserService userService) {
         this.menuItemService = menuItemService;
-        this.restaurantService = restaurantService;
         this.sessionService = sessionService;
         this.userService = userService;
     }
@@ -43,7 +35,6 @@ public class MenuItemController {
         if(!name.isEmpty()){
             if(description.isEmpty()) description = "";
             menuItemService.addMenuItem(name, category, description, price, restaurantId);
-            LOG.info("Item has been created");
         }
         return new RedirectView("/restaurants/" + restaurantId);
     }

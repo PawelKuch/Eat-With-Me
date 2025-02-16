@@ -41,8 +41,8 @@ public class MenuItemService {
     }
 
     @Transactional
-    public boolean deleteMenuItemByMenuItemId(String menuItemId){
-        MenuItem menuItem = menuItemRepository.findByMenuItemId(menuItemId);
+    public boolean deleteMenuItemByMenuItemIdAndRestaurantId(String restaurantId, String menuItemId){
+        MenuItem menuItem = menuItemRepository.findMenuItemByRestaurantIdAndMenuItemId(restaurantId, menuItemId);
         if (menuItem != null) {
             menuItemRepository.delete(menuItem);
             return true;
@@ -51,8 +51,8 @@ public class MenuItemService {
     }
 
     @Transactional
-    public void updateMenuItem(String menuItemId, String name, String description, Double price) {
-        MenuItem menuItem = menuItemRepository.findByMenuItemId(menuItemId);
+    public void updateMenuItem(String restaurantId, String menuItemId, String name, String description, Double price) {
+        MenuItem menuItem = menuItemRepository.findMenuItemByRestaurantIdAndMenuItemId(restaurantId, menuItemId);
         menuItem.setName(name);
         menuItem.setDescription(description);
         menuItem.setPrice(price);

@@ -103,7 +103,7 @@
                             <div>Informacje dot zamówienia</div>
                             <div>${order.description}</div>
                             <div class="h-100 d-flex align-items-end">
-                                Oczekiwania data zamknięcia zamówienia: ${order.closingDateTime?datetime?string("HH:mm dd.MM.yyyy")}<br/>
+                                Oczekiwana data zamknięcia zamówienia: ${order.closingDateTime?datetime?string("HH:mm dd.MM.yyyy")}<br/>
                                 Minimalna wartość zamówienia: ${order.minValue} zł
                             </div>
                         </div>

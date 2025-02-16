@@ -11,7 +11,6 @@ $(document).ready(function () {
     $('.delete-btn').each(function (){
         let $deleteBtn = $(this);
         let orderItemId = $deleteBtn.data('order-item-id');
-        let $orderItem = $('#order-item-' + orderItemId);
 
         $deleteBtn.on('click', function (){
             $.ajax({
@@ -20,7 +19,6 @@ $(document).ready(function () {
                 success: function (response, status) {
                     console.log(status);
                     location.reload();
-                    //$orderItem.remove();
                 },
                 error: function () {
                     console.log('nie usunięto');

@@ -58,6 +58,10 @@ public class OrderItemService {
     public boolean deleteOrderItem(String orderItemId){
         OrderItem orderItem = orderItemRepository.findByOrderItemId(orderItemId);
         if(orderItem != null){
+            Order order = orderItem.getOrder();
+            double currentValueOfOrder = order.getValue() - orderItem.getPrice();
+            order.setValue(currentValueOfOrder);
+            orderRepository.save(order);
             orderItemRepository.delete(orderItem);
             return true;
         } else {

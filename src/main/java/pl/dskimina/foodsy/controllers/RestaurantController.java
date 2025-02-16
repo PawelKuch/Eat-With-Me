@@ -92,7 +92,7 @@ public class RestaurantController {
 
     @DeleteMapping("/{restaurantId}/menuItems/{menuItemId}")
     public ResponseEntity<Void> deleteMenuItem(@PathVariable String restaurantId, @PathVariable String menuItemId){
-        if(menuItemService.deleteMenuItemByMenuItemId(menuItemId)){
+        if(menuItemService.deleteMenuItemByMenuItemIdAndRestaurantId(restaurantId, menuItemId)){
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
@@ -104,7 +104,7 @@ public class RestaurantController {
     public ResponseEntity<Void> updateMenuItem(@PathVariable String restaurantId, @PathVariable String menuItemId,
                                        @RequestBody MenuItemData menuItemData) {
         if(menuItemData.getDescription() == null){LOG.warn("menuItemData description is null!");}
-        menuItemService.updateMenuItem(menuItemId, menuItemData.getName(), menuItemData.getDescription(), menuItemData.getPrice());
+        menuItemService.updateMenuItem(restaurantId, menuItemId, menuItemData.getName(), menuItemData.getDescription(), menuItemData.getPrice());
         return ResponseEntity.ok().build();
     }
 

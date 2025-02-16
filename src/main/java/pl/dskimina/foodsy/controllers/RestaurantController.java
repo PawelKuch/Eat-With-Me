@@ -16,6 +16,7 @@ import pl.dskimina.foodsy.service.*;
 
 
 @Controller
+@RequestMapping("/restaurants")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
@@ -38,13 +39,13 @@ public class RestaurantController {
         modelMap.addAttribute("isActiveRestaurants", true);
     }
 
-    @GetMapping("/restaurants")
+    @GetMapping
     public String addRestaurantView(Model model){
         model.addAttribute("restaurantList", restaurantService.getRestaurants());
         return "restaurant";
     }
 
-    @PostMapping("/restaurants")
+    @PostMapping
     public RedirectView addRestaurant(@RequestParam("name") String name,
                                       @RequestParam("phone") String phone,
                                       @RequestParam("email") String email,
@@ -54,7 +55,7 @@ public class RestaurantController {
         return new RedirectView("/restaurants");
     }
 
-    @GetMapping("/restaurants/{restaurantId}")
+    @GetMapping("/{restaurantId}")
     public String restaurantDetailsView(Model model, @PathVariable String restaurantId){
         RestaurantData restaurant = restaurantService.getRestaurantByRestaurantId(restaurantId);
         model.addAttribute("restaurant", restaurant);
@@ -62,7 +63,7 @@ public class RestaurantController {
         return "restaurant-details";
     }
 
-    @GetMapping("/restaurants/logos/{restaurantId}")
+    @GetMapping("/logos/{restaurantId}")
     public ResponseEntity<byte[]> getLogoForRestaurant(@PathVariable String restaurantId){
         byte[] restaurantLogoBytes = restaurantService.getImageForRestaurantId(restaurantId);
         HttpHeaders headers = new HttpHeaders();
@@ -70,13 +71,13 @@ public class RestaurantController {
         return new ResponseEntity<>(restaurantLogoBytes, headers, HttpStatus.OK);
     }
 
-    @PutMapping("/restaurants/{restaurantId}")
+    @PutMapping("/{restaurantId}")
     public ResponseEntity<Void> updateRestaurant(@RequestBody RestaurantData restaurant){
         restaurantService.updateRestaurant(restaurant.getRestaurantId(), restaurant.getPhone(), restaurant.getEmail(), restaurant.getAddress(), restaurant.getTags());
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/restaurants/{restaurantId}/menuItems")
+    @PostMapping("/{restaurantId}/menuItems")
     public RedirectView addMenuItem(@RequestParam("name") String name,
                                     @RequestParam("price") double price,
                                     @RequestParam("description") String description,
@@ -89,7 +90,7 @@ public class RestaurantController {
         return new RedirectView("/restaurants/" + restaurantId);
     }
 
-    @DeleteMapping("/restaurants/{restaurantId}/menuItems/{menuItemId}")
+    @DeleteMapping("/{restaurantId}/menuItems/{menuItemId}")
     public ResponseEntity<Void> deleteMenuItem(@PathVariable String restaurantId, @PathVariable String menuItemId){
         if(menuItemService.deleteMenuItemByMenuItemId(menuItemId)){
             return ResponseEntity.ok().build();
@@ -99,7 +100,7 @@ public class RestaurantController {
 
     Logger LOG = LoggerFactory.getLogger(RestaurantController.class);
 
-    @PutMapping("/restaurants/{restaurantId}/menuItems/{menuItemId}")
+    @PutMapping("/{restaurantId}/menuItems/{menuItemId}")
     public ResponseEntity<Void> updateMenuItem(@PathVariable String restaurantId, @PathVariable String menuItemId,
                                        @RequestBody MenuItemData menuItemData) {
         if(menuItemData.getDescription() == null){LOG.warn("menuItemData description is null!");}

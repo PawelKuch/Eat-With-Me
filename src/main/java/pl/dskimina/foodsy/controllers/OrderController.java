@@ -1,7 +1,6 @@
 package pl.dskimina.foodsy.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +15,7 @@ import java.util.List;
 
 
 @Controller
-
+@RequestMapping({"/orders", "/"})
 public class OrderController {
     private final OrderService orderService;
     private final OrderItemService orderItemService;
@@ -33,7 +32,6 @@ public class OrderController {
         this.restaurantService = restaurantService;
     }
 
-    Logger LOG = LoggerFactory.getLogger(OrderController.class);
 
     @ModelAttribute
     public void fillModel(Model modelMap){
@@ -42,13 +40,13 @@ public class OrderController {
         modelMap.addAttribute("isActiveOrders", true);
     }
 
-    @GetMapping("/orders/restaurants")
+    @GetMapping("/restaurants")
     public String getRestaurants(Model model){
         model.addAttribute("restaurantList", restaurantService.getRestaurants());
         return "orders-restaurant-list";
     }
 
-    @PostMapping("/orders")
+    @PostMapping
     public RedirectView createOrder(@RequestParam("restaurantId") String restaurantId, @RequestParam("closingDate") String closingDateString,
                                     @RequestParam("minValue") String minValue, @RequestParam("description") String description) {
 
@@ -57,14 +55,14 @@ public class OrderController {
         return new RedirectView("/orders/" + order.getOrderId() + "/orderItems");
     }
 
-    @GetMapping({"/orders", "/"})
+    @GetMapping
     public String orders(Model model) {
         List<OrderData> orderList = orderService.getOrders();
         model.addAttribute("orderList", orderList);
         return "orders";
     }
 
-    @GetMapping("/orders/new/{restaurantId}")
+    @GetMapping("/new/{restaurantId}")
     public String newOrder(@PathVariable String restaurantId, Model model){
         model.addAttribute("restaurantId", restaurantId);
         return "create-order";
@@ -72,7 +70,7 @@ public class OrderController {
 
 
 
-    @GetMapping("/orders/{orderId}/summary")
+    @GetMapping("/{orderId}/summary")
     public String orderSummary(@PathVariable String orderId, Model model) {
         OrderData order = orderService.getOrderByOrderId(orderId);
         RestaurantData restaurant = order.getRestaurantData();
@@ -81,7 +79,7 @@ public class OrderController {
         return "order-summary";
     }
 
-    @PostMapping("/orders/{orderId}/summary")
+    @PostMapping("/{orderId}/summary")
     public RedirectView setFinalValueAndCloseOrder(@PathVariable String orderId,
                                                    @RequestParam(value = "cashDiscount", required = false) String cashDiscount,
                                                    @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
@@ -95,7 +93,7 @@ public class OrderController {
         return new RedirectView("/orders/" + orderId + "/summary");
     }
 
-    @GetMapping("/orders/{orderId}/orderItems")
+    @GetMapping("/{orderId}/orderItems")
     public String getOrderItems(@PathVariable("orderId") String orderId, Model model) {
         OrderData order = orderService.getOrderByOrderId(orderId);
         RestaurantData restaurant = order.getRestaurantData();
@@ -106,7 +104,7 @@ public class OrderController {
         return "order-menu";
     }
 
-    @PostMapping("/orders/{orderId}/orderItems")
+    @PostMapping("/{orderId}/orderItems")
     public RedirectView createOrderItem(@PathVariable String orderId,
                                         @RequestParam("userId") String userId,
                                         @RequestParam("menuItemId") String menuItemId,
@@ -117,12 +115,13 @@ public class OrderController {
         return new RedirectView("/orders/" + orderId + "/orderItems" );
     }
 
-    @DeleteMapping("/orders/{orderItemId}/orderItems")
+    @DeleteMapping("/{orderItemId}/orderItems")
     public ResponseEntity<Void> deleteOrderItem(@PathVariable String orderItemId){
         if(orderItemService.deleteOrderItem(orderItemId)){
             return ResponseEntity.ok().build();
+        } else {
+            throw new NullPointerException("OrderItem " + orderItemId + " not found");
         }
-        return ResponseEntity.notFound().build();
     }
 
 }

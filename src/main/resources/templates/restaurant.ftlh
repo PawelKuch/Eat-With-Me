@@ -24,7 +24,7 @@
         <button data-bs-toggle="modal" data-bs-target="#create-restaurant-modal" class="btn btn-dark col-2 mt-3">Dodaj restaurację</button>
             <#list restaurantList as restaurant>
                 <a href="/restaurants/${restaurant.restaurantId}" class="text-decoration-none"><div class="restaurant-tile list-group-item d-flex flex-row align-items-center mt-3" data-restaurant-id="${restaurant.restaurantId}">
-                    <div class="col-2"><img src="/logos/${restaurant.restaurantId}" alt="${restaurant.name} logo" width="50px" height="50px"></div>
+                    <div class="col-2"><img src="/restaurants/logos/${restaurant.restaurantId}" alt="${restaurant.name} logo" width="50px" height="50px"></div>
                     <div class="col-2">${restaurant.name}</div>
                     <div class="col-4">${restaurant.address}</div>
                     <div class="col-4 mx-3">${restaurant.tags}</div>
@@ -45,7 +45,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="restaurant-form" method="post" action="/create-restaurant">
+                <form id="restaurant-form" method="post" action="/restaurants">
                     <div class="input-group">
                         <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">nazwa</span>
                         <input class="mb-2 form-control" id="name" name="name">

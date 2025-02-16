@@ -51,12 +51,11 @@ public class MenuItemService {
     }
 
     @Transactional
-    public void updateMenuItem(String menuItemId, String name, String description, String price) {
+    public void updateMenuItem(String menuItemId, String name, String description, Double price) {
         MenuItem menuItem = menuItemRepository.findByMenuItemId(menuItemId);
-        double newPrice = Double.parseDouble(price);
         menuItem.setName(name);
         menuItem.setDescription(description);
-        menuItem.setPrice(newPrice);
+        menuItem.setPrice(price);
         menuItemRepository.save(menuItem);
     }
 }

@@ -1,5 +1,7 @@
 package pl.dskimina.foodsy.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
+import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
 import pl.dskimina.foodsy.service.*;
 
@@ -18,12 +21,14 @@ public class RestaurantController {
     private final RestaurantService restaurantService;
     private final UserService userService;
     private final SessionService sessionService;
+    private final MenuItemService menuItemService;
 
     public RestaurantController(RestaurantService restaurantService,
-                                UserService userService, SessionService sessionService) {
+                                UserService userService, SessionService sessionService, MenuItemService menuItemService) {
         this.restaurantService = restaurantService;
         this.userService = userService;
         this.sessionService = sessionService;
+        this.menuItemService = menuItemService;
     }
 
     @ModelAttribute
@@ -39,7 +44,7 @@ public class RestaurantController {
         return "restaurant";
     }
 
-    @PostMapping("/create-restaurant")
+    @PostMapping("/restaurants")
     public RedirectView addRestaurant(@RequestParam("name") String name,
                                       @RequestParam("phone") String phone,
                                       @RequestParam("email") String email,
@@ -57,17 +62,7 @@ public class RestaurantController {
         return "restaurant-details";
     }
 
-   /* @GetMapping("get-restaurant-list")
-    @ResponseBody
-    public Map<String, Object> getRestaurantListForFetch(){
-        Map<String, Object> response = new HashMap<>();
-        response.put("restaurants: ", restaurantService.getRestaurants());
-        response.put("restaurants amount: ", restaurantService.getRestaurants().size());
-        return response;
-    }*/
-
-
-    @GetMapping("/logos/{restaurantId}")
+    @GetMapping("/restaurants/logos/{restaurantId}")
     public ResponseEntity<byte[]> getLogoForRestaurant(@PathVariable String restaurantId){
         byte[] restaurantLogoBytes = restaurantService.getImageForRestaurantId(restaurantId);
         HttpHeaders headers = new HttpHeaders();
@@ -75,13 +70,41 @@ public class RestaurantController {
         return new ResponseEntity<>(restaurantLogoBytes, headers, HttpStatus.OK);
     }
 
-    @PostMapping("/update-restaurant/{restaurantId}")
-    public RedirectView updatePhoneForRestaurant(@PathVariable String restaurantId, @RequestParam(value = "phone", required = false) String phone,
-                                                 @RequestParam(value = "tags", required = false) String tags,
-                                                 @RequestParam(value = "email", required = false) String email,
-                                                 @RequestParam(value = "address", required = false) String address){
-        restaurantService.updateRestaurant(restaurantId, phone, email, address, tags);
+    @PutMapping("/restaurants/{restaurantId}")
+    public ResponseEntity<Void> updateRestaurant(@RequestBody RestaurantData restaurant){
+        restaurantService.updateRestaurant(restaurant.getRestaurantId(), restaurant.getPhone(), restaurant.getEmail(), restaurant.getAddress(), restaurant.getTags());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/restaurants/{restaurantId}/menuItems")
+    public RedirectView addMenuItem(@RequestParam("name") String name,
+                                    @RequestParam("price") double price,
+                                    @RequestParam("description") String description,
+                                    @RequestParam("category") String category,
+                                    @PathVariable String restaurantId){
+        if(!name.isEmpty()){
+            if(description.isEmpty()) description = "";
+            menuItemService.addMenuItem(name, category, description, price, restaurantId);
+        }
         return new RedirectView("/restaurants/" + restaurantId);
+    }
+
+    @DeleteMapping("/restaurants/{restaurantId}/menuItems/{menuItemId}")
+    public ResponseEntity<Void> deleteMenuItem(@PathVariable String restaurantId, @PathVariable String menuItemId){
+        if(menuItemService.deleteMenuItemByMenuItemId(menuItemId)){
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    Logger LOG = LoggerFactory.getLogger(RestaurantController.class);
+
+    @PutMapping("/restaurants/{restaurantId}/menuItems/{menuItemId}")
+    public ResponseEntity<Void> updateMenuItem(@PathVariable String restaurantId, @PathVariable String menuItemId,
+                                       @RequestBody MenuItemData menuItemData) {
+        if(menuItemData.getDescription() == null){LOG.warn("menuItemData description is null!");}
+        menuItemService.updateMenuItem(menuItemId, menuItemData.getName(), menuItemData.getDescription(), menuItemData.getPrice());
+        return ResponseEntity.ok().build();
     }
 
 }

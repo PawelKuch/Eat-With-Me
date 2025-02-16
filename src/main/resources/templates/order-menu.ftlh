@@ -57,7 +57,8 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <form class="order-form-${menuItem.menuItemId}" method="post" action="/orders/${order.orderId}/addMenuItem">
+                                                <form class="order-form-${menuItem.menuItemId}" method="post" action="/orders/${orderId}/orderItems">
+                                                    <input name="orderId" type="hidden" value="${orderId}">
                                                     <div class="input-group">
                                                         <h5>${menuItem.name}</h5>
                                                         <input name="menuItemId" type="hidden" value="${menuItem.menuItemId}">
@@ -96,7 +97,17 @@
                 </div>
 
                 <div id="orders-containers" class="col-6 d-flex flex-column border-start border-dark">
-                    <div class="d-flex justify-content-center"><img src="/logos/${restaurant.restaurantId}" alt="restaurant logo ${restaurant.restaurantId}" width="200px" height="200px"></div>
+                    <div class="d-flex flex-row justify-content-center">
+                        <div><img src="/restaurants/logos/${restaurant.restaurantId}" alt="restaurant logo ${restaurant.restaurantId}" width="200px" height="200px"></div>
+                        <div class="ms-3 d-flex flex-column">
+                            <div>Informacje dot zamówienia</div>
+                            <div>${order.description}</div>
+                            <div class="h-100 d-flex align-items-end">
+                                Oczekiwania data zamknięcia zamówienia: ${order.closingDateTime?datetime?string("HH:mm dd.MM.yyyy")}<br/>
+                                Minimalna wartość zamówienia: ${order.minValue} zł
+                            </div>
+                        </div>
+                    </div>
                     <#if order.orderItemList?has_content>
                     <div class="row fw-bold border-bottom py-2">
                         <div class="col-3">Danie</div>
@@ -107,20 +118,22 @@
                     </div>
                     <div class="list-group-flush row d-flex">
                         <#list order.orderItemList as orderItem>
-                            <div class="list-group-item col-3">${orderItem.menuItem.name}</div>
-                            <div class="list-group-item col-1">${orderItem.menuItem.price}</div>
-                            <div class="list-group-item col-3">${orderItem.description}</div>
-                            <div class="list-group-item col-3">${orderItem.user.firstName} ${orderItem.user.lastName}</div>
-                            <div class="list-group-item col-1">
+                            <div id="order-item-${orderItem.orderItemId}" class="list-group-item d-flex flex-row">
+                            <div class="col-3">${orderItem.menuItem.name}</div>
+                            <div class=" col-1">${orderItem.menuItem.price}</div>
+                            <div class=" col-3">${orderItem.description}</div>
+                            <div class=" col-3">${orderItem.user.firstName} ${orderItem.user.lastName}</div>
+                            <div class=" col-1">
                                 <#if !order.isClosed>
                                     <#if currentUser?has_content && (orderItem.user.userId == currentUser.userId)>
-                                        <a href="/delete-order-item/${order.orderId}/${orderItem.orderItemId}" class="btn btn-dark justify-content-center me-1">
+                                        <button data-order-item-id="${orderItem.orderItemId}" class="btn btn-dark justify-content-center me-1 delete-btn">
                                             <i class="bi bi-trash-fill"></i>
-                                        </a>
+                                        </button>
                                     <#else>
                                         <div class="me-1"> - </div>
                                     </#if>
                                 </#if>
+                            </div>
                             </div>
                         </#list>
                         <div class="col-8 fw-bold">Wartość całkowita</div>
@@ -129,7 +142,7 @@
                     <#else>
                         <div class="alert alert-warning text-center mt-3">Brak pozycji w zamówieniu</div>
                     </#if>
-                    <#if currentUser.userId == order.owner.userId>
+                    <#if currentUser.userId == order.owner.userId && !order.isClosed>
                         <div class="d-flex justify-content-end">
                             <a href="/orders/${order.orderId}/summary"><button class="btn btn-dark mt-3"> Podsumowanie zamówienia </button></a>
                         </div>

@@ -10,6 +10,7 @@ import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.repository.OrderRepository;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -36,11 +37,16 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderData createOrder(String restaurantId, String userId) {
+    public OrderData createOrder(String restaurantId, String userId, String closingDateString, String minValueString, String description) {
         Order order = new Order();
         User user = userService.getUserInstanceById(userId);
         order.setOrderId(UUID.randomUUID().toString());
-        order.setDate(LocalDateTime.now());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        LocalDateTime closingDate = LocalDateTime.parse(closingDateString, formatter);
+        order.setClosingDate(closingDate);
+        order.setDescription(description);
+        Double minValue = Double.parseDouble(minValueString);
+        order.setMinValue(minValue);
         order.setValue(0.0);
         List<OrderItem> orderItems = new ArrayList<>();
         order.setOrderItemList(orderItems);

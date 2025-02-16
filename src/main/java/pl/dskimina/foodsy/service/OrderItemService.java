@@ -55,8 +55,14 @@ public class OrderItemService {
     }
 
     @Transactional
-    public void deleteOrderItem(String orderItemId){
+    public boolean deleteOrderItem(String orderItemId){
         OrderItem orderItem = orderItemRepository.findByOrderItemId(orderItemId);
-        orderItemRepository.delete(orderItem);
+        if(orderItem != null){
+            orderItemRepository.delete(orderItem);
+            return true;
+        } else {
+
+            return false;
+        }
     }
 }

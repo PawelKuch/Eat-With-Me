@@ -19,7 +19,7 @@
     <#include "side-navbar.ftlh">
     <div id="restaurant-details-container" class="d-flex flex-column w-100">
         <div id="logo-container" class="d-flex justify-content-center">
-            <img src="/logos/${restaurant.restaurantId}" alt="${restaurant.name}" width=400px" height="400px">
+            <img src="/restaurants/logos/${restaurant.restaurantId}" alt="${restaurant.name}" width=400px" height="400px">
         </div>
         <div id="details-container" class="d-flex flex-column justify-content-center mt-3">
             <div class="fw-bold fs-4 m-auto"> ${restaurant.name}</div>
@@ -29,9 +29,9 @@
                     <div id="valueDiv-1" class="col-7 d-flex">${restaurant.tags}</div>
                     <div id="inputDiv-1" class="col-7 d-none">
                         <form id="form-1" method="post" action="/update-restaurant/${restaurant.restaurantId}">
-                            <textarea name="tags" id="textarea-1" rows="1" cols="70">${restaurant.tags}</textarea>
+                            <textarea class="tags" name="tags" id="textarea-1" rows="1" cols="70">${restaurant.tags}</textarea>
                         </form>
-                        <button data-button-id="1" class="submit-btn btn btn-dark ms-1">OK</button>
+                        <button data-restaurant-id="${restaurant.restaurantId}" data-button-id="1" class="submit-btn btn btn-dark ms-1">OK</button>
                         <button data-button-id="1" class="cancel-btn btn btn-dark ms-1">X</button>
                     </div>
                     <div class="col-1">
@@ -44,9 +44,9 @@
                     <div id="valueDiv-2" class="col-7">${restaurant.email}</div>
                     <div id="inputDiv-2" class="col-7 d-none">
                         <form id="form-2" method="post" action="/update-restaurant/${restaurant.restaurantId}">
-                            <textarea name="email" id="textarea-2" rows="1" cols="70">${restaurant.email}</textarea>
+                            <textarea class="email" name="email" id="textarea-2" rows="1" cols="70">${restaurant.email}</textarea>
                         </form>
-                        <button data-button-id="2" class="submit-btn btn btn-dark ms-1">OK</button>
+                        <button data-restaurant-id="${restaurant.restaurantId}" data-button-id="2" class="submit-btn btn btn-dark ms-1">OK</button>
                         <button data-button-id="2" class="cancel-btn btn btn-dark ms-1">X</button>
                     </div>
                     <div class="col-1">
@@ -59,9 +59,9 @@
                     <div id="valueDiv-3" class="col-7">${restaurant.address}</div>
                     <div id="inputDiv-3" class="col-7 d-none">
                         <form id="form-3" method="post" action="/update-restaurant/${restaurant.restaurantId}">
-                            <textarea name="address" id="textarea-3" rows="1" cols="70">${restaurant.address}</textarea>
+                            <textarea class="address" name="address" id="textarea-3" rows="1" cols="70">${restaurant.address}</textarea>
                         </form>
-                        <button data-button-id="3" class="submit-btn btn btn-dark ms-1">OK</button>
+                        <button data-restaurant-id="${restaurant.restaurantId}" data-button-id="3" class="submit-btn btn btn-dark ms-1">OK</button>
                         <button data-button-id="3" class="cancel-btn btn btn-dark ms-1">X</button>
                     </div>
                     <div class="col-1">
@@ -73,10 +73,10 @@
                     <div class="col-4">Nr tel.</div>
                     <div id="valueDiv-4" class="col-7">${restaurant.phone}</div>
                     <div id="inputDiv-4" class="col-7 d-none">
-                        <form id="form-4" method="post" action="/update-restaurant/${restaurant.restaurantId}">
-                            <textarea name="phone" id="textarea-4" rows="1" cols="70">${restaurant.phone}</textarea>
+                        <form id="form-4" method="post" action="/restaurants/${restaurant.restaurantId}">
+                            <textarea class="phone" name="phone" id="textarea-4" rows="1" cols="70">${restaurant.phone}</textarea>
                         </form>
-                        <button data-button-id="4" class="submit-btn btn btn-dark ms-1">OK</button>
+                        <button data-restaurant-id="${restaurant.restaurantId}" data-button-id="4" class="submit-btn btn btn-dark ms-1">OK</button>
                         <button data-button-id="4" class="cancel-btn btn btn-dark ms-1">X</button>
                     </div>
                     <div class="col-1">
@@ -84,40 +84,37 @@
                     </div>
                 </div>
             </div>
-            <#if currentUser?has_content>
-                <div class="mt-2 ms-2 ps-3">
-                    <a href="/create-order/${restaurant.restaurantId}/${currentUser.userId}" class="btn btn-primary">Złóż zamówienie</a>
-                </div>
-            </#if>
         </div>
 
 
 
 
-        <div id="display-menuItem-container" class="row d-flex justify-content-center mt-3">
+        <div data-restaurant-id="${restaurant.restaurantId}" id="display-menuItem-container" class="row d-flex justify-content-center mt-3">
             <div class="d-flex justify-content-center"><h3>MENU</h3></div>
             <div class="d-flex justify-content-start mb-3 ms-5 ps-3"><button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#add-menu-item-modal">Dodaj danie</button></div>
             <div class="list-group px-3">
                 <#list restaurantMenuItemList as menuItem>
-                    <div class="my-1 d-flex flex-row justify-content-center align-items-center list-group-item menu-item-${menuItem.menuItemId}">
+                    <div class="menu-item-tile-${menuItem.menuItemId} my-1 d-flex flex-row justify-content-center align-items-center list-group-item menu-item-${menuItem.menuItemId}">
                         <h5 class="col-4">${menuItem.name}</h5>
                         <div class="col-4">${menuItem.description}</div>
                         <div class="col-2" >${menuItem.price} zł</div>
                         <div class="col-2">
                             <button data-menu-item-id="${menuItem.menuItemId}" class="btn btn-dark change-menu-item-btn"><i class="bi bi-pencil-fill"></i></button>
-                            <a href="/delete-menuItem/${restaurant.restaurantId}/${menuItem.menuItemId}"><button class="btn btn-dark"><i class="bi bi-trash3-fill"></i></button></a>
+                            <button data-menu-item-id="${menuItem.menuItemId}" class="delete-btn btn btn-dark"><i class="bi bi-trash3-fill"></i></button>
                         </div>
                     </div>
 
-                <form method="post" action="/update-menu-item/${restaurant.restaurantId}/${menuItem.menuItemId}" class="my-1 d-none flex-row justify-content-center align-items-center list-group-item update-menu-item-form-${menuItem.menuItemId}">
-                    <div class="col-4"><textarea class="name-${menuItem.menuItemId}" cols="35" rows="1" name="name">${menuItem.name}</textarea></div>
-                    <div class="col-4"><textarea class="description-${menuItem.menuItemId}" cols="50" rows="1" name="description">${menuItem.description}</textarea></div>
-                    <div class="col-2"><textarea class="price-${menuItem.menuItemId}" cols="8" rows="1" name="price">${menuItem.price}</textarea></div>
+                <form class="my-1 d-none flex-row justify-content-center align-items-center list-group-item update-menu-item-form-${menuItem.menuItemId}">
+                    <div class="col-4 name"><textarea class="name-${menuItem.menuItemId}" cols="35" rows="1" name="name">${menuItem.name}</textarea></div>
+                    <div class="col-4 description"><textarea class="description-${menuItem.menuItemId}" cols="50" rows="1" name="description">${menuItem.description}</textarea></div>
+                    <div class="col-2 price"><textarea class="price-${menuItem.menuItemId}" cols="8" rows="1" name="price">${menuItem.price}</textarea></div>
+
                     <div class="col-2">
-                        <button class="btn btn-dark" type="submit">OK</button>
+                        <div data-menu-item-id="${menuItem.menuItemId}" class="btn btn-dark confirm-update-btn">OK</div>
                         <div class="btn btn-dark discard-button-${menuItem.menuItemId}">X</div>
                     </div>
                 </form>
+
                 </#list>
             </div>
         </div>
@@ -133,9 +130,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/items" method="post">
-                        <input name="restaurantId" value="${restaurant.restaurantId}" type="hidden">
-
+                    <form action="/restaurants/${restaurant.restaurantId}/menuItems" method="post">
                         <div class="input-group">
                             <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">nazwa</span>
                             <input class="mb-2 form-control" id="name" name="name">

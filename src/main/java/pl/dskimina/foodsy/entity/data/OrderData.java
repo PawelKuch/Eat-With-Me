@@ -1,13 +1,16 @@
 package pl.dskimina.foodsy.entity.data;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 public class OrderData {
 
     private String orderId;
     private double value;
-    private LocalDateTime date;
+    private Date closingDateTime;
+    private String description;
+    private double minValue;
     private boolean isClosed;
     private List<OrderItemData> orderItemList;
     private RestaurantData restaurantData;
@@ -27,11 +30,22 @@ public class OrderData {
         this.value = value;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public Date getClosingDateTime() {
+        return closingDateTime;
     }
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setClosingDateTime(Date date) {
+        this.closingDateTime = date;
+    }
+
+    public String getDescription() {return description;}
+    public void setDescription(String description) {this.description = description;}
+
+    public double getMinValue() {
+        return minValue;
+    }
+
+    public void setMinValue(double minValue) {
+        this.minValue = minValue;
     }
 
     public boolean getIsClosed(){return isClosed;}

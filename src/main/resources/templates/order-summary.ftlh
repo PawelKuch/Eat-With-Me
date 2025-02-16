@@ -21,7 +21,7 @@
     <#include "side-navbar.ftlh">
     <div class="container">
             <div id="orders-containers" class="d-flex flex-column">
-                <div class="d-flex justify-content-center"><img src="/logos/${restaurant.restaurantId}" alt="restaurant logo ${restaurant.restaurantId}" width="200px" height="200px"></div>
+                <div class="d-flex justify-content-center"><img src="/restaurants/logos/${restaurant.restaurantId}" alt="restaurant logo ${restaurant.restaurantId}" width="200px" height="200px"></div>
                 <h5>Podsumowanie zamówienia</h5>
                 <#if order.orderItemList?has_content>
                     <div class="row fw-bold border-bottom py-2">

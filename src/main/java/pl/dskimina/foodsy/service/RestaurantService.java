@@ -70,11 +70,16 @@ public class RestaurantService {
     @Transactional
     public void updateRestaurant(String restaurantId, String phone, String email, String address, String tags){
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-        if(tags != null && !tags.isEmpty()) restaurant.setTags(tags);
-        if(email != null && !email.isEmpty()) restaurant.setEmail(email);
-        if(address != null && !address.isEmpty()) restaurant.setAddress(address);
-        if(phone != null && !phone.isEmpty()) restaurant.setPhone(phone);
-        restaurantRepository.save(restaurant);
+        if(restaurant == null){
+            LOG.warn("restaurant is null");
+        }else {
+            if(tags != null && !tags.isEmpty()) restaurant.setTags(tags);
+            if(email != null && !email.isEmpty()) restaurant.setEmail(email);
+            if(address != null && !address.isEmpty()) restaurant.setAddress(address);
+            if(phone != null && !phone.isEmpty()) restaurant.setPhone(phone);
+            LOG.info("restaurant has been updated");
+            restaurantRepository.save(restaurant);
+        }
     }
 
 }

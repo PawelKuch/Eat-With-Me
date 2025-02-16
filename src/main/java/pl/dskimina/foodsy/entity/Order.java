@@ -20,7 +20,13 @@ public class Order {
     private Double value;
 
     @Column(name = "order_date")
-    private LocalDateTime date;
+    private LocalDateTime closingDate;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "min_value")
+    private Double minValue;
 
     @Column(name = "is_closed")
     private boolean isClosed;
@@ -58,11 +64,22 @@ public class Order {
         this.value = value;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public LocalDateTime getClosingDate() {
+        return closingDate;
     }
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setClosingDate(LocalDateTime date) {
+        this.closingDate = date;
+    }
+
+    public String getDescription() {return description;}
+    public void setDescription(String description) {this.description = description;}
+
+    public Double getMinValue() {
+        return minValue;
+    }
+
+    public void setMinValue(Double minValue) {
+        this.minValue = minValue;
     }
 
     public boolean getIsClosed(){return isClosed;}

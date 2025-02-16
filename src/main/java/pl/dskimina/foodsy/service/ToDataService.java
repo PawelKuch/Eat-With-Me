@@ -3,6 +3,9 @@ package pl.dskimina.foodsy.service;
 import org.springframework.stereotype.Service;
 import pl.dskimina.foodsy.entity.*;
 import pl.dskimina.foodsy.entity.data.*;
+
+import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.List;
 
 
@@ -36,7 +39,9 @@ public class ToDataService {
         OrderData orderData = new OrderData();
         orderData.setOrderId(order.getOrderId());
         orderData.setValue(order.getValue());
-        orderData.setDate(order.getDate());
+        orderData.setClosingDateTime(Date.from(order.getClosingDate().toInstant(ZoneOffset.ofHours(+1))));
+        orderData.setDescription(order.getDescription());
+        orderData.setMinValue(order.getMinValue());
         orderData.setIsClosed(order.getIsClosed());
         orderData.setOwner(convert(order.getOwner()));
         orderData.setOrderItemList(order.getOrderItemList().stream().map(this::convert). toList());

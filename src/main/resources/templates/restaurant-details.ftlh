@@ -21,6 +21,7 @@
         <div id="logo-container" class="d-flex justify-content-center">
             <img src="/restaurants/logos/${restaurant.restaurantId}" alt="${restaurant.name}" width=400px" height="400px">
         </div>
+        <div class="d-flex justify-content-start mb-3"><button data-restaurant-id="${restaurant.restaurantId}" id="delete-restaurant-btn" class="btn btn-dark mb-3 ms-4 ps-3">Usuń</button></div>
         <div id="details-container" class="d-flex flex-column justify-content-center mt-3">
             <div class="fw-bold fs-4 m-auto"> ${restaurant.name}</div>
             <div class="list-group px-2 w-100">

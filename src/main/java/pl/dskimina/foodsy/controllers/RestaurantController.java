@@ -77,6 +77,18 @@ public class RestaurantController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/{restaurantId}")
+    public ResponseEntity<String> deleteRestaurant(@PathVariable String restaurantId){
+        if(restaurantService.deleteRestaurantByRestaurantId(restaurantId)){
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body("Restaurant deleted successfully");
+        }
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("Restaurant not found");
+    }
+
     @PostMapping("/{restaurantId}/menuItems")
     public RedirectView addMenuItem(@RequestParam("name") String name,
                                     @RequestParam("price") double price,

@@ -145,4 +145,25 @@ $(document).ready(function (){
          });
       });
    });
+
+   // delete restaurant
+   $('#delete-restaurant-btn').each(function (){
+      let $deleteBtn = $(this);
+      let restaurantId = $deleteBtn.data('restaurant-id');
+
+      $deleteBtn.on('click', function (){
+         $.ajax({
+            url: '/restaurants/' + restaurantId,
+            type: 'DELETE',
+            success: function (response){
+               console.log(response, ' restaurant has been deleted');
+               window.location.href = '/restaurants';
+            },
+            error: function (response){
+               console.log(response)
+            }
+         });
+      });
+
+   });
 });

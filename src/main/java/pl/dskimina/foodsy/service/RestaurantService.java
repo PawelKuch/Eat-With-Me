@@ -2,6 +2,7 @@ package pl.dskimina.foodsy.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.dskimina.foodsy.entity.Restaurant;
@@ -80,6 +81,15 @@ public class RestaurantService {
             LOG.info("restaurant has been updated");
             restaurantRepository.save(restaurant);
         }
+    }
+
+    public boolean deleteRestaurantByRestaurantId(String restaurantId){
+        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+        if(restaurant != null){
+            restaurantRepository.delete(restaurant);
+            return true;
+        }
+        return false;
     }
 
 }

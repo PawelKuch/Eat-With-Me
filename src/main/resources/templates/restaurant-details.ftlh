@@ -21,7 +21,10 @@
         <div id="logo-container" class="d-flex justify-content-center">
             <img src="/restaurants/logos/${restaurant.restaurantId}" alt="${restaurant.name}" width=400px" height="400px">
         </div>
-        <div class="d-flex justify-content-start mb-3"><button data-restaurant-id="${restaurant.restaurantId}" id="delete-restaurant-btn" class="btn btn-dark mb-3 ms-4 ps-3">Usuń</button></div>
+        <div class="d-flex justify-content-start mb-3">
+            <button data-restaurant-id="${restaurant.restaurantId}" id="change-restaurant-image-btn" class="btn btn-dark mb-3 ms-4 ps-3" data-bs-toggle="modal" data-bs-target="#change-logo-modal">Zmień logo</button>
+            <button data-restaurant-id="${restaurant.restaurantId}" id="delete-restaurant-btn" class="btn btn-dark mb-3 ms-4 ps-3">Usuń</button>
+        </div>
         <div id="details-container" class="d-flex flex-column justify-content-center mt-3">
             <div class="fw-bold fs-4 m-auto"> ${restaurant.name}</div>
             <div class="list-group px-2 w-100">
@@ -167,6 +170,27 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="modal fade" id="change-logo-modal" tabindex="-1" aria-labelledby="change-logo-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div id="modal-title-div">
+                    <h1 class="modal-title fs-5">Zmień logo</h1>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="file" id="image">
+            </div>
+            <div class="modal-footer">
+                <button data-restaurant-id="${restaurant.restaurantId}" id="confirm-new-logo" class="btn btn-dark mb-3">Zatwierdź</button>
+                <button type="button" class="btn btn-secondary mb-3" data-bs-dismiss="modal">Zamknij</button>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script src="/static/js/restaurant-details.js"></script>

@@ -30,10 +30,33 @@ $(document).ready(function (){
       });
    });
 
+   let confirmNewLogoBtn = $('#confirm-new-logo');
+   confirmNewLogoBtn.on('click', function(){
+
+
+      let image = document.querySelector('#image').files[0];
+      let formData = new FormData();
+      formData.append('image', image);
+      console.log(formData.get('image').type);
+
+      $.ajax({
+         url: "/restaurants/" + restaurantId,
+         data: formData,
+         contentType: false,
+         processData: false,
+         type: "PUT",
+         success: function (response) {
+
+            location.reload();
+         },
+         error: function(xhr, status) {
+            console.log(status);
+         }
+      });
+   });
+
    $('.submit-btn').each(function (){
-      let btnId = $(this).data('button-id');
       let restaurantId = $(this).data('restaurant-id');
-      let $form = $('#form-' + btnId);
       $(this).on('click', function (){
 
          let restaurant = {
@@ -41,7 +64,7 @@ $(document).ready(function (){
             tags: $('.tags').val(),
             email: $('.email').val(),
             address: $('.address').val(),
-            phone: $('.phone').val()
+            phone: $('.phone').val(),
          };
 
          $.ajax({
@@ -57,8 +80,6 @@ $(document).ready(function (){
                console.log(status);
             }
          });
-
-         //$form.submit();
       });
    });
 
@@ -167,3 +188,6 @@ $(document).ready(function (){
 
    });
 });
+
+
+

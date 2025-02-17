@@ -45,7 +45,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="restaurant-form" method="post" action="/restaurants">
+                <form id="restaurant-form" method="post" action="/restaurants" enctype="multipart/form-data">
                     <div class="input-group">
                         <span class="input-group-text mb-2 bg-dark text-white" style="width: 125px;">nazwa</span>
                         <input class="mb-2 form-control" id="name" name="name">
@@ -63,7 +63,7 @@
                         <input class="mb-2 form-control" id="address" name="address">
                     </div>
                     <div class="input-group">
-                        <input class="mb-2 form-control" type="file" id="jpg-file" name="jpg-file">
+                        <input class="mb-2 form-control" type="file" id="jpg-file" name="image" accept="image/png, image/jpeg" >
                     </div>
                     <textarea name="tags" cols="60" rows="5" placeholder="#tags"></textarea><br/>
                 </form>

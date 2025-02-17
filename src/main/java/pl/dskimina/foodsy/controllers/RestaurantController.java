@@ -9,10 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
 import pl.dskimina.foodsy.service.*;
+
+import java.io.IOException;
 
 
 @Controller
@@ -50,8 +53,14 @@ public class RestaurantController {
                                       @RequestParam("phone") String phone,
                                       @RequestParam("email") String email,
                                       @RequestParam("address") String address,
-                                      @RequestParam("tags") String tags){
-        restaurantService.addRestaurant(name, phone,email, address, tags);
+                                      @RequestParam("tags") String tags,
+                                      @RequestParam("image") MultipartFile image) throws IOException {
+        if(image == null){
+            LOG.error("image is null");
+            return new RedirectView("/restaurants");
+        }
+        restaurantService.addRestaurant(name, phone,email, address, tags, image.getBytes());
+        LOG.info("restaurant added");
         return new RedirectView("/restaurants");
     }
 
@@ -72,9 +81,16 @@ public class RestaurantController {
     }
 
     @PutMapping("/{restaurantId}")
-    public ResponseEntity<Void> updateRestaurant(@RequestBody RestaurantData restaurant){
-        restaurantService.updateRestaurant(restaurant.getRestaurantId(), restaurant.getPhone(), restaurant.getEmail(), restaurant.getAddress(), restaurant.getTags());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> updateRestaurant(@PathVariable String restaurantId, @RequestBody RestaurantData restaurant, @RequestParam(value = "image", required = false) MultipartFile image) throws IOException {
+        if(restaurantId.equals(restaurant.getRestaurantId())){
+            restaurantService.updateRestaurant(restaurant.getRestaurantId(), restaurant, image.getBytes());
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body("Restaurant updated successfully");
+        }
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("Restaurant not found");
     }
 
     @DeleteMapping("/{restaurantId}")

@@ -2,7 +2,6 @@ package pl.dskimina.foodsy.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.dskimina.foodsy.entity.Restaurant;
@@ -24,7 +23,7 @@ public class RestaurantService {
     }
 
     @Transactional
-    public void addRestaurant(String name, String phone, String email, String address, String tags){
+    public void addRestaurant(String name, String phone, String email, String address, String tags, byte[] image){
         Restaurant restaurant = new Restaurant();
         restaurant.setRestaurantId(UUID.randomUUID().toString());
         restaurant.setName(name);
@@ -32,6 +31,7 @@ public class RestaurantService {
         restaurant.setEmail(email);
         restaurant.setAddress(address);
         restaurant.setTags(tags);
+        restaurant.setImage(image);
         restaurantRepository.save(restaurant);
     }
 
@@ -69,8 +69,12 @@ public class RestaurantService {
     }
 
     @Transactional
-    public void updateRestaurant(String restaurantId, String phone, String email, String address, String tags){
+    public void updateRestaurant(String restaurantId, RestaurantData restaurantData, byte[] image){
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+        String tags = restaurantData.getTags();
+        String email = restaurantData.getEmail();
+        String phone = restaurantData.getPhone();
+        String address = restaurantData.getAddress();
         if(restaurant == null){
             LOG.warn("restaurant is null");
         }else {
@@ -78,6 +82,7 @@ public class RestaurantService {
             if(email != null && !email.isEmpty()) restaurant.setEmail(email);
             if(address != null && !address.isEmpty()) restaurant.setAddress(address);
             if(phone != null && !phone.isEmpty()) restaurant.setPhone(phone);
+            if(image != null) restaurant.setImage(image);
             LOG.info("restaurant has been updated");
             restaurantRepository.save(restaurant);
         }

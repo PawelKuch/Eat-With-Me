@@ -49,7 +49,6 @@ public class OrderController {
     @PostMapping
     public RedirectView createOrder(@RequestParam("restaurantId") String restaurantId, @RequestParam("closingDate") String closingDateString,
                                     @RequestParam("minValue") String minValue, @RequestParam("description") String description) {
-
         String userId = sessionService.getCurrentUser().getUserId();
         OrderData order = orderService.createOrder(restaurantId, userId, closingDateString, minValue, description);
         return new RedirectView("/orders/" + order.getOrderId() + "/orderItems");

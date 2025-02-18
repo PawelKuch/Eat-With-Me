@@ -27,11 +27,11 @@
             <form id="create-order-form" method="post" action="/orders">
                 <div class="input-group">
                     <span class="input-group-text w-50 mb-2">Data zamknięcia</span>
-                    <input id="closing-date" class="form-control mb-2" name="closingDate" type="datetime-local" placeholder="data zamknięcia">
+                    <input id="closing-date" class="form-control mb-2" name="closingDate" type="datetime-local" placeholder="data zamknięcia" required>
                 </div>
                 <div class="input-group">
                     <span class="input-group-text w-50 mb-2">Minimalna kwota</span>
-                    <input class="form-control mb-2" name="minValue" placeholder="minimalna kwota zamówienia">
+                    <input id="min-value" class="form-control mb-2" name="minValue" placeholder="minimalna kwota zamówienia" required>
                 </div>
                 <div class="input-group d-flex flex-column mb-2">
                     <span class="input-group-text">Dodatkowe informacje</span>

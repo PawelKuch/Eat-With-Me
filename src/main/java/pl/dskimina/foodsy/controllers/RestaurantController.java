@@ -35,6 +35,7 @@ public class RestaurantController {
         this.menuItemService = menuItemService;
     }
 
+
     @ModelAttribute
     public void fillModel(Model modelMap){
         modelMap.addAttribute("users", userService.getUsers());
@@ -81,9 +82,9 @@ public class RestaurantController {
     }
 
     @PutMapping("/{restaurantId}")
-    public ResponseEntity<String> updateRestaurant(@PathVariable String restaurantId, @RequestBody RestaurantData restaurant, @RequestParam(value = "image", required = false) MultipartFile image) throws IOException {
+    public ResponseEntity<String> updateRestaurant(@PathVariable String restaurantId, @RequestBody RestaurantData restaurant) {
         if(restaurantId.equals(restaurant.getRestaurantId())){
-            restaurantService.updateRestaurant(restaurant.getRestaurantId(), restaurant, image.getBytes());
+            restaurantService.updateRestaurant(restaurant.getRestaurantId(), restaurant);
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body("Restaurant updated successfully");
@@ -91,6 +92,18 @@ public class RestaurantController {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body("Restaurant not found");
+    }
+
+    @PutMapping("/logos/{restaurantId}")
+    public ResponseEntity<String> updateRestaurantLogo(@PathVariable String restaurantId, @RequestBody MultipartFile image) throws IOException{
+        if(image != null && restaurantService.updateRestaurantLogo(restaurantId, image)){
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body("Restaurant logo updated successfully");
+        }
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Image is null");
     }
 
     @DeleteMapping("/{restaurantId}")

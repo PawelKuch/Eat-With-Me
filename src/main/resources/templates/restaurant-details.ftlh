@@ -19,7 +19,7 @@
     <#include "side-navbar.ftlh">
     <div id="restaurant-details-container" class="d-flex flex-column w-100">
         <div id="logo-container" class="d-flex justify-content-center">
-            <img src="/restaurants/logos/${restaurant.restaurantId}" alt="${restaurant.name}" width=400px" height="400px">
+            <img src="/restaurants/logos/${restaurant.restaurantId}" alt="${restaurant.name}" width=400px" height="300px">
         </div>
         <div class="d-flex justify-content-start mb-3">
             <button data-restaurant-id="${restaurant.restaurantId}" id="change-restaurant-image-btn" class="btn btn-dark mb-3 ms-4 ps-3" data-bs-toggle="modal" data-bs-target="#change-logo-modal">Zmień logo</button>
@@ -27,71 +27,76 @@
         </div>
         <div id="details-container" class="d-flex flex-column justify-content-center mt-3">
             <div class="fw-bold fs-4 m-auto"> ${restaurant.name}</div>
-            <div class="list-group px-2 w-100">
-                <div class="list-group-item d-flex">
-                    <div class="col-4 d-flex">Tagi</div>
-                    <div id="valueDiv-1" class="col-7 d-flex">${restaurant.tags}</div>
-                    <div id="inputDiv-1" class="col-7 d-none">
-                        <form id="form-1" method="post" action="/update-restaurant/${restaurant.restaurantId}">
-                            <textarea class="tags" name="tags" id="textarea-1" rows="1" cols="70">${restaurant.tags}</textarea>
-                        </form>
-                        <button data-restaurant-id="${restaurant.restaurantId}" data-button-id="1" class="submit-btn btn btn-dark ms-1">OK</button>
-                        <button data-button-id="1" class="cancel-btn btn btn-dark ms-1">X</button>
-                    </div>
-                    <div class="col-1">
-                        <button id="change-btn-1" data-button-id="1" class="change-btn btn btn-dark justify-content-center"> <i class="bi bi-pencil-fill"></i> </button>
-                    </div>
-                </div>
-
-                <div class="list-group-item d-flex">
-                    <div class="col-4">Email</div>
-                    <div id="valueDiv-2" class="col-7">${restaurant.email}</div>
-                    <div id="inputDiv-2" class="col-7 d-none">
-                        <form id="form-2" method="post" action="/update-restaurant/${restaurant.restaurantId}">
-                            <textarea class="email" name="email" id="textarea-2" rows="1" cols="70">${restaurant.email}</textarea>
-                        </form>
-                        <button data-restaurant-id="${restaurant.restaurantId}" data-button-id="2" class="submit-btn btn btn-dark ms-1">OK</button>
-                        <button data-button-id="2" class="cancel-btn btn btn-dark ms-1">X</button>
-                    </div>
-                    <div class="col-1">
-                        <button id="change-btn-2" data-button-id="2" class="change-btn btn btn-dark justify-content-center"> <i class="bi bi-pencil-fill"></i> </button>
+            <div class="row justify-content-center mt-3">
+                <div class="col-5">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex flex-row w-100">
+                            <div class="w-50"><h5><i class="bi bi-tags"></i> Tags</h5></div>
+                            <div class="d-flex justify-content-end w-50"><button id="change-btn-1" data-button-id="1" class="change-btn btn btn-dark justify-content-center"> <i class="bi bi-pencil-fill"></i> </button></div>
+                        </div>
+                        <div id="valueDiv-1" class="col-7 card-text">${restaurant.tags}</div>
+                        <div id="inputDiv-1" class="col-7 d-none">
+                            <form id="form-1" method="post" action="/restaurants/${restaurant.restaurantId}">
+                                <textarea class="tags" name="tags" id="textarea-1" rows="1" cols="70">${restaurant.tags}</textarea>
+                            </form>
+                            <button data-restaurant-id="${restaurant.restaurantId}" data-button-id="1" class="submit-btn btn btn-dark ms-1">OK</button>
+                            <button data-button-id="1" class="cancel-btn btn btn-dark ms-1">X</button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="list-group-item d-flex">
-                    <div class="col-4">Adres</div>
-                    <div id="valueDiv-3" class="col-7">${restaurant.address}</div>
-                    <div id="inputDiv-3" class="col-7 d-none">
-                        <form id="form-3" method="post" action="/update-restaurant/${restaurant.restaurantId}">
-                            <textarea class="address" name="address" id="textarea-3" rows="1" cols="70">${restaurant.address}</textarea>
-                        </form>
-                        <button data-restaurant-id="${restaurant.restaurantId}" data-button-id="3" class="submit-btn btn btn-dark ms-1">OK</button>
-                        <button data-button-id="3" class="cancel-btn btn btn-dark ms-1">X</button>
-                    </div>
-                    <div class="col-1">
-                        <button id="change-btn-3" data-button-id="3" class="change-btn btn btn-dark justify-content-center"> <i class="bi bi-pencil-fill"></i> </button>
+                <div class="col-5">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex flex-row w-100">
+                            <div class="w-50"><h5><i class="bi bi-envelope"></i> Email</h5></div>
+                            <div class="d-flex justify-content-end w-50"><button id="change-btn-2" data-button-id="2" class="change-btn btn btn-dark justify-content-center"> <i class="bi bi-pencil-fill"></i> </button></div>
+                        </div>
+                        <div id="valueDiv-2" class="col-7 card-text">${restaurant.email}</div>
+                        <div id="inputDiv-2" class="col-7 d-none">
+                            <form id="form-2" method="post" action="/restaurants/${restaurant.restaurantId}">
+                                <textarea class="email" name="email" id="textarea-2" rows="1" cols="70">${restaurant.email}</textarea>
+                            </form>
+                            <button data-restaurant-id="${restaurant.restaurantId}" data-button-id="2" class="submit-btn btn btn-dark ms-1">OK</button>
+                            <button data-button-id="2" class="cancel-btn btn btn-dark ms-1">X</button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="list-group-item d-flex">
-                    <div class="col-4">Nr tel.</div>
-                    <div id="valueDiv-4" class="col-7">${restaurant.phone}</div>
-                    <div id="inputDiv-4" class="col-7 d-none">
-                        <form id="form-4" method="post" action="/restaurants/${restaurant.restaurantId}">
-                            <textarea class="phone" name="phone" id="textarea-4" rows="1" cols="70">${restaurant.phone}</textarea>
-                        </form>
-                        <button data-restaurant-id="${restaurant.restaurantId}" data-button-id="4" class="submit-btn btn btn-dark ms-1">OK</button>
-                        <button data-button-id="4" class="cancel-btn btn btn-dark ms-1">X</button>
+                <div class="col-5">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex flex-row w-100">
+                            <div class="w-50"><h5><i class="bi bi-geo-alt"> Adres.</i></h5></div>
+                            <div class="d-flex justify-content-end w-50"><button id="change-btn-3" data-button-id="3" class="change-btn btn btn-dark justify-content-center"> <i class="bi bi-pencil-fill"></i> </button></div>
+                        </div>
+                        <div id="valueDiv-3" class="col-7 card-text">${restaurant.address}</div>
+                        <div id="inputDiv-3" class="col-7 d-none">
+                            <form id="form-3" method="post" action="/restaurants/${restaurant.restaurantId}">
+                                <textarea class="address" name="address" id="textarea-3" rows="1" cols="70">${restaurant.address}</textarea>
+                            </form>
+                            <button data-restaurant-id="${restaurant.restaurantId}" data-button-id="3" class="submit-btn btn btn-dark ms-1">OK</button>
+                            <button data-button-id="3" class="cancel-btn btn btn-dark ms-1">X</button>
+                        </div>
                     </div>
-                    <div class="col-1">
-                        <button id="change-btn-4" data-button-id="4" class="change-btn btn btn-dark justify-content-center"> <i class="bi bi-pencil-fill"></i> </button>
+                </div>
+
+                <div class="col-5">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex flex-row w-100">
+                            <div class="w-50"><h5><i class="bi bi-telephone"></i> Nr tel.</h5></div>
+                            <div class="d-flex justify-content-end w-50"><button id="change-btn-4" data-button-id="4" class="change-btn btn btn-dark justify-content-center"> <i class="bi bi-pencil-fill"></i> </button></div>
+                        </div>
+                        <div id="valueDiv-4" class="col-7 card-text">${restaurant.phone}</div>
+                        <div id="inputDiv-4" class="col-7 d-none">
+                            <form id="form-4" method="post" action="/restaurants/${restaurant.restaurantId}">
+                                <textarea class="phone" name="phone" id="textarea-4" rows="1" cols="70">${restaurant.phone}</textarea>
+                            </form>
+                            <button data-restaurant-id="${restaurant.restaurantId}" data-button-id="4" class="submit-btn btn btn-dark ms-1">OK</button>
+                            <button data-button-id="4" class="cancel-btn btn btn-dark ms-1">X</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
-
 
         <div data-restaurant-id="${restaurant.restaurantId}" id="display-menuItem-container" class="row d-flex justify-content-center mt-3">
             <div class="d-flex justify-content-center"><h3>MENU</h3></div>
@@ -108,22 +113,24 @@
                         </div>
                     </div>
 
-                <form class="my-1 d-none flex-row justify-content-center align-items-center list-group-item update-menu-item-form-${menuItem.menuItemId}">
-                    <div class="col-4 name"><textarea class="name-${menuItem.menuItemId}" cols="35" rows="1" name="name">${menuItem.name}</textarea></div>
-                    <div class="col-4 description"><textarea class="description-${menuItem.menuItemId}" cols="50" rows="1" name="description">${menuItem.description}</textarea></div>
-                    <div class="col-2 price"><textarea class="price-${menuItem.menuItemId}" cols="8" rows="1" name="price">${menuItem.price}</textarea></div>
+                    <form class="my-1 d-none flex-row justify-content-center align-items-center list-group-item update-menu-item-form-${menuItem.menuItemId}">
+                        <div class="col-4 name"><textarea class="name-${menuItem.menuItemId}" cols="35" rows="1" name="name">${menuItem.name}</textarea></div>
+                        <div class="col-4 description"><textarea class="description-${menuItem.menuItemId}" cols="50" rows="1" name="description">${menuItem.description}</textarea></div>
+                        <div class="col-2 price"><textarea class="price-${menuItem.menuItemId}" cols="8" rows="1" name="price">${menuItem.price}</textarea></div>
 
-                    <div class="col-2">
-                        <div data-menu-item-id="${menuItem.menuItemId}" class="btn btn-dark confirm-update-btn">OK</div>
-                        <div class="btn btn-dark discard-button-${menuItem.menuItemId}">X</div>
-                    </div>
-                </form>
+                        <div class="col-2">
+                            <div data-menu-item-id="${menuItem.menuItemId}" class="btn btn-dark confirm-update-btn">OK</div>
+                            <div class="btn btn-dark discard-button-${menuItem.menuItemId}">X</div>
+                        </div>
+                    </form>
 
                 </#list>
             </div>
         </div>
     </div>
+</div>
 
+<div id="modals-container">
     <div class="modal fade" id="add-menu-item-modal" tabindex="-1" aria-labelledby="add-menu-item-modal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -170,28 +177,28 @@
             </div>
         </div>
     </div>
-</div>
 
-<div class="modal fade" id="change-logo-modal" tabindex="-1" aria-labelledby="change-logo-modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div id="modal-title-div">
-                    <h1 class="modal-title fs-5">Zmień logo</h1>
+    <div class="modal fade" id="change-logo-modal" tabindex="-1" aria-labelledby="change-logo-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div id="modal-title-div">
+                        <h1 class="modal-title fs-5">Zmień logo</h1>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <input type="file" id="image">
-            </div>
-            <div class="modal-footer">
-                <button data-restaurant-id="${restaurant.restaurantId}" id="confirm-new-logo" class="btn btn-dark mb-3">Zatwierdź</button>
-                <button type="button" class="btn btn-secondary mb-3" data-bs-dismiss="modal">Zamknij</button>
+                <div class="modal-body">
+                    <input type="file" id="image">
+                </div>
+                <div class="modal-footer">
+                    <button data-restaurant-id="${restaurant.restaurantId}" id="confirm-new-logo" class="btn btn-dark mb-3">Zatwierdź</button>
+                    <button type="button" class="btn btn-secondary mb-3" data-bs-dismiss="modal">Zamknij</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
-</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script src="/static/js/restaurant-details.js"></script>
 </body>

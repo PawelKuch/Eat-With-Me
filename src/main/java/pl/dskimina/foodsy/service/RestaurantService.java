@@ -4,9 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import pl.dskimina.foodsy.entity.Restaurant;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
 import pl.dskimina.foodsy.repository.RestaurantRepository;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -69,7 +72,7 @@ public class RestaurantService {
     }
 
     @Transactional
-    public void updateRestaurant(String restaurantId, RestaurantData restaurantData, byte[] image){
+    public void updateRestaurant(String restaurantId, RestaurantData restaurantData){
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
         String tags = restaurantData.getTags();
         String email = restaurantData.getEmail();
@@ -82,10 +85,20 @@ public class RestaurantService {
             if(email != null && !email.isEmpty()) restaurant.setEmail(email);
             if(address != null && !address.isEmpty()) restaurant.setAddress(address);
             if(phone != null && !phone.isEmpty()) restaurant.setPhone(phone);
-            if(image != null) restaurant.setImage(image);
             LOG.info("restaurant has been updated");
             restaurantRepository.save(restaurant);
         }
+    }
+
+    @Transactional
+    public boolean updateRestaurantLogo(String restaurantId, MultipartFile image) throws IOException {
+        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+        if(restaurant != null) {
+            restaurant.setImage(image.getBytes());
+            restaurantRepository.save(restaurant);
+            return true;
+        }
+        return false;
     }
 
     public boolean deleteRestaurantByRestaurantId(String restaurantId){

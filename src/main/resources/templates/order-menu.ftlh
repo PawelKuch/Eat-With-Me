@@ -98,7 +98,7 @@
 
                 <div id="orders-containers" class="col-6 d-flex flex-column border-start border-dark">
                     <div class="d-flex flex-row justify-content-center">
-                        <div><img src="/restaurants/logos/${restaurant.restaurantId}" alt="restaurant logo ${restaurant.restaurantId}" width="200px" height="200px"></div>
+                        <div><img src="/restaurants/${restaurant.restaurantId}/logo" alt="restaurant logo ${restaurant.restaurantId}" width="200px" height="200px"></div>
                         <div class="ms-3 d-flex flex-column">
                             <div>Informacje dot zamówienia</div>
                             <div>${order.description}</div>

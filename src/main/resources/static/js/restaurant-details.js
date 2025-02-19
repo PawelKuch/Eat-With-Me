@@ -33,14 +33,13 @@ $(document).ready(function (){
    let confirmNewLogoBtn = $('#confirm-new-logo');
    confirmNewLogoBtn.on('click', function(){
 
-
       let image = document.querySelector('#image').files[0];
       let formData = new FormData();
       formData.append('image', image);
       console.log(formData.get('image').type);
 
       $.ajax({
-         url: "/restaurants/logos/" + restaurantId,
+         url: "/restaurants/" + restaurantId + "/logo",
          data: formData,
          contentType: false,
          processData: false,
@@ -55,16 +54,17 @@ $(document).ready(function (){
       });
    });
 
-   $('.submit-btn').each(function (){
+   $('#update-restaurant-btn').each(function (){
       let restaurantId = $(this).data('restaurant-id');
       $(this).on('click', function (){
 
          let restaurant = {
             restaurantId: restaurantId,
-            tags: $('.tags').val(),
-            email: $('.email').val(),
-            address: $('.address').val(),
-            phone: $('.phone').val(),
+            name: $('#restaurant-name').val(),
+            tags: $('#tags').val(),
+            email: $('#email').val(),
+            address: $('#address').val(),
+            phone: $('#phone').val(),
          };
 
          $.ajax({

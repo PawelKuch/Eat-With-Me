@@ -20,6 +20,7 @@
 <div id="main-container" class="d-flex flex-row w-100">
     <#include "side-navbar.ftlh">
 
+    
     <div id="create-order-container" class="d-flex flex-column w-100 mt-3 align-items-center justify-content-center">
 
         <div class="order-details d-flex flex-column justify-content-center bg-dark w-50 rounded-3 px-3 py-3">

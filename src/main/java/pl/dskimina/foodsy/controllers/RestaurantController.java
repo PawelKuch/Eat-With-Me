@@ -73,7 +73,7 @@ public class RestaurantController {
         return "restaurant-details";
     }
 
-    @GetMapping("/logos/{restaurantId}")
+    @GetMapping("/{restaurantId}/logo")
     public ResponseEntity<byte[]> getLogoForRestaurant(@PathVariable String restaurantId){
         byte[] restaurantLogoBytes = restaurantService.getImageForRestaurantId(restaurantId);
         HttpHeaders headers = new HttpHeaders();
@@ -94,7 +94,7 @@ public class RestaurantController {
                 .body("Restaurant not found");
     }
 
-    @PutMapping("/logos/{restaurantId}")
+    @PutMapping("/{restaurantId}/logo")
     public ResponseEntity<String> updateRestaurantLogo(@PathVariable String restaurantId, @RequestBody MultipartFile image) throws IOException{
         if(image != null && restaurantService.updateRestaurantLogo(restaurantId, image)){
             return ResponseEntity

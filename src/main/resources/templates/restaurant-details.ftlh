@@ -21,7 +21,7 @@
         <div id="restaurant-details-container" class="d-flex flex-column w-100 px-5" style="height: 100vh;">
             <div class="d-flex flex-row border-bottom border-dark mt-3 mb-3">
                 <div id="logo-container" class="d-flex justify-content-end w-25">
-                    <img src="/restaurants/logos/${restaurant.restaurantId}" alt="${restaurant.name}" style="clip-path: circle(31%); width: 300px;">
+                    <img src="/restaurants/${restaurant.restaurantId}/logo" alt="${restaurant.name}" style="clip-path: circle(31%); width: 300px;">
                 </div>
                 <div class="d-flex flex-column px-2 pt-4">
                     <div class="fs-4 fw-bold">${restaurant.name}</div>

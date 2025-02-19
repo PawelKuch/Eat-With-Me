@@ -39,7 +39,7 @@ $(document).ready(function (){
       console.log(formData.get('image').type);
 
       $.ajax({
-         url: "/restaurants/logos/" + restaurantId,
+         url: "/restaurants/" + restaurantId + "/logo",
          data: formData,
          contentType: false,
          processData: false,

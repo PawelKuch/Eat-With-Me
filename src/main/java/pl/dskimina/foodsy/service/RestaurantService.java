@@ -74,6 +74,7 @@ public class RestaurantService {
     @Transactional
     public void updateRestaurant(String restaurantId, RestaurantData restaurantData){
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+        String name = restaurantData.getName();
         String tags = restaurantData.getTags();
         String email = restaurantData.getEmail();
         String phone = restaurantData.getPhone();
@@ -81,6 +82,7 @@ public class RestaurantService {
         if(restaurant == null){
             LOG.warn("restaurant is null");
         }else {
+            if(name != null && !name.isEmpty()) restaurant.setName(name);
             if(tags != null && !tags.isEmpty()) restaurant.setTags(tags);
             if(email != null && !email.isEmpty()) restaurant.setEmail(email);
             if(address != null && !address.isEmpty()) restaurant.setAddress(address);

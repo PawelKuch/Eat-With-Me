@@ -26,18 +26,18 @@
                 <div class="d-flex flex-column px-2 pt-4">
                     <div class="fs-4 fw-bold">${restaurant.name}</div>
                     <div class="my-2">
-                        ${restaurant.address}
+                        <i class="bi bi-geo-alt"></i> ${restaurant.address}
                     </div>
                     <div class="d-flex flex-colum my-2">
                         <div>
-                            ${restaurant.email}
+                            <i class="bi bi-envelope-at"></i> ${restaurant.email}
                         </div>
                         <div class="ms-3">
-                            ${restaurant.phone}
+                            <i class="bi bi-telephone"></i> ${restaurant.phone}
                         </div>
                     </div>
                     <div class="my-2">
-                        ${restaurant.tags}
+                        <i class="bi bi-tags"></i> ${restaurant.tags}
                     </div>
                 </div>
             </div>

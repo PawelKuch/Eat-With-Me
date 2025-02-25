@@ -22,14 +22,22 @@ public class OrderController {
     private final UserService userService;
     private final SessionService sessionService;
     private final RestaurantService restaurantService;
+    private final ExtraPaymentService extraPaymentService;
+    private final DiscountService discountService;
+    private final UserOrderPaymentService userOrderPaymentService;
 
     public OrderController(OrderService orderService,
-                           OrderItemService orderItemService, UserService userService, SessionService sessionService, RestaurantService restaurantService) {
+                           OrderItemService orderItemService, UserService userService, SessionService sessionService,
+                           RestaurantService restaurantService, ExtraPaymentService extraPaymentService,
+                           DiscountService discountService, UserOrderPaymentService userOrderPaymentService) {
         this.orderService = orderService;
         this.orderItemService = orderItemService;
         this.userService = userService;
         this.sessionService = sessionService;
         this.restaurantService = restaurantService;
+        this.extraPaymentService = extraPaymentService;
+        this.discountService = discountService;
+        this.userOrderPaymentService = userOrderPaymentService;
     }
 
 
@@ -75,19 +83,32 @@ public class OrderController {
         RestaurantData restaurant = order.getRestaurantData();
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("order", order);
+        model.addAttribute("userAmountForOrder", orderService.getUsersAmountForOrder(orderId));
+        model.addAttribute("userOrderPaymentList", userOrderPaymentService.getUserOrderPaymentsForOrderId(orderId));
         return "order-summary";
     }
 
     @PostMapping("/{orderId}/summary")
-    public RedirectView setFinalValueAndCloseOrder(@PathVariable String orderId,
+    public RedirectView setFinalValueOfOrder(@PathVariable String orderId,
                                                    @RequestParam(value = "cashDiscount", required = false) String cashDiscount,
                                                    @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
-                                                   @RequestParam(value = "extraPayment", required = false) String extraPayment,
+                                                   @RequestParam(value = "isPercentage", required = false) boolean isPercentage,
+                                                   @RequestParam(value = "extraPayment", required = false) String extraPaymentPrice,
+                                                   @RequestParam(value = "extraPaymentProduct", required = false) String extraPaymentProduct,
                                                    RedirectAttributes ra) {
-        if(extraPayment != null) {orderService.addExtraPayment(orderId, extraPayment);}
-        if(cashDiscount != null) {orderService.addCashDiscount(orderId, cashDiscount);}
-        if(percentageDiscount != null) {orderService.addPercentageDiscount(orderId, percentageDiscount);}
-        orderService.closeOrder(orderId);
+        if(extraPaymentPrice != null && extraPaymentProduct != null ) {
+                extraPaymentService.createExtraPayment(orderId, extraPaymentProduct, extraPaymentPrice);
+                extraPaymentService.addExtraPaymentToUserOrderPayment(orderId, extraPaymentPrice);
+        }
+        if(!isPercentage && cashDiscount != null) {
+            discountService.createDiscount(orderId, false, cashDiscount);
+            discountService.addDiscountToUserOrderPayment(orderId, cashDiscount, false);
+        }
+        if(isPercentage && percentageDiscount != null) {
+            discountService.createDiscount(orderId, true, percentageDiscount);
+            discountService.addDiscountToUserOrderPayment(orderId, percentageDiscount, true);
+        }
+
         ra.addFlashAttribute("order", orderService.getOrderByOrderId(orderId));
         return new RedirectView("/orders/" + orderId + "/summary");
     }
@@ -110,7 +131,7 @@ public class OrderController {
                                         @RequestParam(value = "description", required = false) String description,
                                         @RequestParam(value = "price", required = false) String price) {
         orderItemService.createOrderItem(userId, menuItemId, price, orderId, description);
-
+        userOrderPaymentService.addUserOrderPaymentInfoForOrderIdAndUserId(orderId, userId);
         return new RedirectView("/orders/" + orderId + "/orderItems" );
     }
 

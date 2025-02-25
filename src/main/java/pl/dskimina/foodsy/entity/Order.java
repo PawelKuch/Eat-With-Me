@@ -32,7 +32,7 @@ public class Order {
     private boolean isClosed;
 
     @OneToMany(mappedBy = "order")
-    private List<OrderItem> orderItem;
+    private List<OrderItem> orderItems;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")
@@ -41,6 +41,15 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private User owner;
+
+    @OneToMany(mappedBy = "order")
+    private List<ExtraPayment> extraPayments;
+
+    @OneToMany(mappedBy = "order")
+    private List<Discount> discounts;
+
+    @OneToMany(mappedBy = "order")
+    private List<UserOrderPayment> userOrderPayments;
 
 
     public Long getId() {
@@ -93,11 +102,11 @@ public class Order {
     }
 
     public List<OrderItem> getOrderItemList() {
-        return orderItem;
+        return orderItems;
     }
 
     public void setOrderItemList(List<OrderItem> orderItem) {
-        this.orderItem = orderItem;
+        this.orderItems = orderItem;
     }
 
     public User getOwner() {
@@ -106,5 +115,27 @@ public class Order {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    public List<ExtraPayment> getExtraPayments() {
+        return extraPayments;
+    }
+    public void setExtraPayments(List<ExtraPayment> extraPayments) {
+        this.extraPayments = extraPayments;
+    }
+
+    public List<Discount> getDiscounts() {
+        return discounts;
+    }
+    public void setDiscounts(List<Discount> discounts) {
+        this.discounts = discounts;
+    }
+
+    public List<UserOrderPayment> getUserOrderPayments() {
+        return userOrderPayments;
+    }
+
+    public void setUserOrderPayments(List<UserOrderPayment> userOrderPayments) {
+        this.userOrderPayments = userOrderPayments;
     }
 }

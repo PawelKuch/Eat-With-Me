@@ -6,6 +6,7 @@ import pl.dskimina.foodsy.entity.MenuItem;
 import pl.dskimina.foodsy.entity.Order;
 import pl.dskimina.foodsy.entity.OrderItem;
 import pl.dskimina.foodsy.entity.User;
+import pl.dskimina.foodsy.entity.data.UserOrderInfo;
 import pl.dskimina.foodsy.repository.MenuItemRepository;
 import pl.dskimina.foodsy.repository.OrderItemRepository;
 import pl.dskimina.foodsy.repository.OrderRepository;
@@ -68,5 +69,10 @@ public class OrderItemService {
 
             return false;
         }
+    }
+
+    @Transactional
+    public UserOrderInfo getUserOrderInfoDTO(String userId, String orderId) {
+        return orderItemRepository.getUserOrderInfo(orderId, userId);
     }
 }

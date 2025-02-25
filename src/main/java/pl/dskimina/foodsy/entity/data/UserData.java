@@ -8,6 +8,7 @@ public class UserData {
     private String lastName;
     private List<OrderItemData> orderItemDataList;
     private List<OrderData> orderList;
+    private List<UserOrderPaymentData> userOrderPaymentData;
 
     public String getUserId() {
         return userId;
@@ -47,5 +48,13 @@ public class UserData {
 
     public void setOrderList(List<OrderData> orderList) {
         this.orderList = orderList;
+    }
+
+    public List<UserOrderPaymentData> getUserOrderPaymentData() {
+        return userOrderPaymentData;
+    }
+
+    public void setUserOrderPaymentData(List<UserOrderPaymentData> userOrderPaymentData) {
+        this.userOrderPaymentData = userOrderPaymentData;
     }
 }

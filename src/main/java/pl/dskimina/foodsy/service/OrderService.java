@@ -2,10 +2,7 @@ package pl.dskimina.foodsy.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.dskimina.foodsy.entity.Order;
-import pl.dskimina.foodsy.entity.OrderItem;
-import pl.dskimina.foodsy.entity.Restaurant;
-import pl.dskimina.foodsy.entity.User;
+import pl.dskimina.foodsy.entity.*;
 import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.repository.OrderRepository;
 
@@ -36,6 +33,15 @@ public class OrderService {
         return toDataService.convert(order);
     }
 
+    @Transactional Order findOrderByOrderId(String orderId){
+        return orderRepository.findByOrderId(orderId);
+    }
+
+    @Transactional
+    public void saveOrder(Order order){
+        orderRepository.save(order);
+    }
+
     @Transactional
     public OrderData createOrder(String restaurantId, String userId, String closingDateString, String minValueString, String description) {
         Order order = new Order();
@@ -49,7 +55,13 @@ public class OrderService {
         order.setMinValue(minValue);
         order.setValue(0.0);
         List<OrderItem> orderItems = new ArrayList<>();
+        List<ExtraPayment> extraPayments = new ArrayList<>();
+        List<Discount> discounts = new ArrayList<>();
+        List<UserOrderPayment> userOrderPayments = new ArrayList<>();
+        order.setUserOrderPayments(userOrderPayments);
         order.setOrderItemList(orderItems);
+        order.setExtraPayments(extraPayments);
+        order.setDiscounts(discounts);
         order.setOwner(user);
         Restaurant restaurant = restaurantService.getRestaurantEntityByRestaurantId(restaurantId);
         order.setRestaurant(restaurant);
@@ -65,11 +77,11 @@ public class OrderService {
     }
 
     @Transactional
-    public void addPercentageDiscount(String orderId, String percentageDiscount){
+    public void addPercentageDiscount(String orderId, String percentageDiscountString){
         Order order = orderRepository.findByOrderId(orderId);
         Double orderValue = order.getValue();
-        double discountPercentageInt = Double.parseDouble(percentageDiscount);
-        Double newOrderValue = orderValue - ((discountPercentageInt / 100) * orderValue);
+        double discountPercentage = Double.parseDouble(percentageDiscountString);
+        Double newOrderValue = orderValue - ((discountPercentage / 100) * orderValue);
         order.setValue(newOrderValue);
         orderRepository.save(order);
     }
@@ -100,4 +112,10 @@ public class OrderService {
         order.setIsClosed(true);
         orderRepository.save(order);
     }
+
+    @Transactional
+    public int getUsersAmountForOrder(String orderId){
+        return orderRepository.getUsersAmountForOrder(orderId);
+    }
+
 }

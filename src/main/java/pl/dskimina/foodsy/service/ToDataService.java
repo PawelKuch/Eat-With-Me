@@ -44,7 +44,10 @@ public class ToDataService {
         orderData.setMinValue(order.getMinValue());
         orderData.setIsClosed(order.getIsClosed());
         orderData.setOwner(convert(order.getOwner()));
+        orderData.setExtraPaymentList(order.getExtraPayments().stream().map(this::convert).toList());
         orderData.setOrderItemList(order.getOrderItemList().stream().map(this::convert). toList());
+        orderData.setDiscountList(order.getDiscounts().stream().map(this::convert).toList());
+        orderData.setUserOrderPaymentList(order.getUserOrderPayments().stream().map(this::convert).toList());
         orderData.setRestaurantData(convert(order.getRestaurant()));
         return orderData;
     }
@@ -65,5 +68,37 @@ public class ToDataService {
         orderItemData.setUser(convert(orderItem.getUser()));
         orderItemData.setMenuItem(convert(orderItem.getMenuItem()));
         return orderItemData;
+    }
+
+    public ExtraPaymentData convert(ExtraPayment extraPayment){
+        ExtraPaymentData extraPaymentData = new ExtraPaymentData();
+        extraPaymentData.setExtraPaymentId(extraPayment.getExtraPaymentId());
+        extraPaymentData.setExtraPaymentProduct(extraPayment.getProduct());
+        extraPaymentData.setPrice(extraPayment.getPrice());
+        return extraPaymentData;
+    }
+
+    public DiscountData convert(Discount discount){
+        DiscountData discountData = new DiscountData();
+        discountData.setDiscountId(discount.getDiscountId());
+        discountData.setIsPercentage(discount.getIsPercentage());
+        if(discount.getIsPercentage()){
+            discountData.setValue(discount.getValue()*100.0);
+        } else {
+            discountData.setValue(discount.getValue());
+        }
+        return discountData;
+    }
+
+    public UserOrderPaymentData convert(UserOrderPayment userOrderPayment) {
+        UserOrderPaymentData userPayment = new UserOrderPaymentData();
+        userPayment.setUserOrderPaymentId(userOrderPayment.getUserOrderPaymentId());
+        userPayment.setAmountToPay(userOrderPayment.getAmountToPay());
+        userPayment.setExtraPaymentValue(userOrderPayment.getExtraPaymentValue());
+        userPayment.setIsPaid(userOrderPayment.getIsPaid());
+        userPayment.setUser(convert(userOrderPayment.getUser()));
+        userPayment.setDiscountInPercentage(userOrderPayment.getDiscountInPercentage() * 100);
+        userPayment.setDiscountValueInCash(userOrderPayment.getDiscountValueInCash());
+        return userPayment;
     }
 }

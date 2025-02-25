@@ -1,6 +1,5 @@
 package pl.dskimina.foodsy.entity.data;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +14,9 @@ public class OrderData {
     private List<OrderItemData> orderItemList;
     private RestaurantData restaurantData;
     private UserData owner;
+    private List<ExtraPaymentData> extraPaymentList;
+    private List<DiscountData> discountList;
+    private List<UserOrderPaymentData> userOrderPaymentList;
 
     public String getOrderId() {
         return orderId;
@@ -72,5 +74,28 @@ public class OrderData {
 
     public void setOwner(UserData owner) {
         this.owner = owner;
+    }
+
+    public List<ExtraPaymentData> getExtraPaymentList() {
+        return extraPaymentList;
+    }
+    public void setExtraPaymentList(List<ExtraPaymentData> extraPaymentDataList) {
+        this.extraPaymentList = extraPaymentDataList;
+    }
+
+    public List<DiscountData> getDiscountList() {
+        return discountList;
+    }
+
+    public void setDiscountList(List<DiscountData> discountList) {
+        this.discountList = discountList;
+    }
+
+    public List<UserOrderPaymentData> getUserOrderPaymentList() {
+        return userOrderPaymentList;
+    }
+
+    public void setUserOrderPaymentList(List<UserOrderPaymentData> userOrderPaymentList) {
+        this.userOrderPaymentList = userOrderPaymentList;
     }
 }

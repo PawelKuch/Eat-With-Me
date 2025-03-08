@@ -43,6 +43,9 @@ public class ToDataService {
         orderData.setDescription(order.getDescription());
         orderData.setMinValue(order.getMinValue());
         orderData.setIsClosed(order.getIsClosed());
+        orderData.setCashDiscount(order.getCashDiscount());
+        orderData.setPercentageDiscount(order.getPercentageDiscount());
+        orderData.setPercentageDiscountCashValue(order.getPercentageDiscountCashValue());
         orderData.setOwner(convert(order.getOwner()));
         orderData.setExtraPaymentList(order.getExtraPayments().stream().map(this::convert).toList());
         orderData.setOrderItemList(order.getOrderItemList().stream().map(this::convert). toList());
@@ -99,6 +102,9 @@ public class ToDataService {
         userPayment.setUser(convert(userOrderPayment.getUser()));
         userPayment.setDiscountInPercentage(userOrderPayment.getDiscountInPercentage() * 100);
         userPayment.setDiscountValueInCash(userOrderPayment.getDiscountValueInCash());
+        userPayment.setGeneralDiscountValue(userOrderPayment.getGeneralDiscountValue());
+        userPayment.setDiscountInPercentageInCash(userOrderPayment.getDiscountInPercentageInCash());
+        userPayment.setBaseForPercentageDiscount(userOrderPayment.getBaseForPercentageDiscount());
         return userPayment;
     }
 }

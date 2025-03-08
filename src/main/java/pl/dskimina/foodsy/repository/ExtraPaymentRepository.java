@@ -13,5 +13,7 @@ public interface ExtraPaymentRepository extends JpaRepository<ExtraPayment, Long
     @Query("SELECT SUM(ep.price) FROM ExtraPayment ep WHERE ep.order.orderId = :orderId")
     Double getExtraPaymentsValueForOrder(@Param("orderId") String orderId);
 
+    ExtraPayment findByExtraPaymentIdAndOrderOrderId(String extraPaymentId, String orderId);
+
 
 }

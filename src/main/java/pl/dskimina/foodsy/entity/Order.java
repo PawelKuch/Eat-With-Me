@@ -31,6 +31,15 @@ public class Order {
     @Column(name = "is_closed")
     private boolean isClosed;
 
+    @Column(name = "percentage_discount")
+    private Double percentageDiscount; //e.g. 10% = 0,1
+
+    @Column(name = "percentage_discount_cash_value")
+    private Double percentageDiscountCashValue;
+
+    @Column(name = "cash_discount")
+    private Double cashDiscount;
+
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
 
@@ -93,6 +102,31 @@ public class Order {
 
     public boolean getIsClosed(){return isClosed;}
     public void setIsClosed(boolean isClosed){this.isClosed = isClosed;}
+
+    public Double getPercentageDiscount() {
+        return percentageDiscount;
+    }
+
+    public void setPercentageDiscount(Double percentageDiscount) {
+        this.percentageDiscount = percentageDiscount;
+    }
+
+    public Double getPercentageDiscountCashValue() {
+        return percentageDiscountCashValue;
+    }
+
+    public void setPercentageDiscountCashValue(Double percentageDiscountCashValue) {
+        this.percentageDiscountCashValue = percentageDiscountCashValue;
+    }
+
+    public Double getCashDiscount() {
+        return cashDiscount;
+    }
+
+    public void setCashDiscount(Double cashDiscount) {
+        this.cashDiscount = cashDiscount;
+    }
+
 
     public Restaurant getRestaurant() {
         return restaurant;

@@ -1,6 +1,8 @@
 package pl.dskimina.foodsy.service;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pl.dskimina.foodsy.entity.ExtraPayment;
 import pl.dskimina.foodsy.entity.Order;
@@ -15,6 +17,8 @@ public class ExtraPaymentService {
     private final ExtraPaymentRepository extraPaymentRepository;
     private final OrderService orderService;
     private final UserOrderPaymentService userOrderPaymentService;
+
+    Logger LOG = LoggerFactory.getLogger(ExtraPaymentService.class);
 
     public ExtraPaymentService(ExtraPaymentRepository extraPaymentRepository, OrderService orderService, UserOrderPaymentService userOrderPaymentService) {
         this.extraPaymentRepository = extraPaymentRepository;
@@ -56,6 +60,16 @@ public class ExtraPaymentService {
             data.setAmountToPay(data.getAmountToPay() + extraPaymentValueForUser);
             userOrderPaymentService.saveUserOrderPayment(data);
         });
+    }
 
+    @Transactional
+    public boolean deleteExtraPayment(String orderId, String extraPaymentId) {
+        ExtraPayment extraPayment = extraPaymentRepository.findByExtraPaymentIdAndOrderOrderId(extraPaymentId, orderId);
+        if (extraPayment == null) {
+            LOG.error("ExtraPayment not found");
+            return false;
+        }
+        extraPaymentRepository.delete(extraPayment);
+        return true;
     }
 }

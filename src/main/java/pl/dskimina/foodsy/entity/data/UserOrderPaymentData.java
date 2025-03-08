@@ -10,6 +10,9 @@ public class UserOrderPaymentData {
     private boolean isPaid;
     private Double discountValueInCash;
     private Double discountInPercentage;
+    private Double generalDiscountValue;
+    private Double discountInPercentageInCash;
+    private Double baseForPercentageDiscount;
 
     public String getUserOrderPaymentId() {
         return userOrderPaymentId;
@@ -73,5 +76,29 @@ public class UserOrderPaymentData {
 
     public void setDiscountInPercentage(Double discountInPercentage) {
         this.discountInPercentage = discountInPercentage;
+    }
+
+    public Double getGeneralDiscountValue() {
+        return generalDiscountValue;
+    }
+
+    public void setGeneralDiscountValue(Double generalDiscountValue) {
+        this.generalDiscountValue = generalDiscountValue;
+    }
+
+    public Double getDiscountInPercentageInCash() {
+        return discountInPercentageInCash;
+    }
+
+    public void setDiscountInPercentageInCash(Double discountInPercentageInCash) {
+        this.discountInPercentageInCash = discountInPercentageInCash;
+    }
+
+    public Double getBaseForPercentageDiscount() {
+        return baseForPercentageDiscount;
+    }
+
+    public void setBaseForPercentageDiscount(Double baseForPercentageDiscount) {
+        this.baseForPercentageDiscount = baseForPercentageDiscount;
     }
 }

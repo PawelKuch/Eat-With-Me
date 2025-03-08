@@ -1,6 +1,9 @@
 package pl.dskimina.foodsy.controllers;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +15,7 @@ import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
 import pl.dskimina.foodsy.service.*;
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -85,34 +89,77 @@ public class OrderController {
         model.addAttribute("order", order);
         model.addAttribute("userAmountForOrder", orderService.getUsersAmountForOrder(orderId));
         model.addAttribute("userOrderPaymentList", userOrderPaymentService.getUserOrderPaymentsForOrderId(orderId));
+
         return "order-summary";
     }
 
     @PostMapping("/{orderId}/summary")
-    public RedirectView setFinalValueOfOrder(@PathVariable String orderId,
-                                                   @RequestParam(value = "cashDiscount", required = false) String cashDiscount,
-                                                   @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
-                                                   @RequestParam(value = "isPercentage", required = false) boolean isPercentage,
-                                                   @RequestParam(value = "extraPayment", required = false) String extraPaymentPrice,
-                                                   @RequestParam(value = "extraPaymentProduct", required = false) String extraPaymentProduct,
-                                                   RedirectAttributes ra) {
-        if(extraPaymentPrice != null && extraPaymentProduct != null ) {
-                extraPaymentService.createExtraPayment(orderId, extraPaymentProduct, extraPaymentPrice);
-                extraPaymentService.addExtraPaymentToUserOrderPayment(orderId, extraPaymentPrice);
-        }
-        if(!isPercentage && cashDiscount != null) {
-            discountService.createDiscount(orderId, false, cashDiscount);
-            discountService.addDiscountToUserOrderPayment(orderId, cashDiscount, false);
-        }
-        if(isPercentage && percentageDiscount != null) {
-            discountService.createDiscount(orderId, true, percentageDiscount);
-            discountService.addDiscountToUserOrderPayment(orderId, percentageDiscount, true);
+        public RedirectView setFinalValueOfOrder(@PathVariable String orderId,
+                                                       @RequestParam(value = "cashDiscount", required = false) String cashDiscount,
+                                                       @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
+                                                       @RequestParam(value = "isPercentage", required = false) boolean isPercentage,
+                                                       @RequestParam(value = "extraPayment", required = false) String extraPaymentPrice,
+                                                       @RequestParam(value = "extraPaymentProduct", required = false) String extraPaymentProduct,
+                                                       RedirectAttributes ra) {
+            if(extraPaymentPrice != null && extraPaymentProduct != null ) {
+                    extraPaymentService.createExtraPayment(orderId, extraPaymentProduct, extraPaymentPrice);
+                    extraPaymentService.addExtraPaymentToUserOrderPayment(orderId, extraPaymentPrice);
+            }
+            if(!isPercentage && cashDiscount != null) {
+               orderService.addCashDiscount(orderId, cashDiscount);
+            }
+            if(isPercentage && percentageDiscount != null) {
+                orderService.addPercentageDiscount(orderId, percentageDiscount);
+            }
+
+            ra.addFlashAttribute("order", orderService.getOrderByOrderId(orderId));
+            return new RedirectView("/orders/" + orderId + "/summary");
         }
 
-        ra.addFlashAttribute("order", orderService.getOrderByOrderId(orderId));
-        return new RedirectView("/orders/" + orderId + "/summary");
+    @PutMapping("/{orderId}/summary")
+    public ResponseEntity<String> updateDiscounts(@PathVariable String orderId,
+                                        @RequestBody(required = false) Map<String, String> requestedDiscount,
+                                        @RequestParam(value = "extraPayment", required = false) String extraPaymentPrice,
+                                        @RequestParam(value = "extraPaymentProduct", required = false) String extraPaymentProduct,
+                                        RedirectAttributes ra) {
+
+        LOG.warn("data: " + requestedDiscount);
+        if(extraPaymentPrice != null && extraPaymentProduct != null) {
+            extraPaymentService.createExtraPayment(orderId, extraPaymentProduct, extraPaymentPrice);
+            extraPaymentService.addExtraPaymentToUserOrderPayment(orderId, extraPaymentPrice);
+        }
+
+        if(requestedDiscount != null && requestedDiscount.containsKey("newCashDiscountValue")) {
+            orderService.updateCashDiscount(orderId, requestedDiscount.get("newCashDiscountValue"));
+            return ResponseEntity.ok("Cash discount updated!");
+        } else if(requestedDiscount != null && requestedDiscount.containsKey("newPercentageDiscountValue")) {
+            orderService.updatePercentageDiscount(orderId, requestedDiscount.get("newPercentageDiscountValue"));
+            return ResponseEntity.ok("Percentage discount updated!");
+        }
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("Request failed!");
     }
 
+    @DeleteMapping("/{orderId}/summary")
+    public ResponseEntity<String> deleteExtraPayment(@PathVariable String orderId, @RequestBody Map<String, String> requestedObject) {
+        if (requestedObject == null) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("ExtraPaymentId is null");
+        }
+        String extraPaymentId = requestedObject.get("extraPaymentId");
+        if (extraPaymentService.deleteExtraPayment(orderId, extraPaymentId)){
+            return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("ExtraPayment deleted!");
+        }
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("ExtraPayment not found!");
+    }
+
+    Logger LOG = LoggerFactory.getLogger(OrderController.class);
     @GetMapping("/{orderId}/orderItems")
     public String getOrderItems(@PathVariable("orderId") String orderId, Model model) {
         OrderData order = orderService.getOrderByOrderId(orderId);

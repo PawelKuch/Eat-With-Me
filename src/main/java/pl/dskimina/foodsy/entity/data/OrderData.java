@@ -11,6 +11,9 @@ public class OrderData {
     private String description;
     private double minValue;
     private boolean isClosed;
+    private Double percentageDiscount;
+    private Double percentageDiscountCashValue;
+    private Double cashDiscount;
     private List<OrderItemData> orderItemList;
     private RestaurantData restaurantData;
     private UserData owner;
@@ -52,6 +55,31 @@ public class OrderData {
 
     public boolean getIsClosed(){return isClosed;}
     public void setIsClosed(boolean isClosed){this.isClosed = isClosed;}
+
+    public Double getPercentageDiscount() {
+        return percentageDiscount;
+    }
+
+    public void setPercentageDiscount(Double percentageDiscount) {
+        this.percentageDiscount = percentageDiscount;
+    }
+
+    public Double getPercentageDiscountCashValue() {
+        return percentageDiscountCashValue;
+    }
+
+    public void setPercentageDiscountCashValue(Double percentageDiscountCashValue) {
+        this.percentageDiscountCashValue = percentageDiscountCashValue;
+    }
+
+    public Double getCashDiscount() {
+        return cashDiscount;
+    }
+
+    public void setCashDiscount(Double cashDiscount) {
+        this.cashDiscount = cashDiscount;
+    }
+
 
     public RestaurantData getRestaurantData() {
         return restaurantData;

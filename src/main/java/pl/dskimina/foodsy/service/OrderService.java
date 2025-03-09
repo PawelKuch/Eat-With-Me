@@ -1,12 +1,10 @@
 package pl.dskimina.foodsy.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.dskimina.foodsy.entity.*;
 import pl.dskimina.foodsy.entity.data.OrderData;
-import pl.dskimina.foodsy.entity.data.UserOrderPaymentData;
+import pl.dskimina.foodsy.repository.ExtraPaymentRepository;
 import pl.dskimina.foodsy.repository.OrderRepository;
 import pl.dskimina.foodsy.repository.UserOrderPaymentRepository;
 
@@ -25,19 +23,20 @@ public class OrderService {
     private final UserService userService;
     private final UserOrderPaymentRepository userOrderPaymentRepository;
     private final UserOrderPaymentService userOrderPaymentService;
+    private final ExtraPaymentRepository extraPaymentRepository;
 
     public OrderService(OrderRepository orderRepository, ToDataService toDataService,
                         RestaurantService restaurantService, UserService userService,
-                        UserOrderPaymentRepository userOrderPaymentRepository, UserOrderPaymentService userOrderPaymentService) {
+                        UserOrderPaymentRepository userOrderPaymentRepository, UserOrderPaymentService userOrderPaymentService, ExtraPaymentRepository extraPaymentRepository) {
         this.orderRepository = orderRepository;
         this.toDataService = toDataService;
         this.restaurantService = restaurantService;
         this.userService = userService;
         this.userOrderPaymentRepository = userOrderPaymentRepository;
         this.userOrderPaymentService = userOrderPaymentService;
+        this.extraPaymentRepository = extraPaymentRepository;
     }
 
-    Logger LOG = LoggerFactory.getLogger(OrderService.class);
     @Transactional
     public OrderData getOrderByOrderId(String orderId){
         Order order = orderRepository.findByOrderId(orderId);
@@ -124,7 +123,6 @@ public class OrderService {
         Order order = orderRepository.findByOrderId(orderId);
         Double extraPaymentValue = userOrderPaymentRepository.getExtraPaymentValueForOrder(orderId);
         Double currentPercentageDiscountInCashValue = order.getPercentageDiscountCashValue();
-        double currentPercentageDiscount = Math.round((order.getPercentageDiscount() / 100.0) * 100.0) / 100.0;
         double noPercentageDiscountOrderValue = order.getValue() + currentPercentageDiscountInCashValue - extraPaymentValue;
 
         double currentBaseOrderValue = Math.round((noPercentageDiscountOrderValue - extraPaymentValue) * 100.0) / 100.0;
@@ -194,23 +192,35 @@ public class OrderService {
     }
 
     @Transactional
-    public void addExtraPayment(String orderId, String extraPaymentString){
+    public boolean updateOrder(String orderId, String extraPaymentId, String newExtraPaymentProduct, String newExtraPaymentPriceString) {
         Order order = orderRepository.findByOrderId(orderId);
-        Double orderValue = order.getValue();
-        Double extraPayment = Double.parseDouble(extraPaymentString);
-        Double newOrderValue = orderValue + extraPayment;
-        order.setValue(newOrderValue);
-        orderRepository.save(order);
+        ExtraPayment extraPayment = extraPaymentRepository.findByExtraPaymentId(extraPaymentId);
+        if(extraPayment == null || order == null) return false;
 
+        double currentExtraPaymentPrice = extraPayment.getPrice();
+        extraPayment.setProduct(newExtraPaymentProduct);
+        double newExtraPaymentPrice = Math.round(Double.parseDouble(newExtraPaymentPriceString) * 100.0) / 100.0;
+        extraPayment.setPrice(newExtraPaymentPrice);
+        extraPaymentRepository.save(extraPayment);
+
+        double currentOrderValue = order.getValue();
+        double currentOrderValueWithoutGivenExtraPayment = currentOrderValue - currentExtraPaymentPrice;
+        double newOrderValue = currentOrderValueWithoutGivenExtraPayment + newExtraPaymentPrice;
+        order.setValue(newOrderValue);
 
         List<UserOrderPayment> userOrderPayments = userOrderPaymentRepository.findByOrderOrderId(orderId);
         int howManyUsersInOrder = userOrderPayments.size();
-        Double extraPaymentValueForUser = Math.round(extraPayment / howManyUsersInOrder * 100.0) / 100.0;
+        double currentGivenExtraPaymentForUser = Math.round((currentExtraPaymentPrice / howManyUsersInOrder) * 100.0) / 100.0;
+
         userOrderPayments.forEach(data -> {
-            data.setExtraPaymentValue(extraPaymentValueForUser);
-            data.setAmountToPay(data.getAmountToPay() + extraPaymentValueForUser);
-            userOrderPaymentRepository.save(data);
+            double currentExtraPaymentForUserWithoutGivenExtraPayment = data.getExtraPaymentValue() - Math.round(currentGivenExtraPaymentForUser * 100.0) / 100.0;
+            double newExtraPaymentForUser = currentExtraPaymentForUserWithoutGivenExtraPayment + Math.round((newExtraPaymentPrice / howManyUsersInOrder) * 100.0 ) / 100.0;
+            data.setExtraPaymentValue(newExtraPaymentForUser);
+            double currentAmountToPayWithoutGivenExtraPayment = data.getAmountToPay() - currentGivenExtraPaymentForUser;
+            double newAmountToPay = currentAmountToPayWithoutGivenExtraPayment + newExtraPaymentForUser;
+            data.setAmountToPay(newAmountToPay);
         });
+        return true;
     }
 
     @Transactional

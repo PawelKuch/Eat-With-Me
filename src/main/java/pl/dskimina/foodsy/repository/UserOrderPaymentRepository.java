@@ -19,6 +19,7 @@ public interface UserOrderPaymentRepository extends JpaRepository<UserOrderPayme
     @Query("SELECT SUM(uop.extraPaymentValue) FROM UserOrderPayment uop WHERE uop.order.orderId = :orderId")
     Double getExtraPaymentValueForOrder(@Param("orderId") String orderId);
 
-
+    @Query("SELECT SUM(uop.extraPaymentValue) FROM UserOrderPayment  uop WHERE uop.order.orderId = :orderId")
+    Double getExtraPaymentValueForOrder(@Param("userId") String userId, @Param("orderId") String orderId);
 }
 

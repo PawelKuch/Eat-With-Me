@@ -63,16 +63,25 @@ public class UserOrderPaymentService {
         UserOrderInfo userOrderInfoDTO = orderItemService.getUserOrderInfoDTO(userId, orderId); //user ,Order, OrderItemsValueForUser
         Double extraPaymentValueForOrder = extraPaymentRepository.getExtraPaymentsValueForOrder(orderId);
         Double amountToPay = userOrderInfoDTO.getMenuItemsValue();
+        double extraPaymentValueToPayForUser = 0.0;
 
         if(howManyUsersInOrder > 0 && extraPaymentValueForOrder != null) {
-            double extraPaymentValueToPayForUser = Math.round(extraPaymentValueForOrder / (howManyUsersInOrder) * 100.0) / 100.0;
+            extraPaymentValueToPayForUser = Math.round(extraPaymentValueForOrder / (howManyUsersInOrder) * 100.0) / 100.0;
             amountToPay += extraPaymentValueToPayForUser;
+        }
+
+        List<UserOrderPayment> userOrderPayments = userOrderPaymentRepository.findByOrderOrderId(orderId);
+        for (UserOrderPayment userOrderPayment : userOrderPayments) {
+            userOrderPayment.setAmountToPay((userOrderPayment.getAmountToPay() - userOrderPayment.getExtraPaymentValue()) + extraPaymentValueToPayForUser);
+            userOrderPayment.setExtraPaymentValue(extraPaymentValueToPayForUser);
         }
 
         if(!userOrderPaymentRepository.existsByOrderOrderIdAndUserUserId(orderId, userId)){
             UserOrderPayment userOrderPayment = createUserOrderPayment(orderId, userId);
+            userOrderPayment.setExtraPaymentValue(extraPaymentValueToPayForUser);
             userOrderPayment.setAmountToPay(amountToPay);
             userOrderPaymentRepository.save(userOrderPayment);
+
         } else {
             UserOrderPayment userOrderPayment = userOrderPaymentRepository.findByOrderOrderIdAndUserUserId(orderId, userId);
             userOrderPayment.setAmountToPay(amountToPay);

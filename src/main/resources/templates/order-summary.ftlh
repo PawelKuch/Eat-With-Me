@@ -26,7 +26,7 @@
                     <div class="row fw-bold border-bottom py-2">
                         <div class="col-4">Danie</div>
                         <div class="col-3">Opis</div>
-                        <div class="col-3">Użytkownik</div>
+                        <div class="col-2">Użytkownik</div>
                         <div class="col-1 d-flex justify-content-end">Cena</div>
                     </div>
                     <div class="list-group-flush d-flex flex-column row">
@@ -34,18 +34,31 @@
                             <div class="list-group-item row d-flex flex-row">
                                 <div class="col-4">${orderItem.menuItem.name}</div>
                                 <div class="col-3">${orderItem.description}</div>
-                                <div class="col-3">${orderItem.user.firstName} ${orderItem.user.lastName}</div>
+                                <div class="col-2">${orderItem.user.firstName} ${orderItem.user.lastName}</div>
                                 <div class="col-1 d-flex justify-content-end">${orderItem.menuItem.price}</div>
                             </div>
                         </#list>
                         <#list order.extraPaymentList as extraPayment>
-                            <div class="list-group-item row d-flex flex-row">
-                                <div class="col-4">${extraPayment.extraPaymentProduct}</div>
-                                <div class="col-6"></div>
-                                <div class="col-1 d-flex justify-content-end">${extraPayment.price}</div>
+                            <div class="list-group-item row d-flex flex-row col-12">
+                                <div id="extra-payment-details-div-${extraPayment.extraPaymentId}" class="col-11 d-flex">
+                                    <div class="col-4">${extraPayment.extraPaymentProduct}</div>
+                                    <div class="col-6"></div>
+                                    <div class="col-1 d-flex justify-content-end pe-2">${extraPayment.price}</div>
+                                </div>
+                                <form id="update-extra-payment-form-${extraPayment.extraPaymentId}" class="col-11 d-none flex-row">
+                                    <textarea class="col-4" cols="50" rows="1" id="new-extra-payment-product-${extraPayment.extraPaymentId}">${extraPayment.extraPaymentProduct}</textarea>
+                                    <div class="col-6"></div>
+                                    <textarea cols="10" rows="1" id="new-extra-payment-price-${extraPayment.extraPaymentId}">${extraPayment.price}</textarea>
+                                </form>
                                 <div class="col-1 d-flex flex-row">
-                                    <button id="update-extra-payment-btn" class="btn btn-dark" data-extra-payment-id="${extraPayment.extraPaymentId}" data-order-id="${order.orderId}"><i class="bi bi-pencil-fill"></i></button>
-                                    <button id="delete-extra-payment-btn" class="btn btn-dark ms-1" data-extra-payment-id="${extraPayment.extraPaymentId}" data-order-id="${order.orderId}"><i class="bi bi-trash3-fill"></i></button>
+                                    <div id="update-and-delete-extra-payment-div-${extraPayment.extraPaymentId}" class="d-flex flex-row">
+                                        <button class="btn btn-dark update-extra-payment-btn" data-extra-payment-id="${extraPayment.extraPaymentId}" data-order-id="${order.orderId}"><i class="bi bi-pencil-fill"></i></button>
+                                        <button class="btn btn-dark ms-1 delete-extra-payment-btn" data-extra-payment-id="${extraPayment.extraPaymentId}" data-order-id="${order.orderId}"><i class="bi bi-trash3-fill"></i></button>
+                                    </div>
+                                    <div id="confirm-and-discard-new-extra-payment-div-${extraPayment.extraPaymentId}" class="d-none flex-row">
+                                        <button id="confirm-new-extra-payment-btn-${extraPayment.extraPaymentId}" class="btn btn-dark" data-extra-payment-id="${extraPayment.extraPaymentId}" data-order-id="${order.orderId}">OK</button>
+                                        <button id="discard-new-extra-payment-btn-${extraPayment.extraPaymentId}" class="btn btn-dark ms-1" data-extra-payment-id="${extraPayment.extraPaymentId}" data-order-id="${order.orderId}">X</button>
+                                    </div>
                                 </div>
                             </div>
                         </#list>

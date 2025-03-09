@@ -79,27 +79,100 @@ $(document).ready(function (){
         });
     });
 
-    let $updateExtraPaymentBtn = $('#update-extra-payment-btn');
-    let $deleteExtraPaymentBtn = $('#delete-extra-payment-btn');
+    $('.delete-extra-payment-btn').each(function (){
+        $(this).on('click', function (){
+            let extraPaymentId = $(this).data('extra-payment-id');
+            let orderId = $(this).data('order-id');
 
-    $deleteExtraPaymentBtn.on('click', function (){
-       let extraPaymentId = $(this).data('extra-payment-id');
-       let orderId = $(this).data('order-id');
+            $.ajax({
+                url: '/orders/' + orderId + '/summary',
+                type: 'DELETE',
+                contentType: 'application/json',
+                data: JSON.stringify({extraPaymentId: extraPaymentId}),
+                success: function (response){
+                    console.log(response);
+                    location.reload();
+                },
+                error: function (response){
+                    console.log(response);
+                }
+            });
+        });
+    });
 
-       $.ajax({
-          url: '/orders/' + orderId + '/summary',
-          type: 'DELETE',
-          contentType: 'application/json',
-          data: JSON.stringify({extraPaymentId: extraPaymentId}),
-          success: function (response){
-              console.log(response);
-              location.reload();
-          },
-          error: function (response){
-              console.log(response);
-          }
-       });
+    $('.update-extra-payment-btn').each(function (){
+        let extraPaymentId = $(this).data('extra-payment-id');
+        let $updateAndDeleteExtraPaymentBtnDiv = $('#update-and-delete-extra-payment-div-' + extraPaymentId);
+        let $updateExtraPaymentForm = $('#update-extra-payment-form-' + extraPaymentId);
+        let $extraPaymentDetailsDiv = $('#extra-payment-details-div-' + extraPaymentId);
+        let $confirmAndDiscardNewExtraPaymentDiv = $('#confirm-and-discard-new-extra-payment-div-' + extraPaymentId);
+        let defaultExtraPaymentProductValue = $('#new-extra-payment-product-' + extraPaymentId).val();
+        let defaultExtraPaymentPrice = $('#new-extra-payment-price-' + extraPaymentId).val();
+        let $discardNewExtraPaymentBtn = $('#discard-new-extra-payment-btn-' + extraPaymentId);
+        let $confirmNewExtraPaymentBtn = $('#confirm-new-extra-payment-btn-' + extraPaymentId);
+        console.log(defaultExtraPaymentProductValue);
+        console.log(defaultExtraPaymentPrice);
+
+
+        $(this).on('click', function (){
+            console.log('button ' + extraPaymentId + ' clicked');
+
+            if($updateAndDeleteExtraPaymentBtnDiv.hasClass('d-flex')) {
+                $updateExtraPaymentForm.removeClass('d-none');
+                $updateExtraPaymentForm.addClass('d-flex');
+                $extraPaymentDetailsDiv.removeClass('d-flex');
+                $extraPaymentDetailsDiv.addClass('d-none');
+                $updateAndDeleteExtraPaymentBtnDiv.addClass('d-none');
+                $updateAndDeleteExtraPaymentBtnDiv.removeClass('d-flex');
+                $confirmAndDiscardNewExtraPaymentDiv.removeClass('d-none');
+                $confirmAndDiscardNewExtraPaymentDiv.addClass('d-flex');
+            }
+        });
+
+        $discardNewExtraPaymentBtn.on('click', function (){
+           $updateExtraPaymentForm.removeClass('d-flex');
+           $updateExtraPaymentForm.addClass('d-none');
+            $extraPaymentDetailsDiv.removeClass('d-none');
+            $extraPaymentDetailsDiv.addClass('d-flex');
+            $updateAndDeleteExtraPaymentBtnDiv.removeClass('d-none');
+            $updateAndDeleteExtraPaymentBtnDiv.addClass('d-flex');
+            $confirmAndDiscardNewExtraPaymentDiv.toggleClass('d-none');
+            $confirmAndDiscardNewExtraPaymentDiv.toggleClass('d-flex');
+        });
+
+        $confirmNewExtraPaymentBtn.on('click', function (){
+            let newExtraPaymentProduct = $('#new-extra-payment-product-' + extraPaymentId).val();
+            let newExtraPaymentPrice = $('#new-extra-payment-price-' + extraPaymentId).val();
+            let orderId = $(this).data('order-id');
+
+            $.ajax({
+                url: '/orders/' + orderId + '/summary',
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify({extraPaymentId: extraPaymentId, newExtraPaymentProduct: newExtraPaymentProduct, newExtraPaymentPrice: newExtraPaymentPrice}),
+                success: function (response) {
+                    console.log("Udate extrapayment succed. Response: " + response);
+                    location.reload();
+                },
+                error: function (response) {
+                    console.log("Update extraPayment failed. Response: " + response);
+                }
+            });
+        });
     });
 
 
+
+
+    /*$updateExtraPaymentBtn.on('click', function (){
+        let extraPaymentId = $(this).data('extra-payment-id');
+        let orderId = $(this).data('order-id');
+
+        $.ajax({
+            url: '/orders/' + orderId + '/summary',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({newExtraPaymentValue: })
+        });
+    });*/
 });

@@ -1,8 +1,6 @@
 package pl.dskimina.foodsy.controllers;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,20 +25,17 @@ public class OrderController {
     private final SessionService sessionService;
     private final RestaurantService restaurantService;
     private final ExtraPaymentService extraPaymentService;
-    private final DiscountService discountService;
     private final UserOrderPaymentService userOrderPaymentService;
 
     public OrderController(OrderService orderService,
                            OrderItemService orderItemService, UserService userService, SessionService sessionService,
-                           RestaurantService restaurantService, ExtraPaymentService extraPaymentService,
-                           DiscountService discountService, UserOrderPaymentService userOrderPaymentService) {
+                           RestaurantService restaurantService, ExtraPaymentService extraPaymentService, UserOrderPaymentService userOrderPaymentService) {
         this.orderService = orderService;
         this.orderItemService = orderItemService;
         this.userService = userService;
         this.sessionService = sessionService;
         this.restaurantService = restaurantService;
         this.extraPaymentService = extraPaymentService;
-        this.discountService = discountService;
         this.userOrderPaymentService = userOrderPaymentService;
     }
 
@@ -117,24 +112,24 @@ public class OrderController {
         }
 
     @PutMapping("/{orderId}/summary")
-    public ResponseEntity<String> updateDiscounts(@PathVariable String orderId,
-                                        @RequestBody(required = false) Map<String, String> requestedDiscount,
-                                        @RequestParam(value = "extraPayment", required = false) String extraPaymentPrice,
-                                        @RequestParam(value = "extraPaymentProduct", required = false) String extraPaymentProduct,
-                                        RedirectAttributes ra) {
+    public ResponseEntity<String> updateOrder(@PathVariable String orderId,
+                                        @RequestBody(required = false) Map<String, String> requestedData) {
 
-        LOG.warn("data: " + requestedDiscount);
-        if(extraPaymentPrice != null && extraPaymentProduct != null) {
-            extraPaymentService.createExtraPayment(orderId, extraPaymentProduct, extraPaymentPrice);
-            extraPaymentService.addExtraPaymentToUserOrderPayment(orderId, extraPaymentPrice);
-        }
-
-        if(requestedDiscount != null && requestedDiscount.containsKey("newCashDiscountValue")) {
-            orderService.updateCashDiscount(orderId, requestedDiscount.get("newCashDiscountValue"));
+        if(requestedData != null && requestedData.containsKey("newCashDiscountValue")) {
+            orderService.updateCashDiscount(orderId, requestedData.get("newCashDiscountValue"));
             return ResponseEntity.ok("Cash discount updated!");
-        } else if(requestedDiscount != null && requestedDiscount.containsKey("newPercentageDiscountValue")) {
-            orderService.updatePercentageDiscount(orderId, requestedDiscount.get("newPercentageDiscountValue"));
+        } else if(requestedData != null && requestedData.containsKey("newPercentageDiscountValue")) {
+            orderService.updatePercentageDiscount(orderId, requestedData.get("newPercentageDiscountValue"));
             return ResponseEntity.ok("Percentage discount updated!");
+        } else if(requestedData != null && requestedData.containsKey("extraPaymentId") && requestedData.containsKey("newExtraPaymentProduct") && requestedData.containsKey("newExtraPaymentPrice")) {
+            String extraPaymentId = requestedData.get("extraPaymentId");
+            String extraPaymentProduct = requestedData.get("newExtraPaymentProduct");
+            String extraPaymentPrice = requestedData.get("newExtraPaymentPrice");
+            if(orderService.updateOrder(orderId, extraPaymentId, extraPaymentProduct, extraPaymentPrice)){
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body("Extra payment updated!");
+            }
         }
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -159,7 +154,6 @@ public class OrderController {
                 .body("ExtraPayment not found!");
     }
 
-    Logger LOG = LoggerFactory.getLogger(OrderController.class);
     @GetMapping("/{orderId}/orderItems")
     public String getOrderItems(@PathVariable("orderId") String orderId, Model model) {
         OrderData order = orderService.getOrderByOrderId(orderId);

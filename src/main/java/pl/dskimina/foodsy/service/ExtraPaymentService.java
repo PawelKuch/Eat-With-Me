@@ -8,6 +8,7 @@ import pl.dskimina.foodsy.entity.ExtraPayment;
 import pl.dskimina.foodsy.entity.Order;
 import pl.dskimina.foodsy.entity.UserOrderPayment;
 import pl.dskimina.foodsy.repository.ExtraPaymentRepository;
+import pl.dskimina.foodsy.repository.OrderRepository;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,13 +18,15 @@ public class ExtraPaymentService {
     private final ExtraPaymentRepository extraPaymentRepository;
     private final OrderService orderService;
     private final UserOrderPaymentService userOrderPaymentService;
+    private final OrderRepository orderRepository;
 
     Logger LOG = LoggerFactory.getLogger(ExtraPaymentService.class);
 
-    public ExtraPaymentService(ExtraPaymentRepository extraPaymentRepository, OrderService orderService, UserOrderPaymentService userOrderPaymentService) {
+    public ExtraPaymentService(ExtraPaymentRepository extraPaymentRepository, OrderService orderService, UserOrderPaymentService userOrderPaymentService, OrderRepository orderRepository) {
         this.extraPaymentRepository = extraPaymentRepository;
         this.orderService = orderService;
         this.userOrderPaymentService = userOrderPaymentService;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
@@ -69,6 +72,8 @@ public class ExtraPaymentService {
             LOG.error("ExtraPayment not found");
             return false;
         }
+        Order order = orderRepository.findByOrderId(orderId);
+        order.setValue(order.getValue() - extraPayment.getPrice());
         extraPaymentRepository.delete(extraPayment);
         return true;
     }

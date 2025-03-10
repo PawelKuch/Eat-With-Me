@@ -4,9 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.dskimina.foodsy.entity.*;
 import pl.dskimina.foodsy.entity.data.OrderData;
-import pl.dskimina.foodsy.repository.ExtraPaymentRepository;
-import pl.dskimina.foodsy.repository.OrderRepository;
-import pl.dskimina.foodsy.repository.UserOrderPaymentRepository;
+import pl.dskimina.foodsy.repository.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,10 +22,14 @@ public class OrderService {
     private final UserOrderPaymentRepository userOrderPaymentRepository;
     private final UserOrderPaymentService userOrderPaymentService;
     private final ExtraPaymentRepository extraPaymentRepository;
+    private final UserRepository userRepository;
+    private final RestaurantRepository restaurantRepository;
 
     public OrderService(OrderRepository orderRepository, ToDataService toDataService,
                         RestaurantService restaurantService, UserService userService,
-                        UserOrderPaymentRepository userOrderPaymentRepository, UserOrderPaymentService userOrderPaymentService, ExtraPaymentRepository extraPaymentRepository) {
+                        UserOrderPaymentRepository userOrderPaymentRepository,
+                        UserOrderPaymentService userOrderPaymentService, ExtraPaymentRepository extraPaymentRepository,
+                        UserRepository userRepository, RestaurantRepository restaurantRepository) {
         this.orderRepository = orderRepository;
         this.toDataService = toDataService;
         this.restaurantService = restaurantService;
@@ -35,6 +37,9 @@ public class OrderService {
         this.userOrderPaymentRepository = userOrderPaymentRepository;
         this.userOrderPaymentService = userOrderPaymentService;
         this.extraPaymentRepository = extraPaymentRepository;
+        this.userRepository = userRepository;
+        this.restaurantRepository = restaurantRepository;
+
     }
 
     @Transactional
@@ -55,7 +60,7 @@ public class OrderService {
     @Transactional
     public OrderData createOrder(String restaurantId, String userId, String closingDateString, String minValueString, String description) {
         Order order = new Order();
-        User user = userService.getUserInstanceById(userId);
+        User user = userRepository.findByUserId(userId);
         order.setOrderId(UUID.randomUUID().toString());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         LocalDateTime closingDate = LocalDateTime.parse(closingDateString, formatter);
@@ -76,7 +81,7 @@ public class OrderService {
         order.setExtraPayments(extraPayments);
         order.setDiscounts(discounts);
         order.setOwner(user);
-        Restaurant restaurant = restaurantService.getRestaurantEntityByRestaurantId(restaurantId);
+        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
         order.setRestaurant(restaurant);
         order.setIsClosed(false);
         orderRepository.save(order);

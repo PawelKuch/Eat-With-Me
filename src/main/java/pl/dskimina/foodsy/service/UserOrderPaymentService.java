@@ -13,6 +13,7 @@ import pl.dskimina.foodsy.entity.data.UserOrderPaymentData;
 import pl.dskimina.foodsy.repository.ExtraPaymentRepository;
 import pl.dskimina.foodsy.repository.OrderRepository;
 import pl.dskimina.foodsy.repository.UserOrderPaymentRepository;
+import pl.dskimina.foodsy.repository.UserRepository;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,23 +27,26 @@ public class UserOrderPaymentService {
     private final ExtraPaymentRepository extraPaymentRepository;
     private final ToDataService toDataService;
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
 
     public UserOrderPaymentService(UserOrderPaymentRepository userOrderPaymentRepository, UserService userService,
-                                   OrderItemService orderItemService, ExtraPaymentRepository extraPaymentRepository, ToDataService toDataService, OrderRepository orderRepository) {
+                                   OrderItemService orderItemService, ExtraPaymentRepository extraPaymentRepository, ToDataService toDataService,
+                                   OrderRepository orderRepository, UserRepository userRepository) {
         this.userOrderPaymentRepository = userOrderPaymentRepository;
         this.userService = userService;
         this.orderItemService = orderItemService;
         this.extraPaymentRepository = extraPaymentRepository;
         this.toDataService = toDataService;
         this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
     }
 
-
+    @Transactional
     public UserOrderPayment createUserOrderPayment(String orderId, String userId) {
         UserOrderPayment userOrderPayment = new UserOrderPayment();
         userOrderPayment.setUserOrderPaymentId(UUID.randomUUID().toString());
         Order order = orderRepository.findByOrderId(orderId);
-        User user = userService.getUserInstanceById(userId);
+        User user = userRepository.findByUserId(userId);
         userOrderPayment.setOrder(order);
         userOrderPayment.setUser(user);
         userOrderPayment.setAmountToPay(0.0);

@@ -197,7 +197,7 @@ public class OrderService {
     }
 
     @Transactional
-    public boolean updateOrder(String orderId, String extraPaymentId, String newExtraPaymentProduct, String newExtraPaymentPriceString) {
+    public boolean updateOrderWithNewExtraPayment(String orderId, String extraPaymentId, String newExtraPaymentProduct, String newExtraPaymentPriceString) {
         Order order = orderRepository.findByOrderId(orderId);
         ExtraPayment extraPayment = extraPaymentRepository.findByExtraPaymentId(extraPaymentId);
         if(extraPayment == null || order == null) return false;

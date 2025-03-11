@@ -10,10 +10,7 @@ import pl.dskimina.foodsy.entity.UserOrderPayment;
 
 import pl.dskimina.foodsy.entity.data.UserOrderInfo;
 import pl.dskimina.foodsy.entity.data.UserOrderPaymentData;
-import pl.dskimina.foodsy.repository.ExtraPaymentRepository;
-import pl.dskimina.foodsy.repository.OrderRepository;
-import pl.dskimina.foodsy.repository.UserOrderPaymentRepository;
-import pl.dskimina.foodsy.repository.UserRepository;
+import pl.dskimina.foodsy.repository.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,10 +25,11 @@ public class UserOrderPaymentService {
     private final ToDataService toDataService;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final OrderItemRepository orderItemRepository;
 
     public UserOrderPaymentService(UserOrderPaymentRepository userOrderPaymentRepository, UserService userService,
                                    OrderItemService orderItemService, ExtraPaymentRepository extraPaymentRepository, ToDataService toDataService,
-                                   OrderRepository orderRepository, UserRepository userRepository) {
+                                   OrderRepository orderRepository, UserRepository userRepository, OrderItemRepository orderItemRepository) {
         this.userOrderPaymentRepository = userOrderPaymentRepository;
         this.userService = userService;
         this.orderItemService = orderItemService;
@@ -39,6 +37,7 @@ public class UserOrderPaymentService {
         this.toDataService = toDataService;
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     @Transactional
@@ -57,28 +56,38 @@ public class UserOrderPaymentService {
         userOrderPayment.setDiscountInPercentageInCash(0.0);
         userOrderPayment.setBaseForPercentageDiscount(0.0);
         userOrderPayment.setIsPaid(false);
-        userOrderPaymentRepository.save(userOrderPayment);
+        //userOrderPaymentRepository.save(userOrderPayment);
         return userOrderPayment;
     }
-
+    Logger LOG = LoggerFactory.getLogger(UserOrderPaymentService.class);
     @Transactional
     public void addUserOrderPaymentInfoForOrderIdAndUserId(String orderId, String userId) {
         int howManyUsersInOrder = orderRepository.getUsersAmountForOrder(orderId);
-        UserOrderInfo userOrderInfoDTO = orderItemService.getUserOrderInfoDTO(userId, orderId); //user ,Order, OrderItemsValueForUser
+        UserOrderInfo userOrderInfoDTO = orderItemRepository.getUserOrderInfo(orderId, userId);//user ,Order, OrderItemsValueForUser
         Double extraPaymentValueForOrder = extraPaymentRepository.getExtraPaymentsValueForOrder(orderId);
+        Double cashDiscountForOrder = orderRepository.getCashDiscountForOrder(orderId);
+        LOG.warn("cashDiscountForOrder: " + cashDiscountForOrder);
         Double amountToPay = userOrderInfoDTO.getMenuItemsValue();
+        LOG.warn("amountToPay: " + amountToPay);
         double extraPaymentValueToPayForUser = 0.0;
+        double cashDiscountForUser = 0.0;
 
         if(howManyUsersInOrder > 0 && extraPaymentValueForOrder != null) {
             extraPaymentValueToPayForUser = Math.round(extraPaymentValueForOrder / (howManyUsersInOrder) * 100.0) / 100.0;
-            amountToPay += extraPaymentValueToPayForUser;
+            cashDiscountForUser = Math.round((cashDiscountForOrder / howManyUsersInOrder * 100.0)) / 100.0;
+            LOG.warn("CashDiscountForUser: " + cashDiscountForUser);
+            amountToPay = amountToPay + extraPaymentValueToPayForUser - cashDiscountForUser;
+            LOG.warn("amountToPay calculating! NewAmountToPay: "  + amountToPay);
         }
 
         List<UserOrderPayment> userOrderPayments = userOrderPaymentRepository.findByOrderOrderId(orderId);
-        for (UserOrderPayment userOrderPayment : userOrderPayments) {
-            userOrderPayment.setAmountToPay((userOrderPayment.getAmountToPay() - userOrderPayment.getExtraPaymentValue()) + extraPaymentValueToPayForUser);
-            userOrderPayment.setExtraPaymentValue(extraPaymentValueToPayForUser);
+        if(userOrderPayments != null && !userOrderPayments.isEmpty()){
+            for (UserOrderPayment userOrderPayment : userOrderPayments) {
+                userOrderPayment.setAmountToPay((userOrderPayment.getAmountToPay() - userOrderPayment.getExtraPaymentValue()) + extraPaymentValueToPayForUser - cashDiscountForUser);
+                userOrderPayment.setExtraPaymentValue(extraPaymentValueToPayForUser);
+            }
         }
+
 
         if(!userOrderPaymentRepository.existsByOrderOrderIdAndUserUserId(orderId, userId)){
             UserOrderPayment userOrderPayment = createUserOrderPayment(orderId, userId);
@@ -92,7 +101,7 @@ public class UserOrderPaymentService {
             userOrderPaymentRepository.save(userOrderPayment);
         }
     }
-    Logger LOG = LoggerFactory.getLogger(UserOrderPayment.class);
+
     @Transactional
     public void updatePercentageDiscountInUserOrderPaymentForUser(String orderId, String userId, String newPercentageDiscountString){
         UserOrderPayment userOrderPayment = userOrderPaymentRepository.findByOrderOrderIdAndUserUserId(orderId, userId);

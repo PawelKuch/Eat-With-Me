@@ -11,10 +11,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pl.dskimina.foodsy.entity.Order;
 import pl.dskimina.foodsy.entity.User;
 import pl.dskimina.foodsy.entity.UserOrderPayment;
-import pl.dskimina.foodsy.repository.ExtraPaymentRepository;
-import pl.dskimina.foodsy.repository.OrderRepository;
-import pl.dskimina.foodsy.repository.UserOrderPaymentRepository;
-import pl.dskimina.foodsy.repository.UserRepository;
+import pl.dskimina.foodsy.entity.data.UserOrderInfo;
+import pl.dskimina.foodsy.repository.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 @ExtendWith(MockitoExtension.class)
 public class UserOrderPaymentServiceTest {
@@ -43,9 +45,52 @@ public class UserOrderPaymentServiceTest {
     @Mock
     private UserOrderPaymentRepository userOrderPaymentRepository;
 
-    @Test
-    public void createUserOrderPaymentTest(){
+    @Mock
+    private OrderItemRepository orderItemRepository;
 
+    @Test
+    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithNoExtraPaymentsTest(){
+        UserOrderPayment userOrderPayment = getUserOrderPayment();
+
+        List<UserOrderPayment> userOrderPayments = new ArrayList<>();
+        userOrderPayments.add(userOrderPayment);
+
+
+        UserOrderInfo userOrderInfo = new UserOrderInfo("orderIdTest", "userIdTest", "userFirstNameTest", "userLastNameTest", 100.0);
+
+        Mockito.when(orderRepository.getUsersAmountForOrder("orderIdTest")).thenReturn(1);
+        Mockito.when(orderItemRepository.getUserOrderInfo("orderIdTest", "userIdTest")).thenReturn(userOrderInfo);
+        Mockito.when(extraPaymentRepository.getExtraPaymentsValueForOrder("orderIdTest")).thenReturn(0.0);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderId("orderIdTest")).thenReturn(userOrderPayments);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest" )).thenReturn(userOrderPayment);
+        Mockito.when(userOrderPaymentRepository.existsByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest")).thenReturn(true);
+
+        ArgumentCaptor<UserOrderPayment> paymentCaptor = ArgumentCaptor.forClass(UserOrderPayment.class);
+
+        userOrderPaymentService.addUserOrderPaymentInfoForOrderIdAndUserId("orderIdTest", "userIdTest");
+
+        Mockito.verify(orderRepository).getUsersAmountForOrder("orderIdTest");
+        Mockito.verify(orderItemRepository).getUserOrderInfo("orderIdTest","userIdTest");
+        Mockito.verify(extraPaymentRepository).getExtraPaymentsValueForOrder("orderIdTest");
+        Mockito.verify(userOrderPaymentRepository).findByOrderOrderId("orderIdTest");
+        Mockito.verify(userOrderPaymentRepository).existsByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest");
+        Mockito.verify(userOrderPaymentRepository).findByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest");
+        Mockito.verify(userOrderPaymentRepository).save(paymentCaptor.capture());
+
+        UserOrderPayment capturedUserOrderPayment = paymentCaptor.getValue();
+
+        Assertions.assertEquals("userOrderPaymentIdTest" ,capturedUserOrderPayment.getUserOrderPaymentId());
+        Assertions.assertEquals(100.0, capturedUserOrderPayment.getAmountToPay());
+        Assertions.assertEquals(0.0, capturedUserOrderPayment.getExtraPaymentValue());
+
+    }
+
+    //addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithExtraPaymentsTest
+    //addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithCashDiscountTest
+    //addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithPercentageDiscountTest
+
+
+    private static UserOrderPayment getUserOrderPayment() {
         User user = new User();
         user.setUserId("userIdTest");
         user.setFirstName("userFirstNameTest");
@@ -55,25 +100,157 @@ public class UserOrderPaymentServiceTest {
         order.setOrderId("orderIdTest");
         order.setValue(100.0);
 
-        Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
+        UserOrderPayment userOrderPayment = new UserOrderPayment();
+        userOrderPayment.setUserOrderPaymentId("userOrderPaymentIdTest");
+        userOrderPayment.setUser(user);
+        userOrderPayment.setOrder(order);
+        userOrderPayment.setAmountToPay(100.0);
+        userOrderPayment.setExtraPaymentValue(0.0);
+        return userOrderPayment;
+    }
+
+
+    @Test
+    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenNotExistsWithNoExtraPaymentsTest(){
+        User user = new User();
+        user.setUserId("userIdTest");
+        user.setFirstName("userFirstNameTest");
+        user.setLastName("userLastNameTest");
+
+        Order order = new Order();
+        order.setOrderId("orderIdTest");
+        order.setValue(0.0);
+
+        UserOrderInfo userOrderInfo = new UserOrderInfo("orderIdTest", "userIdTest", "userFirstNameTest", "userLastNameTest", 0.0);
+
+        List<UserOrderPayment> userOrderPayments = new ArrayList<>();
+
+        Mockito.when(orderRepository.getUsersAmountForOrder("orderIdTest")).thenReturn(1);
+        Mockito.when(orderItemRepository.getUserOrderInfo("orderIdTest", "userIdTest")).thenReturn(userOrderInfo);
         Mockito.when(userRepository.findByUserId("userIdTest")).thenReturn(user);
-
-
-
-        userOrderPaymentService.createUserOrderPayment("orderIdTest", "userIdTest");
+        Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderId("orderIdTest")).thenReturn(userOrderPayments);
+        Mockito.when(userOrderPaymentRepository.existsByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest")).thenReturn(false);
 
         ArgumentCaptor<UserOrderPayment> paymentCaptor = ArgumentCaptor.forClass(UserOrderPayment.class);
 
-        Mockito.verify(orderRepository, Mockito.times(1)).findByOrderId("orderIdTest");
-        Mockito.verify(userRepository, Mockito.times(1)).findByUserId("userIdTest");
-        Mockito.verify(userOrderPaymentRepository, Mockito.times(1)).save(paymentCaptor.capture());
+        userOrderPaymentService.addUserOrderPaymentInfoForOrderIdAndUserId("orderIdTest", "userIdTest");
 
-        UserOrderPayment userOrderPayment = paymentCaptor.getValue();
+        Mockito.verify(orderRepository).getUsersAmountForOrder("orderIdTest");
+        Mockito.verify(orderItemRepository).getUserOrderInfo("orderIdTest","userIdTest");
+        Mockito.verify(extraPaymentRepository).getExtraPaymentsValueForOrder("orderIdTest");
+        Mockito.verify(userOrderPaymentRepository).existsByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest");
+        Mockito.verify(userOrderPaymentRepository).save(paymentCaptor.capture());
 
-        Assertions.assertEquals("userFirstNameTest", userOrderPayment.getUser().getFirstName());
-        Assertions.assertEquals("userLastNameTest", userOrderPayment.getUser().getLastName());
-        Assertions.assertEquals("userIdTest", userOrderPayment.getUser().getUserId());
-        Assertions.assertEquals("orderIdTest", userOrderPayment.getOrder().getOrderId());
-        Assertions.assertEquals(100.0, userOrderPayment.getOrder().getValue());
+        UserOrderPayment capturedUserOrderPayment = paymentCaptor.getValue();
+
+        Assertions.assertEquals("userIdTest" ,capturedUserOrderPayment.getUser().getUserId());
+        Assertions.assertEquals("orderIdTest" ,capturedUserOrderPayment.getOrder().getOrderId());
+        Assertions.assertEquals(0.0, capturedUserOrderPayment.getAmountToPay());
+        Assertions.assertEquals(0.0, capturedUserOrderPayment.getExtraPaymentValue());
+    }
+
+    @Test
+    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithExtraPaymentsTest(){
+        User user = new User();
+        user.setUserId("userIdTest");
+        user.setFirstName("userFirstNameTest");
+        user.setLastName("userLastNameTest");
+
+        Order order = new Order();
+        order.setOrderId("orderIdTest");
+        order.setValue(50.0);
+
+
+        UserOrderInfo userOrderInfo = new UserOrderInfo("orderIdTest", "userIdTest", "userFirstNameTest", "userLastNameTest", 85.0);
+        //50 - to wartość z orderValue,
+        // a 35 - wartość nowododanego produktu
+
+        UserOrderPayment userOrderPayment = new UserOrderPayment();
+        userOrderPayment.setUserOrderPaymentId("userOrderPaymentIdTest");
+        userOrderPayment.setUser(user);
+        userOrderPayment.setOrder(order);
+        userOrderPayment.setAmountToPay(50.0);
+        userOrderPayment.setExtraPaymentValue(0.0);
+
+        List<UserOrderPayment> userOrderPayments = new ArrayList<>();
+        userOrderPayments.add(userOrderPayment);
+
+        Mockito.when(orderRepository.getUsersAmountForOrder("orderIdTest")).thenReturn(1);
+        Mockito.when(orderItemRepository.getUserOrderInfo("orderIdTest", "userIdTest")).thenReturn(userOrderInfo);
+        Mockito.when(extraPaymentRepository.getExtraPaymentsValueForOrder("orderIdTest")).thenReturn(10.0);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderId("orderIdTest")).thenReturn(userOrderPayments);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest")).thenReturn(userOrderPayment);
+        Mockito.when(userOrderPaymentRepository.existsByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest")).thenReturn(true);
+
+        ArgumentCaptor<UserOrderPayment> paymentCaptor = ArgumentCaptor.forClass(UserOrderPayment.class);
+
+        userOrderPaymentService.addUserOrderPaymentInfoForOrderIdAndUserId("orderIdTest", "userIdTest");
+
+        Mockito.verify(userOrderPaymentRepository).save(paymentCaptor.capture());
+
+        UserOrderPayment capturedUserOrderPayment = paymentCaptor.getValue();
+
+        Assertions.assertEquals("userIdTest" ,capturedUserOrderPayment.getUser().getUserId());
+        Assertions.assertEquals("orderIdTest" ,capturedUserOrderPayment.getOrder().getOrderId());
+        Assertions.assertEquals(95.0, capturedUserOrderPayment.getAmountToPay());
+        Assertions.assertEquals(10.0, capturedUserOrderPayment.getExtraPaymentValue());
+    }
+
+    @Test
+    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithWithCashDiscountAndExtraPaymentsTest(){
+        User user = new User();
+        user.setUserId("userIdTest");
+        user.setFirstName("userFirstNameTest");
+        user.setLastName("userLastNameTest");
+
+        Order order = new Order();
+        order.setOrderId("orderIdTest");
+        //order.setValue(50.0);
+        //50 - 20 = 30
+        order.setValue(30.0);
+        order.setCashDiscount(20.0);
+
+
+
+        UserOrderInfo userOrderInfo = new UserOrderInfo("orderIdTest", "userIdTest", "userFirstNameTest", "userLastNameTest", 85.0);
+        //50 - to wartość z orderValue,
+        // a 35 - wartość nowododanego produktu
+
+        UserOrderPayment userOrderPayment = new UserOrderPayment();
+        userOrderPayment.setUserOrderPaymentId("userOrderPaymentIdTest");
+        userOrderPayment.setUser(user);
+        userOrderPayment.setOrder(order);
+        userOrderPayment.setAmountToPay(50.0);
+        userOrderPayment.setDiscountValueInCash(20.0);
+        userOrderPayment.setExtraPaymentValue(0.0);
+        userOrderPayment.setGeneralDiscountValue(20.0);
+
+
+        List<UserOrderPayment> userOrderPayments = new ArrayList<>();
+        userOrderPayments.add(userOrderPayment);
+
+        Mockito.when(orderRepository.getUsersAmountForOrder("orderIdTest")).thenReturn(1);
+        Mockito.when(orderItemRepository.getUserOrderInfo("orderIdTest", "userIdTest")).thenReturn(userOrderInfo);
+        Mockito.when(extraPaymentRepository.getExtraPaymentsValueForOrder("orderIdTest")).thenReturn(10.0);
+        Mockito.when(orderRepository.getCashDiscountForOrder("orderIdTest")).thenReturn(20.0);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderId("orderIdTest")).thenReturn(userOrderPayments);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest")).thenReturn(userOrderPayment);
+        Mockito.when(userOrderPaymentRepository.existsByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest")).thenReturn(true);
+
+        ArgumentCaptor<UserOrderPayment> paymentCaptor = ArgumentCaptor.forClass(UserOrderPayment.class);
+
+        userOrderPaymentService.addUserOrderPaymentInfoForOrderIdAndUserId("orderIdTest", "userIdTest");
+
+        Mockito.verify(userOrderPaymentRepository).save(paymentCaptor.capture());
+
+        UserOrderPayment capturedUserOrderPayment = paymentCaptor.getValue();
+
+        Assertions.assertEquals("userIdTest" ,capturedUserOrderPayment.getUser().getUserId());
+        Assertions.assertEquals("orderIdTest" ,capturedUserOrderPayment.getOrder().getOrderId());
+        Assertions.assertEquals(75.0, capturedUserOrderPayment.getAmountToPay());
+        Assertions.assertEquals(10.0, capturedUserOrderPayment.getExtraPaymentValue());
+        Assertions.assertEquals(20.0, capturedUserOrderPayment.getDiscountValueInCash());
+        Assertions.assertEquals(20.0, capturedUserOrderPayment.getGeneralDiscountValue());
     }
 }

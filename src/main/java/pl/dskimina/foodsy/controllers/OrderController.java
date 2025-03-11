@@ -125,7 +125,7 @@ public class OrderController {
             String extraPaymentId = requestedData.get("extraPaymentId");
             String extraPaymentProduct = requestedData.get("newExtraPaymentProduct");
             String extraPaymentPrice = requestedData.get("newExtraPaymentPrice");
-            if(orderService.updateOrder(orderId, extraPaymentId, extraPaymentProduct, extraPaymentPrice)){
+            if(orderService.updateOrderWithNewExtraPayment(orderId, extraPaymentId, extraPaymentProduct, extraPaymentPrice)){
                 return ResponseEntity
                         .status(HttpStatus.OK)
                         .body("Extra payment updated!");

@@ -11,5 +11,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT COUNT(DISTINCT oi.user.userId) FROM Order o JOIN OrderItem oi ON o.orderId = oi.order.orderId WHERE o.orderId = :orderId")
     int getUsersAmountForOrder(@Param("orderId") String orderId);
 
-
+    @Query("SELECT o.cashDiscount FROM Order o WHERE o.orderId = :orderId")
+    Double getCashDiscountForOrder(@Param("orderId") String orderId);
 }

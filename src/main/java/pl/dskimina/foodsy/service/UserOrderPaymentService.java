@@ -13,6 +13,7 @@ import pl.dskimina.foodsy.entity.data.UserOrderPaymentData;
 import pl.dskimina.foodsy.repository.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -64,20 +65,28 @@ public class UserOrderPaymentService {
     public void addUserOrderPaymentInfoForOrderIdAndUserId(String orderId, String userId) {
         int howManyUsersInOrder = orderRepository.getUsersAmountForOrder(orderId);
         UserOrderInfo userOrderInfoDTO = orderItemRepository.getUserOrderInfo(orderId, userId);//user ,Order, OrderItemsValueForUser
-        Double extraPaymentValueForOrder = extraPaymentRepository.getExtraPaymentsValueForOrder(orderId);
+        Double extraPaymentValueForOrder = extraPaymentRepository.getExtraPaymentsValueForOrder(orderId); //Objects.requireNonNullElse(extraPaymentRepository.getExtraPaymentsValueForOrder(orderId), 0.0);
         Double cashDiscountForOrder = orderRepository.getCashDiscountForOrder(orderId);
+        Double percentageDiscount = orderRepository.getPercentageDiscountForOrder(orderId);
+        LOG.warn("percentageDiscount: " + percentageDiscount);
+
         LOG.warn("cashDiscountForOrder: " + cashDiscountForOrder);
         Double amountToPay = userOrderInfoDTO.getMenuItemsValue();
         LOG.warn("amountToPay: " + amountToPay);
         double extraPaymentValueToPayForUser = 0.0;
         double cashDiscountForUser = 0.0;
+        double percentageDiscountInCashForUser = Math.round((amountToPay * (percentageDiscount / 100.0)) * 100.0) / 100.0;
+        LOG.warn("percentageDiscountInCashForUser: " + percentageDiscountInCashForUser);
+        double baseForPercentageDiscount = amountToPay;
+        LOG.warn("baseForPercentageDiscount: " + baseForPercentageDiscount);
 
         if(howManyUsersInOrder > 0 && extraPaymentValueForOrder != null) {
             extraPaymentValueToPayForUser = Math.round(extraPaymentValueForOrder / (howManyUsersInOrder) * 100.0) / 100.0;
             cashDiscountForUser = Math.round((cashDiscountForOrder / howManyUsersInOrder * 100.0)) / 100.0;
             LOG.warn("CashDiscountForUser: " + cashDiscountForUser);
-            amountToPay = amountToPay + extraPaymentValueToPayForUser - cashDiscountForUser;
+            amountToPay = amountToPay + extraPaymentValueToPayForUser - cashDiscountForUser - percentageDiscountInCashForUser;
             LOG.warn("amountToPay calculating! NewAmountToPay: "  + amountToPay);
+
         }
 
         List<UserOrderPayment> userOrderPayments = userOrderPaymentRepository.findByOrderOrderId(orderId);
@@ -85,6 +94,9 @@ public class UserOrderPaymentService {
             for (UserOrderPayment userOrderPayment : userOrderPayments) {
                 userOrderPayment.setAmountToPay((userOrderPayment.getAmountToPay() - userOrderPayment.getExtraPaymentValue()) + extraPaymentValueToPayForUser - cashDiscountForUser);
                 userOrderPayment.setExtraPaymentValue(extraPaymentValueToPayForUser);
+                userOrderPayment.setGeneralDiscountValue(cashDiscountForUser + percentageDiscountInCashForUser);
+                userOrderPayment.setDiscountInPercentageInCash(percentageDiscountInCashForUser);
+                userOrderPayment.setBaseForPercentageDiscount(baseForPercentageDiscount);
             }
         }
 

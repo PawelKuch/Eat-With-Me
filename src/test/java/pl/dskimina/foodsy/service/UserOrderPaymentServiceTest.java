@@ -197,6 +197,7 @@ public class UserOrderPaymentServiceTest {
         Assertions.assertEquals(10.0, capturedUserOrderPayment.getExtraPaymentValue());
     }
 
+    //add orderItem, add extrapayment, add discount and add orderItem
     @Test
     public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithWithCashDiscountAndExtraPaymentsTest(){
         User user = new User();
@@ -252,5 +253,243 @@ public class UserOrderPaymentServiceTest {
         Assertions.assertEquals(10.0, capturedUserOrderPayment.getExtraPaymentValue());
         Assertions.assertEquals(20.0, capturedUserOrderPayment.getDiscountValueInCash());
         Assertions.assertEquals(20.0, capturedUserOrderPayment.getGeneralDiscountValue());
+    }
+
+    //add orderItem, add extrapayment, add discount and add orderItem
+    @Test
+    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithWithPercentageDiscountAndExtraPaymentsTest(){
+        User user = new User();
+        user.setUserId("userIdTest");
+        user.setFirstName("userFirstNameTest");
+        user.setLastName("userLastNameTest");
+
+        Order order = new Order();
+        order.setOrderId("orderIdTest");
+        //order.setValue(50.0);
+        //50
+        order.setValue(50.0);
+        order.setCashDiscount(0.0);
+        order.setPercentageDiscount(10.0);
+
+        UserOrderPayment userOrderPayment = new UserOrderPayment();
+        userOrderPayment.setUserOrderPaymentId("userOrderPaymentIdTest");
+        userOrderPayment.setUser(user);
+        userOrderPayment.setOrder(order);
+        userOrderPayment.setAmountToPay(50.0);
+        userOrderPayment.setDiscountValueInCash(0.0);
+        userOrderPayment.setDiscountInPercentage(10.0);
+        userOrderPayment.setExtraPaymentValue(0.0);
+        userOrderPayment.setGeneralDiscountValue(0.0);////@@@@@
+
+
+        UserOrderInfo userOrderInfo = new UserOrderInfo("orderIdTest", "userIdTest", "userFirstNameTest", "userLastNameTest", 85.0);
+        //50 - to wartość z orderValue,
+        // a 35 - wartość nowododanego produktu
+
+        List<UserOrderPayment> userOrderPayments = new ArrayList<>();
+        userOrderPayments.add(userOrderPayment);
+
+        Mockito.when(orderRepository.getUsersAmountForOrder("orderIdTest")).thenReturn(1);
+        Mockito.when(orderItemRepository.getUserOrderInfo("orderIdTest", "userIdTest")).thenReturn(userOrderInfo);
+        Mockito.when(extraPaymentRepository.getExtraPaymentsValueForOrder("orderIdTest")).thenReturn(10.0);
+        Mockito.when(orderRepository.getCashDiscountForOrder("orderIdTest")).thenReturn(0.0);
+        Mockito.when(orderRepository.getPercentageDiscountForOrder("orderIdTest")).thenReturn(10.0);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderId("orderIdTest")).thenReturn(userOrderPayments);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest")).thenReturn(userOrderPayment);
+        Mockito.when(userOrderPaymentRepository.existsByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest")).thenReturn(true);
+
+        ArgumentCaptor<UserOrderPayment> paymentCaptor = ArgumentCaptor.forClass(UserOrderPayment.class);
+
+        userOrderPaymentService.addUserOrderPaymentInfoForOrderIdAndUserId("orderIdTest", "userIdTest");
+
+        Mockito.verify(userOrderPaymentRepository).save(paymentCaptor.capture());
+
+        UserOrderPayment capturedUserOrderPayment = paymentCaptor.getValue();
+
+        Assertions.assertEquals("userIdTest" ,capturedUserOrderPayment.getUser().getUserId());
+        Assertions.assertEquals("orderIdTest" ,capturedUserOrderPayment.getOrder().getOrderId());
+        Assertions.assertEquals(86.5, capturedUserOrderPayment.getAmountToPay());
+        Assertions.assertEquals(10.0, capturedUserOrderPayment.getExtraPaymentValue());
+        Assertions.assertEquals(0.0, capturedUserOrderPayment.getDiscountValueInCash());
+        Assertions.assertEquals(85.0, capturedUserOrderPayment.getBaseForPercentageDiscount());
+        Assertions.assertEquals(8.5, capturedUserOrderPayment.getDiscountInPercentageInCash());
+        Assertions.assertEquals(8.5, capturedUserOrderPayment.getGeneralDiscountValue());
+    }
+
+    @Test
+    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithWithPercentageDiscountTest(){
+        User user = new User();
+        user.setUserId("userIdTest");
+        user.setFirstName("userFirstNameTest");
+        user.setLastName("userLastNameTest");
+
+        Order order = new Order();
+        order.setOrderId("orderIdTest");
+        //order.setValue(50.0);
+        //50
+        order.setValue(50.0);
+        order.setCashDiscount(0.0);
+        order.setPercentageDiscount(10.0);
+
+        UserOrderPayment userOrderPayment = new UserOrderPayment();
+        userOrderPayment.setUserOrderPaymentId("userOrderPaymentIdTest");
+        userOrderPayment.setUser(user);
+        userOrderPayment.setOrder(order);
+        userOrderPayment.setAmountToPay(50.0);
+        userOrderPayment.setDiscountValueInCash(0.0);
+        userOrderPayment.setDiscountInPercentage(10.0);
+        userOrderPayment.setExtraPaymentValue(0.0);
+        userOrderPayment.setGeneralDiscountValue(0.0);////@@@@@
+
+
+        UserOrderInfo userOrderInfo = new UserOrderInfo("orderIdTest", "userIdTest", "userFirstNameTest", "userLastNameTest", 85.0);
+        //50 - to wartość z orderValue,
+        // a 35 - wartość nowododanego produktu
+
+        List<UserOrderPayment> userOrderPayments = new ArrayList<>();
+        userOrderPayments.add(userOrderPayment);
+
+        Mockito.when(orderRepository.getUsersAmountForOrder("orderIdTest")).thenReturn(1);
+        Mockito.when(orderItemRepository.getUserOrderInfo("orderIdTest", "userIdTest")).thenReturn(userOrderInfo);
+        Mockito.when(extraPaymentRepository.getExtraPaymentsValueForOrder("orderIdTest")).thenReturn(0.0);
+        Mockito.when(orderRepository.getCashDiscountForOrder("orderIdTest")).thenReturn(0.0);
+        Mockito.when(orderRepository.getPercentageDiscountForOrder("orderIdTest")).thenReturn(10.0);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderId("orderIdTest")).thenReturn(userOrderPayments);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest")).thenReturn(userOrderPayment);
+        Mockito.when(userOrderPaymentRepository.existsByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest")).thenReturn(true);
+
+        ArgumentCaptor<UserOrderPayment> paymentCaptor = ArgumentCaptor.forClass(UserOrderPayment.class);
+
+        userOrderPaymentService.addUserOrderPaymentInfoForOrderIdAndUserId("orderIdTest", "userIdTest");
+
+        Mockito.verify(userOrderPaymentRepository).save(paymentCaptor.capture());
+
+        UserOrderPayment capturedUserOrderPayment = paymentCaptor.getValue();
+
+        Assertions.assertEquals("userIdTest" ,capturedUserOrderPayment.getUser().getUserId());
+        Assertions.assertEquals("orderIdTest" ,capturedUserOrderPayment.getOrder().getOrderId());
+        Assertions.assertEquals(76.5, capturedUserOrderPayment.getAmountToPay());
+        Assertions.assertEquals(0.0, capturedUserOrderPayment.getDiscountValueInCash());
+        Assertions.assertEquals(85.0, capturedUserOrderPayment.getBaseForPercentageDiscount());
+        Assertions.assertEquals(8.5, capturedUserOrderPayment.getDiscountInPercentageInCash());
+        Assertions.assertEquals(8.5, capturedUserOrderPayment.getGeneralDiscountValue());
+    }
+
+    @Test
+    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithWithPercentageDiscountAndCashDiscountTest(){
+        User user = new User();
+        user.setUserId("userIdTest");
+        user.setFirstName("userFirstNameTest");
+        user.setLastName("userLastNameTest");
+
+        Order order = new Order();
+        order.setOrderId("orderIdTest");
+        //order.setValue(50.0);
+        //50
+        order.setValue(50.0);
+        order.setCashDiscount(10.0);
+        order.setPercentageDiscount(10.0);
+
+        UserOrderPayment userOrderPayment = new UserOrderPayment();
+        userOrderPayment.setUserOrderPaymentId("userOrderPaymentIdTest");
+        userOrderPayment.setUser(user);
+        userOrderPayment.setOrder(order);
+        userOrderPayment.setAmountToPay(50.0);
+        userOrderPayment.setDiscountValueInCash(10.0);
+        userOrderPayment.setDiscountInPercentage(10.0);
+        userOrderPayment.setExtraPaymentValue(0.0);
+        userOrderPayment.setGeneralDiscountValue(0.0);////@@@@@
+
+
+        UserOrderInfo userOrderInfo = new UserOrderInfo("orderIdTest", "userIdTest", "userFirstNameTest", "userLastNameTest", 85.0);
+        //50 - to wartość z orderValue,
+        // a 35 - wartość nowododanego produktu
+
+        List<UserOrderPayment> userOrderPayments = new ArrayList<>();
+        userOrderPayments.add(userOrderPayment);
+
+        Mockito.when(orderRepository.getUsersAmountForOrder("orderIdTest")).thenReturn(1);
+        Mockito.when(orderItemRepository.getUserOrderInfo("orderIdTest", "userIdTest")).thenReturn(userOrderInfo);
+        Mockito.when(extraPaymentRepository.getExtraPaymentsValueForOrder("orderIdTest")).thenReturn(0.0);
+        Mockito.when(orderRepository.getCashDiscountForOrder("orderIdTest")).thenReturn(10.0);
+        Mockito.when(orderRepository.getPercentageDiscountForOrder("orderIdTest")).thenReturn(10.0);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderId("orderIdTest")).thenReturn(userOrderPayments);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest")).thenReturn(userOrderPayment);
+        Mockito.when(userOrderPaymentRepository.existsByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest")).thenReturn(true);
+
+        ArgumentCaptor<UserOrderPayment> paymentCaptor = ArgumentCaptor.forClass(UserOrderPayment.class);
+
+        userOrderPaymentService.addUserOrderPaymentInfoForOrderIdAndUserId("orderIdTest", "userIdTest");
+
+        Mockito.verify(userOrderPaymentRepository).save(paymentCaptor.capture());
+
+        UserOrderPayment capturedUserOrderPayment = paymentCaptor.getValue();
+
+        Assertions.assertEquals("userIdTest" ,capturedUserOrderPayment.getUser().getUserId());
+        Assertions.assertEquals("orderIdTest" ,capturedUserOrderPayment.getOrder().getOrderId());
+        Assertions.assertEquals(66.5, capturedUserOrderPayment.getAmountToPay());
+        Assertions.assertEquals(10.0, capturedUserOrderPayment.getDiscountValueInCash());
+        Assertions.assertEquals(85.0, capturedUserOrderPayment.getBaseForPercentageDiscount());
+        Assertions.assertEquals(8.5, capturedUserOrderPayment.getDiscountInPercentageInCash());
+        Assertions.assertEquals(18.5, capturedUserOrderPayment.getGeneralDiscountValue());
+    }
+
+    @Test
+    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithWithCashDiscountTest() {
+        User user = new User();
+        user.setUserId("userIdTest");
+        user.setFirstName("userFirstNameTest");
+        user.setLastName("userLastNameTest");
+
+        Order order = new Order();
+        order.setOrderId("orderIdTest");
+        //order.setValue(50.0);
+        //50
+        order.setValue(50.0);
+        order.setCashDiscount(10.0);
+        order.setPercentageDiscount(10.0);
+
+        UserOrderPayment userOrderPayment = new UserOrderPayment();
+        userOrderPayment.setUserOrderPaymentId("userOrderPaymentIdTest");
+        userOrderPayment.setUser(user);
+        userOrderPayment.setOrder(order);
+        userOrderPayment.setAmountToPay(50.0);
+        userOrderPayment.setDiscountValueInCash(10.0);
+        userOrderPayment.setDiscountInPercentage(0.0);
+        userOrderPayment.setExtraPaymentValue(0.0);
+        userOrderPayment.setGeneralDiscountValue(0.0);////@@@@@
+
+
+        UserOrderInfo userOrderInfo = new UserOrderInfo("orderIdTest", "userIdTest", "userFirstNameTest", "userLastNameTest", 85.0);
+        //50 - to wartość z orderValue,
+        // a 35 - wartość nowododanego produktu
+
+        List<UserOrderPayment> userOrderPayments = new ArrayList<>();
+        userOrderPayments.add(userOrderPayment);
+
+        Mockito.when(orderRepository.getUsersAmountForOrder("orderIdTest")).thenReturn(1);
+        Mockito.when(orderItemRepository.getUserOrderInfo("orderIdTest", "userIdTest")).thenReturn(userOrderInfo);
+        Mockito.when(extraPaymentRepository.getExtraPaymentsValueForOrder("orderIdTest")).thenReturn(0.0);
+        Mockito.when(orderRepository.getCashDiscountForOrder("orderIdTest")).thenReturn(10.0);
+        Mockito.when(orderRepository.getPercentageDiscountForOrder("orderIdTest")).thenReturn(0.0);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderId("orderIdTest")).thenReturn(userOrderPayments);
+        Mockito.when(userOrderPaymentRepository.findByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest")).thenReturn(userOrderPayment);
+        Mockito.when(userOrderPaymentRepository.existsByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest")).thenReturn(true);
+
+        ArgumentCaptor<UserOrderPayment> paymentCaptor = ArgumentCaptor.forClass(UserOrderPayment.class);
+
+        userOrderPaymentService.addUserOrderPaymentInfoForOrderIdAndUserId("orderIdTest", "userIdTest");
+
+        Mockito.verify(userOrderPaymentRepository).save(paymentCaptor.capture());
+
+        UserOrderPayment capturedUserOrderPayment = paymentCaptor.getValue();
+
+        Assertions.assertEquals("userIdTest", capturedUserOrderPayment.getUser().getUserId());
+        Assertions.assertEquals("orderIdTest", capturedUserOrderPayment.getOrder().getOrderId());
+        Assertions.assertEquals(75.0, capturedUserOrderPayment.getAmountToPay());
+        Assertions.assertEquals(10.0, capturedUserOrderPayment.getDiscountValueInCash());
+        Assertions.assertEquals(85.0, capturedUserOrderPayment.getBaseForPercentageDiscount());
+        Assertions.assertEquals(0.0, capturedUserOrderPayment.getDiscountInPercentageInCash());
+        Assertions.assertEquals(10.0, capturedUserOrderPayment.getGeneralDiscountValue());
     }
 }

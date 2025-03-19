@@ -39,6 +39,7 @@ public class ToDataService {
         OrderData orderData = new OrderData();
         orderData.setOrderId(order.getOrderId());
         orderData.setValue(order.getValue());
+        orderData.setNetValue(order.getNetValue());
         orderData.setClosingDateTime(Date.from(order.getClosingDate().toInstant(ZoneOffset.ofHours(+1))));
         orderData.setDescription(order.getDescription());
         orderData.setMinValue(order.getMinValue());
@@ -48,6 +49,7 @@ public class ToDataService {
         orderData.setPercentageDiscountCashValue(order.getPercentageDiscountCashValue());
         orderData.setOwner(convert(order.getOwner()));
         orderData.setExtraPaymentList(order.getExtraPayments().stream().map(this::convert).toList());
+        orderData.setExtraPaymentValue(order.getExtraPaymentValue());
         orderData.setOrderItemList(order.getOrderItemList().stream().map(this::convert). toList());
         orderData.setDiscountList(order.getDiscounts().stream().map(this::convert).toList());
         orderData.setUserOrderPaymentList(order.getUserOrderPayments().stream().map(this::convert).toList());
@@ -96,6 +98,8 @@ public class ToDataService {
     public UserOrderPaymentData convert(UserOrderPayment userOrderPayment) {
         UserOrderPaymentData userPayment = new UserOrderPaymentData();
         userPayment.setUserOrderPaymentId(userOrderPayment.getUserOrderPaymentId());
+        userPayment.setMenuItemsValue(userOrderPayment.getMenuItemsValue());
+        userPayment.setAmountToPayWithoutExtraPayment(userOrderPayment.getAmountToPayWithoutExtraPayment());
         userPayment.setAmountToPay(userOrderPayment.getAmountToPay());
         userPayment.setExtraPaymentValue(userOrderPayment.getExtraPaymentValue());
         userPayment.setIsPaid(userOrderPayment.getIsPaid());

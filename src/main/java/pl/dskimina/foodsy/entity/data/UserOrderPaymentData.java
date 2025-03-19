@@ -5,6 +5,8 @@ public class UserOrderPaymentData {
     private String userOrderPaymentId;
     private OrderData orderData;
     private UserData user;
+    private double menuItemsValue;
+    private double amountToPayWithoutExtraPayment;
     private Double amountToPay;
     private Double extraPaymentValue;
     private boolean isPaid;
@@ -38,13 +40,23 @@ public class UserOrderPaymentData {
         this.user = user;
     }
 
+    public double getMenuItemsValue() {
+        return menuItemsValue;
+    }
+
+    public void setMenuItemsValue(double menuItemsValue) {
+        this.menuItemsValue = menuItemsValue;
+    }
+
     public Double getAmountToPay() {
         return amountToPay;
     }
-
     public void setAmountToPay(Double amountToPay) {
         this.amountToPay = amountToPay;
     }
+
+    public double getAmountToPayWithoutExtraPayment() {return amountToPayWithoutExtraPayment;}
+    public void setAmountToPayWithoutExtraPayment(double amountToPayWithoutExtraPayment) {this.amountToPayWithoutExtraPayment = amountToPayWithoutExtraPayment;}
 
     public Double getExtraPaymentValue() {
         return extraPaymentValue;

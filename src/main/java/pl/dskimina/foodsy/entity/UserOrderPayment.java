@@ -20,6 +20,12 @@ public class UserOrderPayment {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "menu_items_value")
+    private double menuItemsValue;
+
+    @Column(name = "amount_to_pay_without_extra_payment")
+    private double amountToPayWithoutExtraPayment;
+
     @Column(name = "amount_to_pay")
     private Double amountToPay;
 
@@ -44,6 +50,14 @@ public class UserOrderPayment {
     @Column(name = "is_paid", nullable = false)
     private boolean isPaid;
 
+    public double getMenuItemsValue() {
+        return menuItemsValue;
+    }
+
+    public void setMenuItemsValue(double menuItemsValue) {
+        this.menuItemsValue = menuItemsValue;
+    }
+
     public Order getOrder() {
         return order;
     }
@@ -59,6 +73,9 @@ public class UserOrderPayment {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public double getAmountToPayWithoutExtraPayment() {return amountToPayWithoutExtraPayment;}
+    public void setAmountToPayWithoutExtraPayment(double amountToPayWithoutExtraPayment) {this.amountToPayWithoutExtraPayment = amountToPayWithoutExtraPayment;}
 
     public Double getAmountToPay() {
         return amountToPay;

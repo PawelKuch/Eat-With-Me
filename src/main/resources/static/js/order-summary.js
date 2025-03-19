@@ -5,6 +5,13 @@ $(document).ready(function (){
 
     let discardPercentageDiscountChangesBtn = $('#discard-percentage-discount-changes-btn');
 
+    let $percentageDiscountInput = $('#percentage-discount');
+    let percentageOrderDiscount = $percentageDiscountInput.data("order-discount");
+
+
+    $percentageDiscountInput.attr('placeholder', percentageOrderDiscount).val(percentageOrderDiscount);
+
+
     $updatePercentageDiscountDiv.addClass('d-none');
 
     $updatePercentageDiscountBtn.on('click', function (){
@@ -160,19 +167,4 @@ $(document).ready(function (){
             });
         });
     });
-
-
-
-
-    /*$updateExtraPaymentBtn.on('click', function (){
-        let extraPaymentId = $(this).data('extra-payment-id');
-        let orderId = $(this).data('order-id');
-
-        $.ajax({
-            url: '/orders/' + orderId + '/summary',
-            type: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify({newExtraPaymentValue: })
-        });
-    });*/
 });

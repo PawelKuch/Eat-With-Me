@@ -7,6 +7,7 @@ public class OrderData {
 
     private String orderId;
     private double value;
+    private double netValue;
     private Date closingDateTime;
     private String description;
     private double minValue;
@@ -18,6 +19,7 @@ public class OrderData {
     private RestaurantData restaurantData;
     private UserData owner;
     private List<ExtraPaymentData> extraPaymentList;
+    private double extraPaymentValue;
     private List<DiscountData> discountList;
     private List<UserOrderPaymentData> userOrderPaymentList;
 
@@ -34,6 +36,9 @@ public class OrderData {
     public void setValue(double value) {
         this.value = value;
     }
+
+    public double getNetValue() {return netValue;}
+    public void setNetValue(double netValue) {this.netValue = netValue;}
 
     public Date getClosingDateTime() {
         return closingDateTime;
@@ -110,6 +115,9 @@ public class OrderData {
     public void setExtraPaymentList(List<ExtraPaymentData> extraPaymentDataList) {
         this.extraPaymentList = extraPaymentDataList;
     }
+
+    public double getExtraPaymentValue(){return extraPaymentValue;}
+    public void setExtraPaymentValue(double extraPaymentValue){this.extraPaymentValue = extraPaymentValue;}
 
     public List<DiscountData> getDiscountList() {
         return discountList;

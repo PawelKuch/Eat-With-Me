@@ -13,6 +13,8 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     @Query("SELECT new pl.dskimina.foodsy.entity.data.UserOrderInfo(oi.order.orderId, oi.user.userId, oi.user.firstName, oi.user.lastName, SUM(oi.price)) FROM OrderItem oi WHERE oi.order.orderId = :orderId AND oi.user.userId = :userId")
     UserOrderInfo getUserOrderInfo(@Param("orderId") String orderId, @Param("userId") String userId);
 
+    @Query("SELECT SUM(oi.price) FROM OrderItem oi WHERE oi.order.orderId = :orderId" )
+    Double getOrderItemsValueForOrder(@Param("orderId") String orderId);
 
 
 

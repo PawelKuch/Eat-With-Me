@@ -7,12 +7,9 @@ import pl.dskimina.foodsy.entity.Order;
 import pl.dskimina.foodsy.entity.OrderItem;
 import pl.dskimina.foodsy.entity.User;
 import pl.dskimina.foodsy.entity.data.UserOrderInfo;
-import pl.dskimina.foodsy.repository.MenuItemRepository;
-import pl.dskimina.foodsy.repository.OrderItemRepository;
-import pl.dskimina.foodsy.repository.OrderRepository;
-import pl.dskimina.foodsy.repository.UserRepository;
+import pl.dskimina.foodsy.repository.*;
 
-import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -22,12 +19,14 @@ public class OrderItemService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final MenuItemRepository menuItemRepository;
+    private final ExtraPaymentRepository extraPaymentRepository;
 
-    public OrderItemService(OrderItemRepository orderItemRepository, UserRepository userRepository, OrderRepository orderRepository, MenuItemRepository menuItemRepository) {
+    public OrderItemService(OrderItemRepository orderItemRepository, UserRepository userRepository, OrderRepository orderRepository, MenuItemRepository menuItemRepository, ExtraPaymentRepository extraPaymentRepository) {
         this.orderItemRepository = orderItemRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.menuItemRepository = menuItemRepository;
+        this.extraPaymentRepository = extraPaymentRepository;
     }
 
     @Transactional
@@ -44,14 +43,23 @@ public class OrderItemService {
         orderItem.setDescription(description);
         orderItem.setPrice(Double.parseDouble(price));
         orderItemRepository.save(orderItem);
+
         setValueForOrder(order);
     }
 
     @Transactional
     public void setValueForOrder(Order order){
-        List<OrderItem> orderItemList = order.getOrderItemList();
-        Double value = orderItemList.stream().mapToDouble(OrderItem::getPrice).sum();
-        order.setValue(value);
+        double percentageDiscountValueInCash = order.getPercentageDiscountCashValue();
+        double cashDiscountValue = order.getCashDiscount();
+        double extraPaymentValueForOrder = Objects.requireNonNullElse(extraPaymentRepository.getExtraPaymentsValueForOrder(order.getOrderId()), 0.0);
+        double orderItemsValueForOrder = Objects.requireNonNullElse(orderItemRepository.getOrderItemsValueForOrder(order.getOrderId()), 0.0);
+        double newPercentageDiscountValueInCash = orderItemsValueForOrder * (order.getPercentageDiscount() / 100.0);
+
+        double newValue = orderItemsValueForOrder - newPercentageDiscountValueInCash - cashDiscountValue + extraPaymentValueForOrder;
+
+        order.setPercentageDiscountCashValue(newPercentageDiscountValueInCash);
+        order.setNetValue(orderItemsValueForOrder);
+        order.setValue(newValue);
         orderRepository.save(order);
     }
 
@@ -72,7 +80,7 @@ public class OrderItemService {
     }
 
     @Transactional
-    public UserOrderInfo getUserOrderInfoDTO(String userId, String orderId) {
+    public UserOrderInfo  getUserOrderInfoDTO(String userId, String orderId) {
         return orderItemRepository.getUserOrderInfo(orderId, userId);
     }
 }

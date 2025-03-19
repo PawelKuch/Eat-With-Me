@@ -1,6 +1,7 @@
 package pl.dskimina.foodsy.service;
 
 
+import ch.qos.logback.core.testUtil.MockInitialContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -101,6 +102,34 @@ public class OrderServiceTest {
         Assertions.assertEquals(closingDateTime, capturedOrder.getClosingDate());
         Assertions.assertEquals(100.0, capturedOrder.getMinValue());
         Assertions.assertEquals("descriptionTest", capturedOrder.getDescription());
+    }
+
+    @Test
+    public void addPercentageDiscountTest(){
+        Order order = new Order();
+        order.setOrderId("orderIdTest");
+        order.setValue(50.0);
+        order.setCashDiscount(0.0);
+        order.setPercentageDiscount(0.0);
+        order.setPercentageDiscountCashValue(0.0);
+
+        Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
+        Mockito.when(userOrderPaymentRepository.getExtraPaymentValueForOrder("orderIdTest")).thenReturn(0.0);
+
+        ArgumentCaptor<Order> orderCaptor = ArgumentCaptor.forClass(Order.class);
+
+        orderService.addPercentageDiscount("orderIdTest", "10");
+
+        Mockito.verify(orderRepository).save(orderCaptor.capture());
+
+        Order capturedOrder = orderCaptor.getValue();
+
+        Assertions.assertEquals("orderIdTest", capturedOrder.getOrderId());
+        Assertions.assertEquals(10.0, capturedOrder.getPercentageDiscount());
+        Assertions.assertEquals(5.0, capturedOrder.getPercentageDiscountCashValue());
+        Assertions.assertEquals(45.0, capturedOrder.getValue());
+
+
     }
 
 

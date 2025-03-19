@@ -115,13 +115,8 @@ public class OrderController {
     public ResponseEntity<String> updateOrder(@PathVariable String orderId,
                                         @RequestBody(required = false) Map<String, String> requestedData) {
 
-        if(requestedData != null && requestedData.containsKey("newCashDiscountValue")) {
-            orderService.updateCashDiscount(orderId, requestedData.get("newCashDiscountValue"));
-            return ResponseEntity.ok("Cash discount updated!");
-        } else if(requestedData != null && requestedData.containsKey("newPercentageDiscountValue")) {
-            orderService.updatePercentageDiscount(orderId, requestedData.get("newPercentageDiscountValue"));
-            return ResponseEntity.ok("Percentage discount updated!");
-        } else if(requestedData != null && requestedData.containsKey("extraPaymentId") && requestedData.containsKey("newExtraPaymentProduct") && requestedData.containsKey("newExtraPaymentPrice")) {
+
+        if(requestedData != null && requestedData.containsKey("extraPaymentId") && requestedData.containsKey("newExtraPaymentProduct") && requestedData.containsKey("newExtraPaymentPrice")) {
             String extraPaymentId = requestedData.get("extraPaymentId");
             String extraPaymentProduct = requestedData.get("newExtraPaymentProduct");
             String extraPaymentPrice = requestedData.get("newExtraPaymentPrice");

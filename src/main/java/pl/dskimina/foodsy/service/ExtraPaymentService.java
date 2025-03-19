@@ -9,24 +9,26 @@ import pl.dskimina.foodsy.entity.Order;
 import pl.dskimina.foodsy.entity.UserOrderPayment;
 import pl.dskimina.foodsy.repository.ExtraPaymentRepository;
 import pl.dskimina.foodsy.repository.OrderRepository;
+import pl.dskimina.foodsy.repository.UserOrderPaymentRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
 public class ExtraPaymentService {
     private final ExtraPaymentRepository extraPaymentRepository;
     private final OrderService orderService;
-    private final UserOrderPaymentService userOrderPaymentService;
     private final OrderRepository orderRepository;
+    private final UserOrderPaymentRepository userOrderPaymentRepository;
 
     Logger LOG = LoggerFactory.getLogger(ExtraPaymentService.class);
 
-    public ExtraPaymentService(ExtraPaymentRepository extraPaymentRepository, OrderService orderService, UserOrderPaymentService userOrderPaymentService, OrderRepository orderRepository) {
+    public ExtraPaymentService(ExtraPaymentRepository extraPaymentRepository, OrderService orderService, OrderRepository orderRepository, UserOrderPaymentRepository userOrderPaymentRepository) {
         this.extraPaymentRepository = extraPaymentRepository;
         this.orderService = orderService;
-        this.userOrderPaymentService = userOrderPaymentService;
         this.orderRepository = orderRepository;
+        this.userOrderPaymentRepository = userOrderPaymentRepository;
     }
 
     @Transactional
@@ -41,8 +43,9 @@ public class ExtraPaymentService {
         double currentOrderValue = order.getValue();
         double newOrderValue = currentOrderValue + extraPaymentPrice;
         order.setValue(newOrderValue);
-        orderService.saveOrder(order);
         extraPaymentRepository.save(extraPayment);
+        order.setExtraPaymentValue(Objects.requireNonNullElse(extraPaymentRepository.getExtraPaymentsValueForOrder(orderId), 0.0));
+        orderService.saveOrder(order);
     }
 
 
@@ -55,13 +58,13 @@ public class ExtraPaymentService {
     @Transactional
     public void addExtraPaymentToUserOrderPayment(String orderId, String extraPaymentValueString){
         double extraPaymentValue = Double.parseDouble(extraPaymentValueString);
-        List<UserOrderPayment> userOrderPayments = userOrderPaymentService.findUserOrderPaymentsForOrderId(orderId);
+        List<UserOrderPayment> userOrderPayments = userOrderPaymentRepository.findByOrderOrderId(orderId);
         int howManyUsersInOrder = userOrderPayments.size();
         Double extraPaymentValueForUser = Math.round(extraPaymentValue / howManyUsersInOrder * 100.0) / 100.0;
         userOrderPayments.forEach(data -> {
             data.setExtraPaymentValue(extraPaymentValueForUser);
             data.setAmountToPay(data.getAmountToPay() + extraPaymentValueForUser);
-            userOrderPaymentService.saveUserOrderPayment(data);
+            userOrderPaymentRepository.save(data);
         });
     }
 
@@ -75,6 +78,8 @@ public class ExtraPaymentService {
         Order order = orderRepository.findByOrderId(orderId);
         order.setValue(order.getValue() - extraPayment.getPrice());
         extraPaymentRepository.delete(extraPayment);
+        order.setExtraPaymentValue(extraPaymentRepository.getExtraPaymentsValueForOrder(orderId));
+        orderRepository.save(order);
         return true;
     }
 

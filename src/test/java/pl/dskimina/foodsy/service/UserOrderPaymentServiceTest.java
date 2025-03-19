@@ -481,7 +481,7 @@ public class UserOrderPaymentServiceTest {
 
     //adding item A of user A, adding percentage discount and adding item B of user B
     @Test
-    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithPercentageDiscountFor2UsersTest(){
+    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenFirstExistsWithPercentageDiscountFor2UsersTest(){
         User user1 = new User();
         user1.setUserId("userIdTest");
         user1.setFirstName("userFirstNameTest");
@@ -561,7 +561,7 @@ public class UserOrderPaymentServiceTest {
 
 
     @Test
-    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithCashDiscountFor2UsersTest(){
+    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenFirstExistsWithCashDiscountFor2UsersTest(){
         User user1 = new User();
         user1.setUserId("userIdTest");
         user1.setFirstName("userFirstNameTest");
@@ -574,6 +574,7 @@ public class UserOrderPaymentServiceTest {
 
         Order order = new Order();
         order.setOrderId("orderIdTest");
+        order.setNetValue(50.0);
         order.setValue(50.0);
         order.setCashDiscount(10.0);
         order.setPercentageDiscount(0.0);
@@ -591,7 +592,7 @@ public class UserOrderPaymentServiceTest {
 
 
         UserOrderInfo userOrderInfo = new UserOrderInfo("orderIdTest", "userIdTest", "userFirstNameTest", "userLastNameTest", 50.0);
-        UserOrderInfo userOrderInfo2 = new UserOrderInfo("orderIdTest", "userIdTest2", "userFirstNameTest2", "userLastNameTest2", 35.0);
+        UserOrderInfo userOrderInfo2 = new UserOrderInfo("orderIdTest", "userIdTest2", "userFirstNameTest2", "userLastNameTest2", 40.0);
 
         List<UserOrderPayment> userOrderPayments = new ArrayList<>();
         userOrderPayments.add(userOrderPayment);
@@ -607,6 +608,7 @@ public class UserOrderPaymentServiceTest {
         Mockito.when(userOrderPaymentRepository.existsByOrderOrderIdAndUserUserId("orderIdTest", "userIdTest2")).thenReturn(false);
         Mockito.when(userRepository.findByUserId("userIdTest2")).thenReturn(user2);
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
+        Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
 
         ArgumentCaptor<List<UserOrderPayment>> paymentCaptor = ArgumentCaptor.forClass(List.class);
 
@@ -620,9 +622,9 @@ public class UserOrderPaymentServiceTest {
 
         Assertions.assertEquals("userIdTest2" ,capturedUserOrderPayments.get(1).getUser().getUserId());
         Assertions.assertEquals("orderIdTest" ,capturedUserOrderPayments.get(1).getOrder().getOrderId());
-        Assertions.assertEquals(30.0, capturedUserOrderPayments.get(1).getAmountToPay());
+        Assertions.assertEquals(35.0, capturedUserOrderPayments.get(1).getAmountToPay());
         Assertions.assertEquals(5.0, capturedUserOrderPayments.get(1).getDiscountValueInCash());
-        Assertions.assertEquals(35.0, capturedUserOrderPayments.get(1).getBaseForPercentageDiscount());
+        Assertions.assertEquals(40.0, capturedUserOrderPayments.get(1).getBaseForPercentageDiscount());
         Assertions.assertEquals(0.0, capturedUserOrderPayments.get(1).getDiscountInPercentageInCash());
         Assertions.assertEquals(5.0, capturedUserOrderPayments.get(1).getGeneralDiscountValue());
 
@@ -637,7 +639,7 @@ public class UserOrderPaymentServiceTest {
     }
 
     @Test
-    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithPercentageDiscountAndCashDiscountFor2UsersTest() {
+    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenFirstExistsWithPercentageDiscountAndCashDiscountFor2UsersTest() {
         User user1 = new User();
         user1.setUserId("userIdTest");
         user1.setFirstName("userFirstNameTest");
@@ -714,7 +716,7 @@ public class UserOrderPaymentServiceTest {
     }
 
     @Test
-    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithPercentageDiscountAndExtraPaymentFor2UsersTest() {
+    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenFirstExistsWithPercentageDiscountAndExtraPaymentFor2UsersTest() {
         User user1 = new User();
         user1.setUserId("userIdTest");
         user1.setFirstName("userFirstNameTest");
@@ -793,7 +795,7 @@ public class UserOrderPaymentServiceTest {
     }
 
     @Test
-    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithCashDiscountAndExtraPaymentFor2UsersTest() {
+    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenFirstExistsWithCashDiscountAndExtraPaymentFor2UsersTest() {
         User user1 = new User();
         user1.setUserId("userIdTest");
         user1.setFirstName("userFirstNameTest");
@@ -872,7 +874,7 @@ public class UserOrderPaymentServiceTest {
     }
 
     @Test
-    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenExistsWithExtraPaymentFor2UsersTest() {
+    public void addUserOrderPaymentInfoForOrderIdAndUserIdWhenFirstExistsWithExtraPaymentFor2UsersTest() {
         User user1 = new User();
         user1.setUserId("userIdTest");
         user1.setFirstName("userFirstNameTest");

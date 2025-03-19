@@ -19,6 +19,9 @@ public class Order {
     @Column(name = "order_value")
     private Double value;
 
+    @Column(name = "net_order_value")
+    private Double netValue;
+
     @Column(name = "order_date")
     private LocalDateTime closingDate;
 
@@ -54,6 +57,9 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<ExtraPayment> extraPayments;
 
+    @Column(name = "extra_payment_value")
+    private double extraPaymentValue;
+
     @OneToMany(mappedBy = "order")
     private List<Discount> discounts;
 
@@ -81,6 +87,9 @@ public class Order {
     public void setValue(Double value) {
         this.value = value;
     }
+
+    public Double getNetValue(){return netValue;}
+    public void setNetValue(Double netValue){this.netValue = netValue;}
 
     public LocalDateTime getClosingDate() {
         return closingDate;
@@ -157,6 +166,9 @@ public class Order {
     public void setExtraPayments(List<ExtraPayment> extraPayments) {
         this.extraPayments = extraPayments;
     }
+
+    public double getExtraPaymentValue(){return extraPaymentValue;}
+    public void setExtraPaymentValue(double extraPaymentValue){this.extraPaymentValue = extraPaymentValue;}
 
     public List<Discount> getDiscounts() {
         return discounts;

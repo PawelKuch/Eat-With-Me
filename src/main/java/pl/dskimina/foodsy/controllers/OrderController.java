@@ -1,6 +1,9 @@
 package pl.dskimina.foodsy.controllers;
 
 
+import org.apache.logging.log4j.spi.LoggerContextFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -39,6 +42,7 @@ public class OrderController {
         this.userOrderPaymentService = userOrderPaymentService;
     }
 
+    Logger LOG = LoggerFactory.getLogger(OrderController.class);
 
     @ModelAttribute
     public void fillModel(Model modelMap){
@@ -94,16 +98,18 @@ public class OrderController {
                                                        @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
                                                        @RequestParam(value = "isPercentage", required = false) boolean isPercentage,
                                                        @RequestParam(value = "extraPayment", required = false) String extraPaymentPrice,
-                                                       @RequestParam(value = "extraPaymentProduct", required = false) String extraPaymentProduct,
                                                        RedirectAttributes ra) {
-            if(extraPaymentPrice != null && extraPaymentProduct != null ) {
-                    extraPaymentService.createExtraPayment(orderId, extraPaymentProduct, extraPaymentPrice);
-                    extraPaymentService.addExtraPaymentToUserOrderPayment(orderId, extraPaymentPrice);
+            if(extraPaymentPrice != null ) {
+                    //extraPaymentService.createExtraPayment(orderId, extraPaymentProduct, extraPaymentPrice);
+                    //extraPaymentService.addExtraPaymentToUserOrderPayment(orderId, extraPaymentPrice);
+                orderService.addExtraPayment(orderId, extraPaymentPrice);
+                LOG.warn("addExtraPaymentMethod is called!");
             }
-            if(!isPercentage && cashDiscount != null) {
+            if(cashDiscount != null) {
                orderService.addCashDiscount(orderId, cashDiscount);
+                LOG.warn("addCashDiscountMethod is called!");
             }
-            if(isPercentage && percentageDiscount != null) {
+            if(percentageDiscount != null) {
                 orderService.addPercentageDiscount(orderId, percentageDiscount);
             }
 
@@ -111,25 +117,7 @@ public class OrderController {
             return new RedirectView("/orders/" + orderId + "/summary");
         }
 
-    @PutMapping("/{orderId}/summary")
-    public ResponseEntity<String> updateOrder(@PathVariable String orderId,
-                                        @RequestBody(required = false) Map<String, String> requestedData) {
 
-
-        if(requestedData != null && requestedData.containsKey("extraPaymentId") && requestedData.containsKey("newExtraPaymentProduct") && requestedData.containsKey("newExtraPaymentPrice")) {
-            String extraPaymentId = requestedData.get("extraPaymentId");
-            String extraPaymentProduct = requestedData.get("newExtraPaymentProduct");
-            String extraPaymentPrice = requestedData.get("newExtraPaymentPrice");
-            if(orderService.updateOrderWithNewExtraPayment(orderId, extraPaymentId, extraPaymentProduct, extraPaymentPrice)){
-                return ResponseEntity
-                        .status(HttpStatus.OK)
-                        .body("Extra payment updated!");
-            }
-        }
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Request failed!");
-    }
 
     @DeleteMapping("/{orderId}/summary")
     public ResponseEntity<String> deleteExtraPayment(@PathVariable String orderId, @RequestBody Map<String, String> requestedObject) {

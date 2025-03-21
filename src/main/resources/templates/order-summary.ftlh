@@ -38,30 +38,17 @@
                             <div class="col-1 d-flex justify-content-end">${orderItem.menuItem.price}</div>
                         </div>
                     </#list>
-                    <#list order.extraPaymentList as extraPayment>
+                    <#if order.extraPaymentValue?number gt 0.00>
                         <div class="list-group-item row d-flex flex-row col-12">
-                            <div id="extra-payment-details-div-${extraPayment.extraPaymentId}" class="col-11 d-flex">
-                                <div class="col-4">${extraPayment.extraPaymentProduct}</div>
+                            <div class="col-11 d-flex">
+                                <div class="col-4">Dostawa</div>
                                 <div class="col-6"></div>
-                                <div class="col-1 d-flex justify-content-end pe-2">${extraPayment.price}</div>
-                            </div>
-                            <form id="update-extra-payment-form-${extraPayment.extraPaymentId}" class="col-11 d-none flex-row">
-                                <textarea class="col-4" cols="50" rows="1" id="new-extra-payment-product-${extraPayment.extraPaymentId}">${extraPayment.extraPaymentProduct}</textarea>
-                                <div class="col-6"></div>
-                                <textarea cols="10" rows="1" id="new-extra-payment-price-${extraPayment.extraPaymentId}">${extraPayment.price}</textarea>
-                            </form>
-                            <div class="col-1 d-flex flex-row">
-                                <div id="update-and-delete-extra-payment-div-${extraPayment.extraPaymentId}" class="d-flex flex-row">
-                                    <button class="btn btn-dark update-extra-payment-btn" data-extra-payment-id="${extraPayment.extraPaymentId}" data-order-id="${order.orderId}"><i class="bi bi-pencil-fill"></i></button>
-                                    <button class="btn btn-dark ms-1 delete-extra-payment-btn" data-extra-payment-id="${extraPayment.extraPaymentId}" data-order-id="${order.orderId}"><i class="bi bi-trash3-fill"></i></button>
-                                </div>
-                                <div id="confirm-and-discard-new-extra-payment-div-${extraPayment.extraPaymentId}" class="d-none flex-row">
-                                    <button id="confirm-new-extra-payment-btn-${extraPayment.extraPaymentId}" class="btn btn-dark" data-extra-payment-id="${extraPayment.extraPaymentId}" data-order-id="${order.orderId}">OK</button>
-                                    <button id="discard-new-extra-payment-btn-${extraPayment.extraPaymentId}" class="btn btn-dark ms-1" data-extra-payment-id="${extraPayment.extraPaymentId}" data-order-id="${order.orderId}">X</button>
-                                </div>
+                                <div class="col-1 d-flex justify-content-end pe-2">${order.extraPaymentValue}</div>
                             </div>
                         </div>
-                    </#list>
+                    </#if>
+
+
                 </div>
             <#else>
                 <div class="alert alert-warning text-center mt-3">Brak pozycji w zamówieniu</div>
@@ -100,7 +87,7 @@
         Rabat procentowy:${order.percentageDiscount} <br/>
         Wartość procentowego rabatu: ${order.percentageDiscountCashValue} zł <br/>
         Rabat kwotowy: ${order.cashDiscount} <br/>
-        Dopłata: ${order.extraPaymentValue}
+        Dostawa: ${order.extraPaymentValue}
 
         <br/>
 
@@ -112,47 +99,32 @@
         <#if !order.isClosed>
             <div class="d-flex fw-bold mt-3">Ustaw dodatkowe rabaty lub opłaty</div>
 
-
             <form action="/orders/${order.orderId}/summary" method="post" class="mt-2">
-                <input name="isPercentage" value="true" type="hidden">
-                <div class="d-flex flex-row">
-                    <div class="input-group w-25 mb-3 mx-2">
-                        <span class="input-group-text">Rabat [%]</span>
-                        <input id="percentage-discount" data-order-discount="<#if order.percentageDiscount?number lt 0.01>0.0<#else>${order.percentageDiscount}</#if>"  class="form-control w-25" type="number" name="percentageDiscount">
-                    </div>
-                    <div class="mx-2">
-                        <button class="btn btn-outline-primary" type="submit">Zatwierdź rabat</button>
-                    </div>
-                </div>
-            </form>
-
-
-            <form action="/orders/${order.orderId}/summary" method="post">
-                <input name="isPercentage" value="false" type="hidden">
                 <div class="d-flex flex-row">
                     <div class="input-group w-25 mb-3 mx-2">
                         <span class="input-group-text">Rabat [zł]</span>
-                        <input id="cash-discount" class="form-control w-25" type="number" name="cashDiscount" value="0.0">
-                    </div>
-                    <div class="mx-2">
-                        <button type="submit" class="btn btn-outline-primary">Zatwierdź rabat</button>
+                        <input id="cash-discount" class="form-control w-25" type="number" name="cashDiscount" value="${order.cashDiscount}">
                     </div>
                 </div>
-            </form>
 
-            <form action="/orders/${order.orderId}/summary" method="post">
+
+                <div class="d-flex flex-row">
+                    <div class="input-group w-25 mb-3 mx-2">
+                        <span class="input-group-text">Rabat [%]</span>
+                        <input id="percentage-discount" data-order-discount="<#if order.percentageDiscount?number lt 0.01>0.0<#else>${order.percentageDiscount}</#if>"  class="form-control w-25" type="number" name="percentageDiscount" value="${order.percentageDiscount}">
+                    </div>
+                </div>
+
+
                 <div class="d-flex flex-row">
                     <div class="input-group mb-3 mx-2 w-25">
-                        <span class="input-group-text">Dodatkowa opłata</span>
-                        <input id="extra-payment-product" class="form-control w-25" name="extraPaymentProduct" placeholder="np. dostawa">
+                        <span class="input-group-text">Dostawa [zł]</span>
+                        <input id="extra-payment" class="form-control w-25" name="extraPayment" value="${order.extraPaymentValue}">
                     </div>
-                    <div class="input-group mb-3 mx-2 w-25">
-                        <span class="input-group-text">Kwota [zł]</span>
-                        <input id="extra-payment" class="form-control w-25" name="extraPayment" value="0.0">
-                    </div>
-                    <div class="d-flex mx-2 mb-3 w-25">
-                        <button class="btn btn-outline-primary form-control" type="submit">Zatwierdź dopłatę</button>
-                    </div>
+                </div>
+
+                <div class="d-flex mx-2 mb-3 w-25">
+                    <button class="btn btn-outline-primary form-control" type="submit">Zatwierdź zmiany</button>
                 </div>
             </form>
         <#else>

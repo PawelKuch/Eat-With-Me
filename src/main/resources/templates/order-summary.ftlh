@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -115,11 +115,38 @@
 
         </div>
 
-        Obecna liczba użytkowników na zamówieniu: ${userAmountForOrder} <br/>
-        Rabat procentowy:${order.percentageDiscount}% <br/>
-        Wartość procentowego rabatu: ${order.percentageDiscountCashValue} zł <br/>
-        Rabat kwotowy: ${order.cashDiscount} zł <br/>
-        Dostawa: ${order.extraPaymentValue} zł
+        <button class="btn btn-primary" data-bs-target="#order-details-modal" data-bs-toggle="modal">Szczegóły</button>
+
+        <div class="modal fade" id="order-details-modal" tabindex="-1" aria-labelledby="order-details-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div id="modal-title-div">
+                            <h1 class="modal-title fs-5">SZCZEGÓŁY</h1>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex justify-content-center">
+                            <div class="list-group-flush">
+                                <div class="list-group-item d-flex flex-row">
+                                    <div class="d-flex col-10">Liczba użytkowników w zamówieniu</div>
+                                    <div class="d-flex col-2 align-items-center">${userAmountForOrder} <br/></div>
+                                </div>
+                                <div class="list-group-item d-flex flex-row">
+                                    <div class="d-flex col-9 align-items-center">Rabat procentowy</div>
+                                    <div class="d-flex col-3 justify-content-center">${order.percentageDiscount}% <br/> (${order.percentageDiscountCashValue} zł) </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="submit-sign-in-form-button" class="btn btn-dark mb-3">Zaloguj</button>
+                            <button type="button" class="btn btn-secondary mb-3" data-bs-dismiss="modal">Zamknij</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <br/>
 
@@ -161,9 +188,11 @@
     </div>
 </div>
 
+
+
+
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
-
-
-
-

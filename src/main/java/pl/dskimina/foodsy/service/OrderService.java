@@ -143,6 +143,9 @@ public class OrderService {
             double currentExtraPaymentValue = order.getExtraPaymentValue();
 
             double baseOrderValue = currentOrderValue + currentPercentageDiscountInCash - currentExtraPaymentValue;
+            LOG.warn("currentOrderValue: {}", currentOrderValue);
+            LOG.warn("currentPercentageDiscountInCash: {}", currentPercentageDiscountInCash);
+            LOG.warn("baseOrderValue: {}", baseOrderValue);
             double newPercentageDiscountInCashForOrder = baseOrderValue * newPercentageDiscountDouble;
             order.setPercentageDiscount(newPercentageDiscount);
             LOG.warn("newPercentageDiscount: {}", newPercentageDiscount);
@@ -192,9 +195,9 @@ public class OrderService {
         if (order.getCashDiscount() != newCashDiscount) {
             double currentCashDiscountForOrder = order.getCashDiscount();
             double currentOrderValue = order.getValue();
-
             order.setCashDiscount(newCashDiscount);
             order.setValue(currentOrderValue + currentCashDiscountForOrder - newCashDiscount);
+
             orderRepository.save(order);
 
             List<UserOrderPayment> userOrderPayments = userOrderPaymentRepository.findByOrderOrderId(orderId);

@@ -20,7 +20,7 @@
     <#include "side-navbar.ftlh">
     <div class="container">
         <div id="orders-containers" class="d-flex flex-column">
-            <div class="d-flex justify-content-center"><img src="/restaurants/logos/${restaurant.restaurantId}" alt="restaurant logo ${restaurant.restaurantId}" width="200px" height="200px"></div>
+            <div class="d-flex justify-content-center"><img src="/restaurants/${restaurant.restaurantId}/logo" alt="restaurant logo ${restaurant.restaurantId}" width="200px" height="200px"></div>
             <h5>Podsumowanie zamówienia</h5>
             <#if order.orderItemList?has_content>
                 <div class="row fw-bold border-bottom py-2">
@@ -35,7 +35,7 @@
                             <div class="col-4">${orderItem.menuItem.name}</div>
                             <div class="col-3">${orderItem.description}</div>
                             <div class="col-2">${orderItem.user.firstName} ${orderItem.user.lastName}</div>
-                            <div class="col-1 d-flex justify-content-end">${orderItem.menuItem.price}</div>
+                            <div class="col-1 d-flex justify-content-end">${orderItem.menuItem.price} zł</div>
                         </div>
                     </#list>
                     <#if order.extraPaymentValue?number gt 0.00>
@@ -43,12 +43,29 @@
                             <div class="col-11 d-flex">
                                 <div class="col-4">Dostawa</div>
                                 <div class="col-6"></div>
-                                <div class="col-1 d-flex justify-content-end pe-2">${order.extraPaymentValue}</div>
+                                <div class="col-1 d-flex justify-content-end pe-2">${order.extraPaymentValue} zł</div>
                             </div>
                         </div>
                     </#if>
-
-
+                    <#if order.cashDiscount?number gt 0.00>
+                        <div class="list-group-item row d-flex flex-row col-12">
+                            <div class="col-11 d-flex">
+                                <div class="col-4">Rabat kwotowy</div>
+                                <div class="col-6"></div>
+                                <div class="col-1 d-flex justify-content-end pe-2">${order.cashDiscount} zł</div>
+                            </div>
+                        </div>
+                    </#if>
+                    <#if order.percentageDiscount?number gt 0.00>
+                        <div class="list-group-item row d-flex flex-row col-12">
+                            <div class="col-11 d-flex">
+                                <div class="col-4">Rabat procentowy</div>
+                                <div class="col-2 d-flex justify-content-center">${order.percentageDiscount}%</div>
+                                <div class="col-4"></div>
+                                <div class="col-1 d-flex justify-content-end pe-2">${order.percentageDiscountCashValue} zł</div>
+                            </div>
+                        </div>
+                    </#if>
                 </div>
             <#else>
                 <div class="alert alert-warning text-center mt-3">Brak pozycji w zamówieniu</div>
@@ -57,45 +74,56 @@
         <div id="costs-summary" class="mt-5">
             <div class="list-group-flush">
                 <div class="list-group-item d-flex flex-row">
-                    <div class="d-flex col-3">Użytkownik</div>
+                    <div class="d-flex col-2">Użytkownik</div>
                     <div class="d-flex col-2 justify-content-center">Koszt w zamówieniu</div>
-                    <div class="d-flex col-3 justify-content-center">Udział w rabacie kwotowym</div>
+                    <div class="d-flex col-2 justify-content-center">Udział w rabacie kwotowym</div>
+                    <div class="d-flex col-2 justify-content-center">Dopłata</div>
                     <div class="d-flex col-2 justify-content-center">Cena po rabatach</div>
                     <div class="d-flex col-2 justify-content-center">Cena końcowa</div>
                 </div>
                 <#list order.userOrderPaymentList as uop>
                     <div class="list-group-item d-flex flex-row">
-                        <div class="d-flex col-3">${uop.user.firstName} ${uop.user.lastName}</div>
-                        <div class="d-flex col-2 justify-content-center">${uop.menuItemsValue} zł</div>
-                        <div class="d-flex col-3 justify-content-center">${uop.discountValueInCash} zł</div>
+                        <div class="d-flex col-2">${uop.user.firstName} ${uop.user.lastName}</div>
+                        <div class="d-flex col-2 justify-content-center">
+                            <#if uop.extraPaymentValue?number gt 0.00 || uop.discountValueInCash?number gt 0.00 || uop.discountInPercentageInCash?number gt 0.00>
+                                <s>${uop.menuItemsValue} zł </s>
+                            <#else>
+                                ${uop.menuItemsValue} zł
+                            </#if>
+                        </div>
+
+                        <div class="d-flex col-2 justify-content-center">${uop.discountValueInCash} zł</div>
+                        <div class="d-flex col-2 justify-content-center">${uop.extraPaymentValue} zł</div>
                         <div class="d-flex col-2 justify-content-center">${uop.amountToPayWithoutExtraPayment} zł</div>
                         <div class="d-flex col-2 justify-content-center">${uop.amountToPay} zł</div>
 
                     </div>
                 </#list>
                 <div class="list-group-item d-flex flex-row">
-                    <div class="d-flex col-3">RAZEM</div>
-                    <div class="d-flex col-2 justify-content-center">${order.netValue} zł</div>
-                    <div class="d-flex col-5"></div>
-                    <div class="d-flex col-2 justify-content-center">${order.value}zł</div>
+                    <div class="d-flex col-2">RAZEM</div>
+                    <div class="d-flex col-2 justify-content-center">
+                        <#if order.extraPaymentValue?number gt 0.00 || order.cashDiscount?number gt 0.00 || order.percentageDiscountCashValue?number gt 0.00>
+                            <s>${order.netValue} zł </s>
+                        <#else>
+                            ${order.netValue} zł
+                        </#if>
+                    </div>
+                    <div class="d-flex col-6"></div>
+                    <div class="d-flex col-2 justify-content-center">${order.value} zł</div>
                 </div>
             </div>
 
         </div>
 
         Obecna liczba użytkowników na zamówieniu: ${userAmountForOrder} <br/>
-        Rabat procentowy:${order.percentageDiscount} <br/>
+        Rabat procentowy:${order.percentageDiscount}% <br/>
         Wartość procentowego rabatu: ${order.percentageDiscountCashValue} zł <br/>
-        Rabat kwotowy: ${order.cashDiscount} <br/>
-        Dostawa: ${order.extraPaymentValue}
+        Rabat kwotowy: ${order.cashDiscount} zł <br/>
+        Dostawa: ${order.extraPaymentValue} zł
 
         <br/>
 
         ______________________________________
-        <#list userOrderPaymentList as payment>
-            <br/>${payment.user.firstName} ${payment.user.lastName} || do zapłaty: ${payment.amountToPay} || <#if payment.extraPaymentValue?has_content> dopłata: ${payment.extraPaymentValue} </#if> zapłacone: ${payment.isPaid?string}
-            <br/>rabat w %: ${payment.discountInPercentage} || rabat w gotówce: ${payment.discountValueInCash} || Całkowita wartość rabatu: ${payment.generalDiscountValue} zł
-        </#list>
         <#if !order.isClosed>
             <div class="d-flex fw-bold mt-3">Ustaw dodatkowe rabaty lub opłaty</div>
 

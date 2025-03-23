@@ -71,12 +71,9 @@ public class UserOrderPaymentService {
         double orderItemsGeneralValueForOrder = order.getNetValue();
 
         double currentCashDiscountForUser = (menuItemsValueForUserAfterAddingOrderItem / orderItemsGeneralValueForOrder) * currentCashDiscountForOrder;
-        LOG.warn("menuItemsValueAfterAddingOrderItem: {}", menuItemsValueForUserAfterAddingOrderItem);
-        LOG.warn("generalOrderItemsValueForOrder: {}", orderItemsGeneralValueForOrder);
-        LOG.warn("currentCashDiscountForOrder: {}", currentCashDiscountForOrder);
-        LOG.warn("currentCashDiscountForUser: {}", currentCashDiscountForUser);
-        double currentExtraPaymentForUser = howManyUsersInOrder > 0 ? currentExtraPaymentForOrder / howManyUsersInOrder : currentExtraPaymentForOrder;
-        double currentPercentageDiscountInCashForUser = menuItemsValueForUserAfterAddingOrderItem * currentPercentageDiscountForOrder;
+        double extraPaymentForUser = howManyUsersInOrder > 0 ? currentExtraPaymentForOrder / howManyUsersInOrder : currentExtraPaymentForOrder;
+        double currentPercentageDiscountInCashForUser = Math.round(menuItemsValueForUserAfterAddingOrderItem * currentPercentageDiscountForOrder * 100.0) / 100.0;
+
 
 
         //czy użytkownik na zamówieniu istnieje
@@ -84,13 +81,13 @@ public class UserOrderPaymentService {
            UserOrderPayment uop = userOrderPaymentRepository.findByOrderOrderIdAndUserUserId(orderId, userId);
            uop.setAmountToPayWithoutExtraPayment(menuItemsValueForUserAfterAddingOrderItem - (currentCashDiscountForUser + currentPercentageDiscountInCashForUser));
            uop.setMenuItemsValue(menuItemsValueForUserAfterAddingOrderItem);
-           uop.setAmountToPay(menuItemsValueForUserAfterAddingOrderItem - (currentCashDiscountForUser + currentPercentageDiscountInCashForUser) + currentExtraPaymentForUser);
+           uop.setAmountToPay(menuItemsValueForUserAfterAddingOrderItem - (currentCashDiscountForUser + currentPercentageDiscountInCashForUser) + extraPaymentForUser);
            uop.setDiscountInPercentageInCash(currentPercentageDiscountInCashForUser);
            uop.setGeneralDiscountValue((uop.getGeneralDiscountValue() - uop.getDiscountValueInCash()) + currentPercentageDiscountInCashForUser);
            uop.setDiscountValueInCash(currentCashDiscountForUser);
            uop.setDiscountInPercentage(Math.round(currentPercentageDiscountForOrderNoDecimalValue * 100.0) / 100.0);
            uop.setBaseForPercentageDiscount(menuItemsValueForUserAfterAddingOrderItem);
-           uop.setExtraPaymentValue(currentExtraPaymentForUser);
+           uop.setExtraPaymentValue(extraPaymentForUser);
 
 
            List<UserOrderPayment> userOrderPayments = userOrderPaymentRepository.findByOrderOrderId(orderId);
@@ -101,7 +98,7 @@ public class UserOrderPaymentService {
                    double percentageDiscountInCashForUser = Math.round((uoi.getMenuItemsValue() * currentPercentageDiscountForOrder) * 100.0) / 100.0;
                    data.setDiscountValueInCash(cashDiscountForUser);
                    data.setAmountToPayWithoutExtraPayment(uoi.getMenuItemsValue() - (cashDiscountForUser + percentageDiscountInCashForUser));
-                   data.setAmountToPay(uoi.getMenuItemsValue() - (cashDiscountForUser + percentageDiscountInCashForUser) + currentExtraPaymentForUser);
+                   data.setAmountToPay(uoi.getMenuItemsValue() - (cashDiscountForUser + percentageDiscountInCashForUser) + extraPaymentForUser);
                }
            });
            userOrderPayments.add(uop);
@@ -110,39 +107,39 @@ public class UserOrderPaymentService {
         }else {
             //przypisywanie do tworzonego userORderPayment odpowiednich wartości
             UserOrderPayment userOrderPayment = createUserOrderPayment(orderId, userId);
+            double baseForPercentageDiscount = menuItemsValueForUserAfterAddingOrderItem - currentCashDiscountForUser - extraPaymentForUser;
+            double percentageDiscountInCash = Math.round((baseForPercentageDiscount * currentPercentageDiscountForOrder) * 100.0) / 100.0;
+            Double amountToPay = Math.round((menuItemsValueForUserAfterAddingOrderItem - percentageDiscountInCash + extraPaymentForUser - currentCashDiscountForUser) * 100.0) / 100.0;
 
-            Double amountToPay = menuItemsValueForUserAfterAddingOrderItem - currentPercentageDiscountInCashForUser + currentExtraPaymentForUser - currentCashDiscountForUser;
-            LOG.warn("currentExtraPaymentForUser: " + currentExtraPaymentForUser + " currentExtraPaymentValueForUser: " + currentExtraPaymentForUser);
-            LOG.warn("percentageInCash: " + currentPercentageDiscountInCashForUser);
-            LOG.warn("currentPercentageDiscountInCashForUser: " + currentPercentageDiscountInCashForUser);
-            LOG.warn("currentExtraPaymentForUser: " + currentCashDiscountForUser);
-            LOG.warn("amountToPay: " + amountToPay);
-
-            userOrderPayment.setExtraPaymentValue(currentExtraPaymentForUser);
+            userOrderPayment.setExtraPaymentValue(extraPaymentForUser);
             userOrderPayment.setMenuItemsValue(menuItemsValueForUserAfterAddingOrderItem);
             userOrderPayment.setAmountToPay(amountToPay);
-            userOrderPayment.setAmountToPayWithoutExtraPayment(amountToPay - currentExtraPaymentForUser);
+            userOrderPayment.setAmountToPayWithoutExtraPayment(amountToPay - extraPaymentForUser);
             userOrderPayment.setDiscountValueInCash(currentCashDiscountForUser);
             userOrderPayment.setDiscountInPercentage(currentPercentageDiscountForOrderNoDecimalValue);
-            LOG.warn("currentPercentageDiscountForOrderNoDecimalValue: " + currentPercentageDiscountForOrderNoDecimalValue);
-            userOrderPayment.setDiscountInPercentageInCash(currentPercentageDiscountInCashForUser);
-            userOrderPayment.setBaseForPercentageDiscount(menuItemsValueForUserAfterAddingOrderItem);
+            userOrderPayment.setDiscountInPercentageInCash(percentageDiscountInCash);
+            userOrderPayment.setBaseForPercentageDiscount(baseForPercentageDiscount);
             userOrderPayment.setGeneralDiscountValue(currentPercentageDiscountInCashForUser + currentCashDiscountForUser);
-
 
             //Akutalizacja reszty usoerOrderPayment ze wzgledu na powstanie nowego UserORderPayment, przez co wartość howManyUsers jest inna, wiec wartość rabatu kwotowego
             // oraz extrapayment jest rozkładana na większą liczbę userów
             List<UserOrderPayment> userOrderPayments = userOrderPaymentRepository.findByOrderOrderId(orderId);
+
             for(UserOrderPayment uop : userOrderPayments){
                 UserOrderInfo userOrderInfo = orderItemRepository.getUserOrderInfo(orderId, uop.getUser().getUserId());
-                double baseForPercentageDiscount = userOrderInfo.getMenuItemsValue();
                 double cashDiscountForUser = (uop.getMenuItemsValue() / order.getNetValue()) * order.getCashDiscount();
-                uop.setAmountToPay(uop.getAmountToPay() - uop.getExtraPaymentValue() + uop.getDiscountValueInCash() + currentExtraPaymentForUser - cashDiscountForUser);
-                uop.setGeneralDiscountValue((uop.getGeneralDiscountValue() - uop.getDiscountValueInCash()) + cashDiscountForUser);
-                uop.setExtraPaymentValue(currentExtraPaymentForUser);
-                uop.setDiscountValueInCash(currentCashDiscountForUser);
-                uop.setDiscountInPercentageInCash(uop.getGeneralDiscountValue() - cashDiscountForUser);
-                uop.setBaseForPercentageDiscount(baseForPercentageDiscount);
+                uop.setDiscountValueInCash(cashDiscountForUser);
+                uop.setExtraPaymentValue(extraPaymentForUser);
+
+                double baseForPercentageDiscountForUser = uop.getMenuItemsValue() - cashDiscountForUser - extraPaymentForUser;
+                double currentPercentageDiscountInCash = uop.getDiscountInPercentageInCash();
+                double percentageDiscountInCashForUser = baseForPercentageDiscountForUser * (uop.getDiscountInPercentage() / 100);
+                uop.setBaseForPercentageDiscount(baseForPercentageDiscountForUser);
+                uop.setDiscountInPercentageInCash(percentageDiscountInCashForUser);
+                double amountToPayForUser = uop.getMenuItemsValue() - percentageDiscountInCashForUser - cashDiscountForUser + extraPaymentForUser;
+                uop.setAmountToPay(amountToPayForUser);
+                uop.setAmountToPayWithoutExtraPayment(amountToPayForUser - extraPaymentForUser);
+                uop.setGeneralDiscountValue(uop.getDiscountValueInCash() + uop.getDiscountInPercentageInCash());
             }
             userOrderPayments.add(userOrderPayment);
             userOrderPaymentRepository.saveAll(userOrderPayments);

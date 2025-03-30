@@ -55,7 +55,7 @@ public class OrderItemService {
     public void setValueForOrder(Order order){
         double percentageDiscountValueInCash = order.getPercentageDiscountCashValue();
         double cashDiscountValue = order.getCashDiscount();
-        double extraPaymentValueForOrder = Objects.requireNonNullElse(extraPaymentRepository.getExtraPaymentsValueForOrder(order.getOrderId()), 0.0);
+        double extraPaymentValueForOrder = order.getExtraPaymentValue();
         double orderItemsValueForOrder = Objects.requireNonNullElse(orderItemRepository.getOrderItemsValueForOrder(order.getOrderId()), 0.0);
 
 

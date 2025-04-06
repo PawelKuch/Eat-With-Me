@@ -20,9 +20,6 @@ public class RestaurantServiceTest {
     @Mock
     private RestaurantRepository restaurantRepository;
 
-    @Mock
-    private ToDataService toDataService;
-
     @Test
     public void addRestaurantTest(){
         String name = "Test Restaurant";

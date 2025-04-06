@@ -1,6 +1,5 @@
 package pl.dskimina.foodsy.service;
 
-import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,49 +16,27 @@ import java.util.UUID;
 
 @Service
 public class OrderService {
-
+    private final static Logger LOG = LoggerFactory.getLogger(OrderService.class);
     private final ToDataService toDataService;
     private final OrderRepository orderRepository;
-    private final RestaurantService restaurantService;
-    private final UserService userService;
     private final UserOrderPaymentRepository userOrderPaymentRepository;
-    private final UserOrderPaymentService userOrderPaymentService;
-    private final ExtraPaymentRepository extraPaymentRepository;
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
 
     public OrderService(OrderRepository orderRepository, ToDataService toDataService,
-                        RestaurantService restaurantService, UserService userService,
-                        UserOrderPaymentRepository userOrderPaymentRepository,
-                        UserOrderPaymentService userOrderPaymentService, ExtraPaymentRepository extraPaymentRepository,
-                        UserRepository userRepository, RestaurantRepository restaurantRepository) {
+                        UserOrderPaymentRepository userOrderPaymentRepository, UserRepository userRepository, RestaurantRepository restaurantRepository) {
         this.orderRepository = orderRepository;
         this.toDataService = toDataService;
-        this.restaurantService = restaurantService;
-        this.userService = userService;
         this.userOrderPaymentRepository = userOrderPaymentRepository;
-        this.userOrderPaymentService = userOrderPaymentService;
-        this.extraPaymentRepository = extraPaymentRepository;
         this.userRepository = userRepository;
         this.restaurantRepository = restaurantRepository;
 
     }
 
-    Logger LOG = LoggerFactory.getLogger(OrderService.class);
-
     @Transactional
     public OrderData getOrderByOrderId(String orderId){
         Order order = orderRepository.findByOrderId(orderId);
         return toDataService.convert(order);
-    }
-
-    @Transactional Order findOrderByOrderId(String orderId){
-        return orderRepository.findByOrderId(orderId);
-    }
-
-    @Transactional
-    public void saveOrder(Order order){
-        orderRepository.save(order);
     }
 
     @Transactional
@@ -108,16 +85,16 @@ public class OrderService {
         double newExtraPayment = Math.round(Double.parseDouble(newExtraPaymentString) * 100.0) / 100.0;
 
         order.setExtraPaymentValue(newExtraPayment);
-        order.setValue(currentOrderValue - currentExtraPayment + newExtraPayment);
+        order.setValue(Math.round((currentOrderValue - currentExtraPayment + newExtraPayment) * 100.0) / 100.0);
         orderRepository.save(order);
 
         List<UserOrderPayment> userOrderPayments = userOrderPaymentRepository.findByOrderOrderId(orderId);
         int howManyUsers = orderRepository.getUsersAmountForOrder(orderId);
         userOrderPayments.forEach(data -> {
-            double newExtraPaymentForUser = newExtraPayment / howManyUsers;
-            double currentAmountToPay = data.getAmountToPay();
-            double currentExtraPaymentForUser = data.getExtraPaymentValue();
-            data.setExtraPaymentValue(newExtraPaymentForUser);
+            double newExtraPaymentForUser = Math.round((newExtraPayment / howManyUsers) * 100.0) / 100.0;
+            double currentAmountToPay = Math.round(data.getAmountToPay() * 100.0) / 100.0;
+            double currentExtraPaymentForUser = Math.round(data.getExtraPaymentValue() * 100.0) / 100.0;
+            data.setExtraPaymentValue(Math.round(newExtraPaymentForUser * 100.0) / 100.0);
             data.setAmountToPay(currentAmountToPay - currentExtraPaymentForUser + newExtraPaymentForUser);
         });
         userOrderPaymentRepository.saveAll(userOrderPayments);
@@ -132,71 +109,50 @@ public class OrderService {
 
         if(order.getPercentageDiscount() != newPercentageDiscount) {
             double newPercentageDiscountDouble = Math.round((newPercentageDiscount / 100) * 100.0) / 100.0;
-
-            double currentPercentageDiscountForOrder = order.getPercentageDiscount();
-            double currentPercentageDiscountInCash = order.getPercentageDiscountCashValue();
-
-            LOG.warn("currentPercentageDiscountForOrder: {}", currentPercentageDiscountForOrder);
-            LOG.warn("currentPercentageDiscountInCash: {}", currentPercentageDiscountInCash);
+            double currentPercentageDiscountInCash = Math.round(order.getPercentageDiscountCashValue() * 100.0) / 100.0;
             double currentOrderValue = order.getValue();
-            LOG.warn("currentOrderValue: {}", currentOrderValue);
             double currentExtraPaymentValue = order.getExtraPaymentValue();
-
             double baseOrderValue = currentOrderValue + currentPercentageDiscountInCash - currentExtraPaymentValue;
-            LOG.warn("currentOrderValue: {}", currentOrderValue);
-            LOG.warn("currentPercentageDiscountInCash: {}", currentPercentageDiscountInCash);
-            LOG.warn("baseOrderValue: {}", baseOrderValue);
-            double newPercentageDiscountInCashForOrder = baseOrderValue * newPercentageDiscountDouble;
+            double newPercentageDiscountInCashForOrder = Math.round((baseOrderValue * newPercentageDiscountDouble) * 100.0) / 100.0;
             order.setPercentageDiscount(newPercentageDiscount);
             LOG.warn("newPercentageDiscount: {}", newPercentageDiscount);
             order.setPercentageDiscountCashValue(newPercentageDiscountInCashForOrder);
-            LOG.warn("newPercentageDiscountCashValue: {}", newPercentageDiscountInCashForOrder);
             order.setValue(currentOrderValue + currentPercentageDiscountInCash - newPercentageDiscountInCashForOrder);
-            LOG.warn("newOrderValue {}",currentOrderValue + currentPercentageDiscountInCash - newPercentageDiscountInCashForOrder);
-            LOG.warn("____ currentOrderValue: " + currentOrderValue + " currentPercentageDiscountInCash: " + currentPercentageDiscountInCash + " newPercentageDiscountInCashForOrder: " + newPercentageDiscountInCashForOrder);
             orderRepository.save(order);
 
             List<UserOrderPayment> userOrderPayments = userOrderPaymentRepository.findByOrderOrderId(orderId);
 
             userOrderPayments.forEach(data -> {
-                double currentPercentageDiscountInCashForUser = data.getDiscountInPercentageInCash();
+                double currentPercentageDiscountInCashForUser = Math.round(data.getDiscountInPercentageInCash()* 100.0) / 100.0;
                 double currentAmountToPay = data.getAmountToPay();
                 double currentAmountToPayWithoutExtraPayment = data.getAmountToPayWithoutExtraPayment();
                 double currentGeneralDiscountValue = data.getGeneralDiscountValue();
-                double baseForPercentageDiscount = (data.getBaseForPercentageDiscount() != 0) ? data.getBaseForPercentageDiscount() : data.getMenuItemsValue(); //nowododane
+                double baseForPercentageDiscount = (data.getBaseForPercentageDiscount() != 0) ? data.getBaseForPercentageDiscount() : data.getMenuItemsValue();
                 double newPercentageDiscountInCashForUser = baseForPercentageDiscount * newPercentageDiscountDouble;
+                double amountToPayWithoutExtraPayment = Math.round((currentAmountToPayWithoutExtraPayment + currentPercentageDiscountInCashForUser - newPercentageDiscountInCashForUser) * 100.0) / 100.0;
+                double amountToPay = Math.round((currentAmountToPay + currentPercentageDiscountInCashForUser - newPercentageDiscountInCashForUser) * 100.0) / 100.0;
+                double generalDiscountValue = Math.round((currentGeneralDiscountValue - currentPercentageDiscountInCashForUser + newPercentageDiscountInCashForUser) * 100.0) / 100.0;
 
                 data.setDiscountInPercentage(newPercentageDiscount);
-                data.setDiscountInPercentageInCash(newPercentageDiscountInCashForUser);
-                data.setAmountToPayWithoutExtraPayment(currentAmountToPayWithoutExtraPayment + currentPercentageDiscountInCashForUser - newPercentageDiscountInCashForUser);
-                data.setAmountToPay(currentAmountToPay + currentPercentageDiscountInCashForUser - newPercentageDiscountInCashForUser);
-                data.setGeneralDiscountValue(currentGeneralDiscountValue - currentPercentageDiscountInCashForUser + newPercentageDiscountInCashForUser);
+                data.setDiscountInPercentageInCash(Math.round(newPercentageDiscountInCashForUser * 100.0) / 100.0);
+                data.setAmountToPayWithoutExtraPayment(amountToPayWithoutExtraPayment);
+                data.setAmountToPay(amountToPay);
+                data.setGeneralDiscountValue(generalDiscountValue);
             });
 
             userOrderPaymentRepository.saveAll(userOrderPayments);
         }
     }
 
-    public void updatePercentageDiscount(Order order, String newPercentageDiscountString){
-
-        List<UserOrderPayment> userOrderPayments = userOrderPaymentRepository.findByOrderOrderId(order.getOrderId());
-        userOrderPayments.forEach(data -> {
-            userOrderPaymentService.updatePercentageDiscountInUserOrderPaymentForUser(data, newPercentageDiscountString);
-        });
-
-    }
-
     @Transactional
     public void addCashDiscount(String orderId, String newCashDiscountString) {
         Order order = orderRepository.findByOrderId(orderId);
         double newCashDiscount = Double.parseDouble(newCashDiscountString);
-        LOG.warn("order.getCashDiscount in addCashDiscount: {}", order.getCashDiscount());
-        LOG.warn("newCashDiscount in addCashDiscount: {}", newCashDiscount);
         if (order.getCashDiscount() != newCashDiscount) {
             double currentCashDiscountForOrder = order.getCashDiscount();
             double currentOrderValue = order.getValue();
             order.setCashDiscount(newCashDiscount);
-            order.setValue(currentOrderValue + currentCashDiscountForOrder - newCashDiscount);
+            order.setValue(Math.round((currentOrderValue + currentCashDiscountForOrder - newCashDiscount) * 100.0) / 100.0);
 
             orderRepository.save(order);
 
@@ -211,23 +167,17 @@ public class OrderService {
                 LOG.warn("data.getMenuItemsValue: {}", data.getMenuItemsValue());
                 LOG.warn("order.getNetValue: {}", order.getNetValue());
                 LOG.warn("newCashDiscountForUser: {}", newCashDiscountForUser);
-                data.setDiscountValueInCash(newCashDiscountForUser);
-                data.setAmountToPay(currentAmountToPay + currentCashDiscountForUser - newCashDiscountForUser);
-                data.setAmountToPayWithoutExtraPayment(currentAmountToPayWithoutExtraPayment + currentCashDiscountForUser - newCashDiscountForUser);
+                data.setDiscountValueInCash(Math.round(newCashDiscountForUser * 100.0) / 100.0);
+                double amountToPay = Math.round((currentAmountToPay + currentCashDiscountForUser - newCashDiscountForUser) * 100.0) / 100.0;
+                data.setAmountToPay(amountToPay);
+                double amountToPayWithoutExtraPayment = Math.round((currentAmountToPayWithoutExtraPayment + currentCashDiscountForUser - newCashDiscountForUser) * 100.0) / 100.0;
+                data.setAmountToPayWithoutExtraPayment(amountToPayWithoutExtraPayment);
                 data.setBaseForPercentageDiscount(data.getAmountToPayWithoutExtraPayment());
                 LOG.warn("baseForPercentageDiscount in addCashDiscount method: {}", data.getBaseForPercentageDiscount());
                 data.setGeneralDiscountValue(currentGeneralDiscountValue - currentCashDiscountForUser + newCashDiscountForUser);
             });
             userOrderPaymentRepository.saveAll(userOrderPayments);
         }
-    }
-
-
-    @Transactional
-    public void closeOrder(String orderId){
-        Order order = orderRepository.findByOrderId(orderId);
-        order.setIsClosed(true);
-        orderRepository.save(order);
     }
 
     @Transactional

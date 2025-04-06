@@ -1,10 +1,8 @@
 package pl.dskimina.foodsy.controllers;
 
 
-import org.apache.logging.log4j.spi.LoggerContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,33 +14,30 @@ import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
 import pl.dskimina.foodsy.service.*;
 import java.util.List;
-import java.util.Map;
 
 
 @Controller
 @RequestMapping({"/orders", "/"})
 public class OrderController {
+    private final static Logger LOG = LoggerFactory.getLogger(OrderController.class);
     private final OrderService orderService;
     private final OrderItemService orderItemService;
     private final UserService userService;
     private final SessionService sessionService;
     private final RestaurantService restaurantService;
-    private final ExtraPaymentService extraPaymentService;
     private final UserOrderPaymentService userOrderPaymentService;
+
 
     public OrderController(OrderService orderService,
                            OrderItemService orderItemService, UserService userService, SessionService sessionService,
-                           RestaurantService restaurantService, ExtraPaymentService extraPaymentService, UserOrderPaymentService userOrderPaymentService) {
+                           RestaurantService restaurantService, UserOrderPaymentService userOrderPaymentService) {
         this.orderService = orderService;
         this.orderItemService = orderItemService;
         this.userService = userService;
         this.sessionService = sessionService;
         this.restaurantService = restaurantService;
-        this.extraPaymentService = extraPaymentService;
         this.userOrderPaymentService = userOrderPaymentService;
     }
-
-    Logger LOG = LoggerFactory.getLogger(OrderController.class);
 
     @ModelAttribute
     public void fillModel(Model modelMap){
@@ -96,12 +91,9 @@ public class OrderController {
         public RedirectView setFinalValueOfOrder(@PathVariable String orderId,
                                                        @RequestParam(value = "cashDiscount", required = false) String cashDiscount,
                                                        @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
-                                                       @RequestParam(value = "isPercentage", required = false) boolean isPercentage,
                                                        @RequestParam(value = "extraPayment", required = false) String extraPaymentPrice,
                                                        RedirectAttributes ra) {
             if(extraPaymentPrice != null ) {
-                    //extraPaymentService.createExtraPayment(orderId, extraPaymentProduct, extraPaymentPrice);
-                    //extraPaymentService.addExtraPaymentToUserOrderPayment(orderId, extraPaymentPrice);
                 orderService.addExtraPayment(orderId, extraPaymentPrice);
                 LOG.warn("addExtraPaymentMethod is called!");
             }
@@ -116,26 +108,6 @@ public class OrderController {
             ra.addFlashAttribute("order", orderService.getOrderByOrderId(orderId));
             return new RedirectView("/orders/" + orderId + "/summary");
         }
-
-
-
-    @DeleteMapping("/{orderId}/summary")
-    public ResponseEntity<String> deleteExtraPayment(@PathVariable String orderId, @RequestBody Map<String, String> requestedObject) {
-        if (requestedObject == null) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("ExtraPaymentId is null");
-        }
-        String extraPaymentId = requestedObject.get("extraPaymentId");
-        if (extraPaymentService.deleteExtraPayment(orderId, extraPaymentId)){
-            return ResponseEntity
-                .status(HttpStatus.OK)
-                .body("ExtraPayment deleted!");
-        }
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("ExtraPayment not found!");
-    }
 
     @GetMapping("/{orderId}/orderItems")
     public String getOrderItems(@PathVariable("orderId") String orderId, Model model) {

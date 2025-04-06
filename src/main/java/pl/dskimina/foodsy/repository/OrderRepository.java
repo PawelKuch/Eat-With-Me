@@ -14,7 +14,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o.cashDiscount FROM Order o WHERE o.orderId = :orderId")
     Double getCashDiscountForOrder(@Param("orderId") String orderId);
 
-    @Query("SELECT o.percentageDiscount FROM Order o WHERE o.orderId = :orderId")
-    Double getPercentageDiscountForOrder(@Param("orderId") String orderId);
 
 }

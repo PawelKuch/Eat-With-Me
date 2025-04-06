@@ -8,7 +8,6 @@ import pl.dskimina.foodsy.entity.MenuItem;
 import pl.dskimina.foodsy.entity.Order;
 import pl.dskimina.foodsy.entity.OrderItem;
 import pl.dskimina.foodsy.entity.User;
-import pl.dskimina.foodsy.entity.data.UserOrderInfo;
 import pl.dskimina.foodsy.repository.*;
 
 import java.util.Objects;
@@ -21,14 +20,12 @@ public class OrderItemService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final MenuItemRepository menuItemRepository;
-    private final ExtraPaymentRepository extraPaymentRepository;
 
-    public OrderItemService(OrderItemRepository orderItemRepository, UserRepository userRepository, OrderRepository orderRepository, MenuItemRepository menuItemRepository, ExtraPaymentRepository extraPaymentRepository) {
+    public OrderItemService(OrderItemRepository orderItemRepository, UserRepository userRepository, OrderRepository orderRepository, MenuItemRepository menuItemRepository) {
         this.orderItemRepository = orderItemRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.menuItemRepository = menuItemRepository;
-        this.extraPaymentRepository = extraPaymentRepository;
     }
 
     @Transactional
@@ -53,7 +50,6 @@ public class OrderItemService {
 
     @Transactional
     public void setValueForOrder(Order order){
-        double percentageDiscountValueInCash = order.getPercentageDiscountCashValue();
         double cashDiscountValue = order.getCashDiscount();
         double extraPaymentValueForOrder = order.getExtraPaymentValue();
         double orderItemsValueForOrder = Objects.requireNonNullElse(orderItemRepository.getOrderItemsValueForOrder(order.getOrderId()), 0.0);
@@ -83,10 +79,5 @@ public class OrderItemService {
 
             return false;
         }
-    }
-
-    @Transactional
-    public UserOrderInfo  getUserOrderInfoDTO(String userId, String orderId) {
-        return orderItemRepository.getUserOrderInfo(orderId, userId);
     }
 }

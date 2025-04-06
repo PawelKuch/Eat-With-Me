@@ -67,11 +67,6 @@ public class RestaurantService {
     }
 
     @Transactional
-    public Restaurant getRestaurantEntityByRestaurantId(String restaurantId){
-        return restaurantRepository.findByRestaurantId(restaurantId);
-    }
-
-    @Transactional
     public void updateRestaurant(String restaurantId, RestaurantData restaurantData){
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
         String name = restaurantData.getName();

@@ -71,54 +71,12 @@
                 <div class="alert alert-warning text-center mt-3">Brak pozycji w zamówieniu</div>
             </#if>
         </div>
-        <div id="costs-summary" class="mt-5">
-            <div class="list-group-flush">
-                <div class="list-group-item d-flex flex-row">
-                    <div class="d-flex col-2">Użytkownik</div>
-                    <div class="d-flex col-2 justify-content-center">Koszt w zamówieniu</div>
-                    <div class="d-flex col-2 justify-content-center">Udział w rabacie kwotowym</div>
-                    <div class="d-flex col-2 justify-content-center">Dopłata</div>
-                    <div class="d-flex col-2 justify-content-center">Cena po rabatach</div>
-                    <div class="d-flex col-2 justify-content-center">Cena końcowa</div>
-                </div>
-                <#list order.userOrderPaymentList as uop>
-                    <div class="list-group-item d-flex flex-row">
-                        <div class="d-flex col-2">${uop.user.firstName} ${uop.user.lastName}</div>
-                        <div class="d-flex col-2 justify-content-center">
-                            <#if uop.extraPaymentValue?number gt 0.00 || uop.discountValueInCash?number gt 0.00 || uop.discountInPercentageInCash?number gt 0.00>
-                                <s>${uop.menuItemsValue} zł </s>
-                            <#else>
-                                ${uop.menuItemsValue} zł
-                            </#if>
-                        </div>
 
-                        <div class="d-flex col-2 justify-content-center">${uop.discountValueInCash} zł</div>
-                        <div class="d-flex col-2 justify-content-center">${uop.extraPaymentValue} zł</div>
-                        <div class="d-flex col-2 justify-content-center">${uop.amountToPayWithoutExtraPayment} zł</div>
-                        <div class="d-flex col-2 justify-content-center">${uop.amountToPay} zł</div>
-
-                    </div>
-                </#list>
-                <div class="list-group-item d-flex flex-row">
-                    <div class="d-flex col-2">RAZEM</div>
-                    <div class="d-flex col-2 justify-content-center">
-                        <#if order.extraPaymentValue?number gt 0.00 || order.cashDiscount?number gt 0.00 || order.percentageDiscountCashValue?number gt 0.00>
-                            <s>${order.netValue} zł </s>
-                        <#else>
-                            ${order.netValue} zł
-                        </#if>
-                    </div>
-                    <div class="d-flex col-6"></div>
-                    <div class="d-flex col-2 justify-content-center">${order.value} zł</div>
-                </div>
-            </div>
-
-        </div>
 
         <button class="btn btn-primary" data-bs-target="#order-details-modal" data-bs-toggle="modal">Szczegóły</button>
 
-        <div class="modal fade" id="order-details-modal" tabindex="-1" aria-labelledby="order-details-modal">
-            <div class="modal-dialog">
+        <div class="modal fade w-100" id="order-details-modal" tabindex="-1" aria-labelledby="order-details-modal">
+            <div class="modal-dialog modal-xl w-100">
                 <div class="modal-content">
                     <div class="modal-header">
                         <div id="modal-title-div">
@@ -126,16 +84,58 @@
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <div class="d-flex justify-content-center">
+                    <div class="modal-body w-100">
+                        <div class="d-flex justify-content-center flex-column">
                             <div class="list-group-flush">
                                 <div class="list-group-item d-flex flex-row">
                                     <div class="d-flex col-10">Liczba użytkowników w zamówieniu</div>
                                     <div class="d-flex col-2 align-items-center">${userAmountForOrder} <br/></div>
                                 </div>
                                 <div class="list-group-item d-flex flex-row">
-                                    <div class="d-flex col-9 align-items-center">Rabat procentowy</div>
-                                    <div class="d-flex col-3 justify-content-center">${order.percentageDiscount}% <br/> (${order.percentageDiscountCashValue} zł) </div>
+                                    <div class="d-flex col-8 align-items-center">Rabat procentowy</div>
+                                    <div class="d-flex col-4 justify-content-center">${order.percentageDiscount}% <br/> (${order.percentageDiscountCashValue} zł) </div>
+                                </div>
+                                <div id="costs-summary" class="mt-5">
+                                    <div class="list-group-flush">
+                                        <div class="list-group-item d-flex flex-row">
+                                            <div class="d-flex col-2">Użytkownik</div>
+                                            <div class="d-flex col-2 justify-content-center">Koszt w zamówieniu</div>
+                                            <div class="d-flex col-2 justify-content-center">Udział w rabacie kwotowym</div>
+                                            <div class="d-flex col-2 justify-content-center">Dopłata</div>
+                                            <div class="d-flex col-2 justify-content-center">Cena po rabatach</div>
+                                            <div class="d-flex col-2 justify-content-center">Cena końcowa</div>
+                                        </div>
+                                        <#list order.userOrderPaymentList as uop>
+                                            <div class="list-group-item d-flex flex-row">
+                                                <div class="d-flex col-2">${uop.user.firstName} ${uop.user.lastName}</div>
+                                                <div class="d-flex col-2 justify-content-center">
+                                                    <#if uop.extraPaymentValue?number gt 0.00 || uop.discountValueInCash?number gt 0.00 || uop.discountInPercentageInCash?number gt 0.00>
+                                                        <s>${uop.menuItemsValue} zł </s>
+                                                    <#else>
+                                                        ${uop.menuItemsValue} zł
+                                                    </#if>
+                                                </div>
+
+                                                <div class="d-flex col-2 justify-content-center">${uop.discountValueInCash} zł</div>
+                                                <div class="d-flex col-2 justify-content-center">${uop.extraPaymentValue} zł</div>
+                                                <div class="d-flex col-2 justify-content-center">${uop.amountToPayWithoutExtraPayment} zł</div>
+                                                <div class="d-flex col-2 justify-content-center">${uop.amountToPay} zł</div>
+
+                                            </div>
+                                        </#list>
+                                        <div class="list-group-item d-flex flex-row">
+                                            <div class="d-flex col-2">RAZEM</div>
+                                            <div class="d-flex col-2 justify-content-center">
+                                                <#if order.extraPaymentValue?number gt 0.00 || order.cashDiscount?number gt 0.00 || order.percentageDiscountCashValue?number gt 0.00>
+                                                    <s>${order.netValue} zł </s>
+                                                <#else>
+                                                    ${order.netValue} zł
+                                                </#if>
+                                            </div>
+                                            <div class="d-flex col-6"></div>
+                                            <div class="d-flex col-2 justify-content-center">${order.value} zł</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -147,6 +147,24 @@
             </div>
         </div>
 
+        <div id="summary" class="mt-5 d-flex justify-content-center">
+            <div class="list-group-flush w-75">
+                <div class="list-group-item d-flex flex-row">
+                    <div class="d-flex col-4">Użytkownik</div>
+                    <div class="d-flex col-3 justify-content-center">Koszt</div>
+                    <div class="d-flex col-2 justify-content-center">Dopłata</div>
+                    <div class="d-flex col-3 justify-content-center">Do zapłaty</div>
+                </div>
+                <#list userOrderPaymentList as uop>
+                    <div class="list-group-item d-flex flex-row">
+                        <div class="d-flex col-4">${uop.user.firstName} ${uop.user.lastName}</div>
+                        <div class="d-flex col-3 justify-content-center">${uop.menuItemsValue} zł</div>
+                        <div class="d-flex col-2 justify-content-center">${uop.extraPaymentValue} zł</div>
+                        <div class="d-flex col-3 justify-content-center">${uop.amountToPay} zł</div>
+                    </div>
+                </#list>
+            </div>
+        </div>
         <br/>
 
         ______________________________________

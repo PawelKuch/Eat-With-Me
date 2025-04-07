@@ -147,7 +147,8 @@ public class OrderService {
     @Transactional
     public void addCashDiscount(String orderId, String newCashDiscountString) {
         Order order = orderRepository.findByOrderId(orderId);
-        double newCashDiscount = Double.parseDouble(newCashDiscountString);
+        double newCashDiscount = Double.parseDouble(newCashDiscountString) > order.getValue() ? order.getValue() : Double.parseDouble(newCashDiscountString);
+
         if (order.getCashDiscount() != newCashDiscount) {
             double currentCashDiscountForOrder = order.getCashDiscount();
             double currentOrderValue = order.getValue();

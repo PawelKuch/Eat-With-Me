@@ -20,48 +20,47 @@
                 <img src="/restaurants/${restaurant.restaurantId}/logo" alt="restaurant logo" class="img-fluid rounded" width="200" height="200">
             </div>
             <h5 class="text-center">Podsumowanie zamówienia</h5>
-
             <#if order.orderItemList?has_content>
                 <div class="row fw-bold border-bottom pb-2">
                     <div class="col-4">Danie</div>
-                    <div class="col-3">Opis</div>
-                    <div class="col-2">Użytkownik</div>
+                    <div class="col-4 text-center">Opis</div>
+                    <div class="col-3">Użytkownik</div>
                     <div class="col-1 text-end">Cena</div>
                 </div>
                 <div class="list-group-flush d-flex flex-column">
                     <#list order.orderItemList as orderItem>
                         <div class="list-group-item d-flex flex-row row py-2">
                             <div class="col-4">${orderItem.menuItem.name}</div>
-                            <div class="col-3">${orderItem.description}</div>
-                            <div class="col-2">${orderItem.user.firstName} ${orderItem.user.lastName}</div>
+                            <div class="col-4 text-center">${orderItem.description}</div>
+                            <div class="col-3">${orderItem.user.firstName} ${orderItem.user.lastName}</div>
                             <div class="col-1 text-end">${orderItem.menuItem.price} zł</div>
                         </div>
                     </#list>
                     <#if order.extraPaymentValue?number gt 0.00>
                         <div class="list-group-item d-flex flex-row row py-2">
                             <div class="col-4">Dostawa</div>
-                            <div class="col-5"></div>
+                            <div class="col-7"></div>
                             <div class="col-1 text-end">${order.extraPaymentValue} zł</div>
                         </div>
                     </#if>
                     <#if order.cashDiscount?number gt 0.00>
                         <div class="list-group-item d-flex flex-row row py-2">
                             <div class="col-4">Rabat kwotowy</div>
-                            <div class="col-5"></div>
+                            <div class="col-7"></div>
                             <div class="col-1 text-end">${order.cashDiscount} zł</div>
                         </div>
                     </#if>
                     <#if order.percentageDiscount?number gt 0.00>
                         <div class="list-group-item d-flex flex-row row py-2">
                             <div class="col-4">Rabat procentowy</div>
-                            <div class="col-3">${order.percentageDiscount}%</div>
-                            <div class="col-2"></div>
+                            <div class="col-4 text-center">${order.percentageDiscount}%</div>
+                            <div class="col-3"></div>
                             <div class="col-1 text-end">${order.percentageDiscountCashValue} zł</div>
                         </div>
                     </#if>
                     <div class="list-group-item d-flex flex-row row py-2">
                         <div class="col-4"><b>Wartość końcowa zamówienia</b></div>
-                        <div class="col-5"></div>
+                        <div class="col-7"></div>
                         <div class="col-1 text-end">
                             <#if order.extraPaymentValue?number gt 0.00 || order.cashDiscount?number gt 0.00 || order.percentageDiscountCashValue?number gt 0.00>
                                 <s>${order.netValue} zł </s> <b>${order.value}</b>
@@ -69,8 +68,6 @@
                                 <b>${order.netValue} zł</b>
                             </#if>
                         </div>
-
-
                     </div>
                 </div>
             <#else>

@@ -25,18 +25,18 @@ public class OrderController {
     private final UserService userService;
     private final SessionService sessionService;
     private final RestaurantService restaurantService;
-    private final UserOrderPaymentService userOrderPaymentService;
+    private final UserInfoService discountAndExtraPaymentService;
 
 
     public OrderController(OrderService orderService,
                            OrderItemService orderItemService, UserService userService, SessionService sessionService,
-                           RestaurantService restaurantService, UserOrderPaymentService userOrderPaymentService) {
+                           RestaurantService restaurantService, UserInfoService discountAndExtraPaymentService) {
         this.orderService = orderService;
         this.orderItemService = orderItemService;
         this.userService = userService;
         this.sessionService = sessionService;
         this.restaurantService = restaurantService;
-        this.userOrderPaymentService = userOrderPaymentService;
+        this.discountAndExtraPaymentService = discountAndExtraPaymentService;
     }
 
     @ModelAttribute
@@ -81,8 +81,8 @@ public class OrderController {
         RestaurantData restaurant = order.getRestaurantData();
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("order", order);
+        model.addAttribute("userInfoList", discountAndExtraPaymentService.getUserInfoListForOrder(orderId));
         model.addAttribute("userAmountForOrder", orderService.getUsersAmountForOrder(orderId));
-        model.addAttribute("userOrderPaymentList", userOrderPaymentService.getUserOrderPaymentsForOrderId(orderId));
 
         return "order-summary";
     }
@@ -127,7 +127,6 @@ public class OrderController {
                                         @RequestParam(value = "description", required = false) String description,
                                         @RequestParam(value = "price", required = false) String price) {
         orderItemService.createOrderItem(userId, menuItemId, price, orderId, description);
-        userOrderPaymentService.addUserOrderPaymentInfoForOrderIdAndUserId(orderId, userId);
         return new RedirectView("/orders/" + orderId + "/orderItems" );
     }
 

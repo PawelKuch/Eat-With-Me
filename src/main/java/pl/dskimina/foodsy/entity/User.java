@@ -26,9 +26,6 @@ public class User {
     @OneToMany(mappedBy = "owner")
     private List<Order> orderList;
 
-    @OneToMany(mappedBy = "user")
-    private List<UserOrderPayment> userOrderPaymentList;
-
     public Long getId() {
         return id;
     }
@@ -73,11 +70,4 @@ public class User {
         this.orderList = orderList;
     }
 
-    public List<UserOrderPayment> getUserOrderPaymentList() {
-        return userOrderPaymentList;
-    }
-
-    public void setUserOrderPaymentList(List<UserOrderPayment> userOrderPaymentList) {
-        this.userOrderPaymentList = userOrderPaymentList;
-    }
 }

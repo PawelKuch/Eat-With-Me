@@ -21,13 +21,13 @@ public class Restaurant {
     @Column(name="phone", nullable = false, length = 512)
     private String phone;
 
-    @Column(name = "email", nullable = true)
+    @Column(name = "email")
     private String email;
 
     @Column(name="address", nullable = false, length = 512)
     private String address;
 
-    @Column(name = "image", nullable = true)
+    @Column(name = "image")
     @Lob
     private byte[] image;
 
@@ -36,9 +36,6 @@ public class Restaurant {
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     private List<MenuItem> menuItems;
-
-    @OneToMany(mappedBy ="restaurant", cascade = CascadeType.ALL)
-    private List<Order> orders;
 
     public String getRestaurantId() {
         return restaurantId;

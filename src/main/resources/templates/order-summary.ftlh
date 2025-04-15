@@ -108,24 +108,27 @@
                                             <div class="d-flex col-2 justify-content-center">Cena po rabatach</div>
                                             <div class="d-flex col-2 justify-content-center">Cena końcowa</div>
                                         </div>
-                                        <#list order.userOrderPaymentList as uop>
+
+                                        <#list userInfoList as uil>
+                                            ss
                                             <div class="list-group-item d-flex flex-row">
-                                                <div class="d-flex col-2">${uop.user.firstName} ${uop.user.lastName}</div>
+                                                <div class="d-flex col-2">${uil.firstName} ${uil.lastName}</div>
                                                 <div class="d-flex col-2 justify-content-center">
-                                                    <#if uop.extraPaymentValue?number gt 0.00 || uop.discountValueInCash?number gt 0.00 || uop.discountInPercentageInCash?number gt 0.00>
-                                                        <s>${uop.menuItemsValue} zł </s>
+                                                    <#if uil.extraPayment?number gt 0.00 || uil.cashDiscount?number gt 0.00 || uil.percentageDiscountInCash?number gt 0.00>
+                                                        <s>${uil.menuItemsValue} zł </s>
                                                     <#else>
-                                                        ${uop.menuItemsValue} zł
+                                                        ${uil.menuItemsValue} zł
                                                     </#if>
                                                 </div>
 
-                                                <div class="d-flex col-2 justify-content-center">${uop.discountValueInCash} zł</div>
-                                                <div class="d-flex col-2 justify-content-center">${uop.extraPaymentValue} zł</div>
-                                                <div class="d-flex col-2 justify-content-center">${uop.amountToPayWithoutExtraPayment} zł</div>
-                                                <div class="d-flex col-2 justify-content-center">${uop.amountToPay} zł</div>
+                                                <div class="d-flex col-2 justify-content-center">${uil.cashDiscount} zł</div>
+                                                <div class="d-flex col-2 justify-content-center">${uil.extraPayment} zł</div>
+                                                <div class="d-flex col-2 justify-content-center">${uil.amountToPayWithoutExtraPayment} zł</div>
+                                                <div class="d-flex col-2 justify-content-center">${uil.amountToPay} zł</div>
 
                                             </div>
                                         </#list>
+
                                         <div class="list-group-item d-flex flex-row">
                                             <div class="d-flex col-2">RAZEM</div>
                                             <div class="d-flex col-2 justify-content-center">
@@ -157,12 +160,13 @@
                 <div class="col-2 text-center fw-bold">Dopłata/Dowóz</div>
                 <div class="col-3 text-center fw-bold">Do zapłaty</div>
             </div>
-            <#list userOrderPaymentList as uop>
+
+            <#list userInfoList as userInfo>
                 <div class="list-group-item d-flex">
-                    <div class="col-4">${uop.user.firstName} ${uop.user.lastName}</div>
-                    <div class="col-3 text-center">${uop.menuItemsValue} zł</div>
-                    <div class="col-2 text-center">${uop.extraPaymentValue} zł</div>
-                    <div class="col-3 text-center">${uop.amountToPay} zł</div>
+                    <div class="col-4">${userInfo.firstName} ${userInfo.lastName}</div>
+                    <div class="col-3 text-center">${userInfo.menuItemsValue} zł</div>
+                    <div class="col-2 text-center">${userInfo.extraPayment} zł</div>
+                    <div class="col-3 text-center">${userInfo.amountToPay} zł</div>
                 </div>
             </#list>
         </div>

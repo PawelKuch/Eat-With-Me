@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Service
 public class OrderItemService {
-
+    private final static Logger LOG = LoggerFactory.getLogger(OrderItemService.class);
     private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
@@ -46,8 +46,6 @@ public class OrderItemService {
         setValueForOrder(order);
     }
 
-    Logger LOG = LoggerFactory.getLogger(OrderItemService.class);
-
     @Transactional
     public void setValueForOrder(Order order){
         double cashDiscountValue = order.getCashDiscount();
@@ -57,7 +55,7 @@ public class OrderItemService {
 
         double baseForPercentageDiscount = orderItemsValueForOrder - cashDiscountValue;
         double newPercentageDiscountValueInCash = Math.round((baseForPercentageDiscount * (order.getPercentageDiscount() / 100)) * 100.0) / 100.0;
-        LOG.warn("newPercentageDiscountValueInCash in setValueForOrder: {}", newPercentageDiscountValueInCash);
+        LOG.debug("newPercentageDiscountValueInCash in setValueForOrder: {}", newPercentageDiscountValueInCash);
         double newValue = orderItemsValueForOrder - cashDiscountValue - newPercentageDiscountValueInCash + extraPaymentValueForOrder;
         order.setPercentageDiscountCashValue(newPercentageDiscountValueInCash);
         order.setNetValue(orderItemsValueForOrder);

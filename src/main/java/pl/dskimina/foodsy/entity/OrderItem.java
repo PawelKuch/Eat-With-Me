@@ -3,8 +3,6 @@ package pl.dskimina.foodsy.entity;
 import jakarta.persistence.*;
 
 
-import java.util.List;
-
 @Entity
 @Table(name="order_item")
 public class OrderItem {

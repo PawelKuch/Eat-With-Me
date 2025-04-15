@@ -4,7 +4,6 @@ public class MenuItemData {
 
     private String menuItemId;
     private String name;
-    private String category;
     private String description;
     private double price;
     private RestaurantData restaurant;
@@ -19,14 +18,6 @@ public class MenuItemData {
 
     public String getName() {
         return name;
-    }
-
-    public String getCategory(){
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public void setName(String name) {

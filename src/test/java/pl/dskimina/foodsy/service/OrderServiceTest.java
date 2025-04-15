@@ -1,27 +1,20 @@
 package pl.dskimina.foodsy.service;
 
-
-import ch.qos.logback.core.testUtil.MockInitialContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.util.Assert;
 import pl.dskimina.foodsy.entity.Order;
 import pl.dskimina.foodsy.entity.Restaurant;
 import pl.dskimina.foodsy.entity.User;
-import pl.dskimina.foodsy.entity.UserOrderPayment;
 import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.repository.*;
-
+import java.sql.Date;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -33,25 +26,8 @@ public class OrderServiceTest {
     private OrderService orderService;
 
     @Mock
-    private ToDataService toDataService;
-
-    @Mock
     private OrderRepository orderRepository;
 
-    @Mock
-    private RestaurantService restaurantService;
-
-    @Mock
-    private UserService userService;
-
-    @Mock
-    private UserOrderPaymentRepository userOrderPaymentRepository;
-
-    @Mock
-    private UserOrderPaymentService userOrderPaymentService;
-
-    @Mock
-    private ExtraPaymentRepository extraPaymentRepository;
 
     @Mock
     private UserRepository userRepository;
@@ -59,11 +35,44 @@ public class OrderServiceTest {
     @Mock
     private RestaurantRepository restaurantRepository;
 
+    @Mock
+    ToDataService toDataService;
+
+    private OrderData createTestOrderData(){
+        OrderData orderData = new OrderData();
+        String closingDateString = "1999-01-17T22:22";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        LocalDateTime closingDate = LocalDateTime.parse(closingDateString, formatter);
+        orderData.setOrderId("orderIdTest");
+        orderData.setDescription("descriptionTest");
+        orderData.setClosingDateTime(Date.from(closingDate.toInstant(ZoneOffset.ofHours(+1))));
+        return orderData;
+    }
+
+    private Order createTestOrder(double netValue, double percentageDiscount, double percentageDiscountInCash, double cashDiscount, double extraPaymentValue, double value){
+        Order order = new Order();
+        order.setOrderId("orderIdTest");
+        order.setNetValue(netValue);
+        order.setPercentageDiscount(percentageDiscount);
+        order.setPercentageDiscountCashValue(percentageDiscountInCash);
+        order.setCashDiscount(cashDiscount);
+        order.setExtraPaymentValue(extraPaymentValue);
+        order.setValue(value);
+        return order;
+    }
+
+
+    @Captor
+    ArgumentCaptor<Order> orderCaptor;
+
     @Test
     public void createOrderTest(){
         String restaurantId = "restaurantIdTest";
         String userId = "userIdTest";
-        String closingDate = "1999-01-17T22:22";
+        String closingDateString = "1999-01-17T22:22";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        LocalDateTime closingDate = LocalDateTime.parse(closingDateString, formatter);
+
         String minOrderValue = "100";
         String description = "descriptionTest";
 
@@ -77,18 +86,17 @@ public class OrderServiceTest {
         restaurant.setName("restaurantNameTest");
         restaurant.setEmail("restaurantEmailTest");
 
+        OrderData orderData = createTestOrderData();
+
         Mockito.when(userRepository.findByUserId("userIdTest")).thenReturn(user);
         Mockito.when(restaurantRepository.findByRestaurantId("restaurantIdTest")).thenReturn(restaurant);
+        Mockito.when(toDataService.convert(any(Order.class))).thenReturn(orderData);
 
-        orderService.createOrder(restaurantId, userId, closingDate, minOrderValue, description);
+        OrderData convertedOrderData = orderService.createOrder(restaurantId, userId, closingDateString, minOrderValue, description);
 
         ArgumentCaptor<Order> orderCaptor = ArgumentCaptor.forClass(Order.class);
+
         verify(orderRepository).save(orderCaptor.capture());
-
-        Mockito.verify(userRepository, Mockito.times(1)).findByUserId("userIdTest");
-        verify(restaurantRepository, Mockito.times(1)).findByRestaurantId("restaurantIdTest");
-        verify(orderRepository, Mockito.times(1)).save(orderCaptor.capture());
-
         Order capturedOrder = orderCaptor.getValue();
 
         Assertions.assertEquals("userIdTest", capturedOrder.getOwner().getUserId());
@@ -99,26 +107,18 @@ public class OrderServiceTest {
         Assertions.assertEquals("restaurantNameTest", capturedOrder.getRestaurant().getName());
         Assertions.assertEquals("restaurantEmailTest", capturedOrder.getRestaurant().getEmail());
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-        LocalDateTime closingDateTime = LocalDateTime.parse(closingDate, formatter);
-
-        Assertions.assertEquals(closingDateTime, capturedOrder.getClosingDate());
+        Assertions.assertEquals(closingDate, capturedOrder.getClosingDate());
         Assertions.assertEquals(100.0, capturedOrder.getMinValue());
         Assertions.assertEquals("descriptionTest", capturedOrder.getDescription());
+
+        Assertions.assertEquals("orderIdTest", convertedOrderData.getOrderId());
     }
 
     @Test
-    public void addPercentageDiscountWithoutAnyDiscountTest(){
-        Order order = new Order();
-        order.setOrderId("orderIdTest");
-        order.setValue(50.0);
-        order.setCashDiscount(0.0);
-        order.setPercentageDiscount(0.0);
-        order.setPercentageDiscountCashValue(0.0);
-
+    public void addPercentageDiscountWithoutAnyDiscountTest() {
+        Order order = createTestOrder(50.0, 0.0, 0.0, 0.0, 0.0, 50.0);
+        order.setBaseValue(50.0);
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
-
-        ArgumentCaptor<Order> orderCaptor = ArgumentCaptor.forClass(Order.class);
 
         orderService.addPercentageDiscount("orderIdTest", "10");
 
@@ -127,6 +127,7 @@ public class OrderServiceTest {
         Order capturedOrder = orderCaptor.getValue();
 
         Assertions.assertEquals("orderIdTest", capturedOrder.getOrderId());
+        Assertions.assertEquals(50.0, capturedOrder.getNetValue());
         Assertions.assertEquals(10.0, capturedOrder.getPercentageDiscount());
         Assertions.assertEquals(5.0, capturedOrder.getPercentageDiscountCashValue());
         Assertions.assertEquals(45.0, capturedOrder.getValue());
@@ -134,124 +135,192 @@ public class OrderServiceTest {
 
     @Test
     public void addPercentageDiscountWithCurrentCashDiscountTest(){
-        Order order = new Order();
-        order.setOrderId("orderIdTest");
-        order.setNetValue(100.0);
-        order.setCashDiscount(20.0);
-        order.setPercentageDiscount(0.0);
-        order.setPercentageDiscountCashValue(0.0);
-        order.setExtraPaymentValue(0.0);
-        order.setValue(80.0);
-
-        UserOrderPayment uop = new UserOrderPayment();
-        uop.setUserOrderPaymentId("uopIdTest");
-        uop.setExtraPaymentValue(0.0);
-        uop.setDiscountValueInCash(20.0);
-        uop.setDiscountInPercentageInCash(0.0);
-        uop.setBaseForPercentageDiscount(80.0);
-        uop.setGeneralDiscountValue(20.0);
-        uop.setAmountToPay(80.0);
-        uop.setAmountToPayWithoutExtraPayment(80.0);
-
-        List<UserOrderPayment> userOrderPayments = new ArrayList<>();
-        userOrderPayments.add(uop);
-
+        Order order = createTestOrder(100.0, 0.0, 0.0, 20.0, 0.0, 80.0);
+        order.setBaseValue(80.0);
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
-        Mockito.when(userOrderPaymentRepository.findByOrderOrderId("orderIdTest")).thenReturn(userOrderPayments);
-
-        ArgumentCaptor<List<UserOrderPayment>> userOrderPaymentCaptor = ArgumentCaptor.forClass(List.class);
 
         orderService.addPercentageDiscount("orderIdTest", "10");
 
-        Mockito.verify(userOrderPaymentRepository).saveAll(userOrderPaymentCaptor.capture());
-        Mockito.verify(orderRepository).save(order);
+        Mockito.verify(orderRepository).save(orderCaptor.capture());
 
-        List<UserOrderPayment> capturedList = userOrderPaymentCaptor.getValue();
-        Assertions.assertEquals(72.0, capturedList.get(0).getAmountToPay());
-        Assertions.assertEquals(72.0, capturedList.get(0).getAmountToPayWithoutExtraPayment());
+        Order capturedOrder = orderCaptor.getValue();
+
+        Assertions.assertEquals(80.0, capturedOrder.getBaseValue());
+        Assertions.assertEquals(8.0, capturedOrder.getPercentageDiscountCashValue());
+        Assertions.assertEquals(10.0, capturedOrder.getPercentageDiscount());
+        Assertions.assertEquals(72.0, capturedOrder.getValue());
+        Assertions.assertEquals(100.0, capturedOrder.getNetValue());
+        Assertions.assertEquals(20.0, capturedOrder.getCashDiscount());
     }
 
 
     @Test
     public void addCashDiscountWithoutAnyDiscount(){
-        Order order = new Order();
-        order.setOrderId("orderIdTest");
-        order.setNetValue(100.0);
-        order.setCashDiscount(0.0);
-        order.setPercentageDiscount(0.0);
-        order.setPercentageDiscountCashValue(0.0);
-        order.setExtraPaymentValue(0.0);
-        order.setValue(100.0);
-
-        UserOrderPayment uop = new UserOrderPayment();
-        uop.setUserOrderPaymentId("uopIdTest");
-        uop.setMenuItemsValue(100.0);
-        uop.setExtraPaymentValue(0.0);
-        uop.setDiscountValueInCash(0.0);
-        uop.setGeneralDiscountValue(0.0);
-        uop.setAmountToPay(100.0);
-        uop.setAmountToPayWithoutExtraPayment(100.0);
-        uop.setBaseForPercentageDiscount(100.0);
-
-        List<UserOrderPayment> userOrderPayments = new ArrayList<>();
-        userOrderPayments.add(uop);
+        Order order = createTestOrder(100.0, 0.0, 0.0, 0.0, 0.0, 100.0);
 
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
-        Mockito.when(userOrderPaymentRepository.findByOrderOrderId("orderIdTest")).thenReturn(userOrderPayments);
-
-        ArgumentCaptor<List<UserOrderPayment>> userOrderPaymentCaptor = ArgumentCaptor.forClass(List.class);
 
         orderService.addCashDiscount("orderIdTest", "20");
 
-        Mockito.verify(userOrderPaymentRepository).saveAll(userOrderPaymentCaptor.capture());
+        Mockito.verify(orderRepository).save(orderCaptor.capture());
 
-        List<UserOrderPayment> capturedList = userOrderPaymentCaptor.getValue();
+        Order capturedOrder = orderCaptor.getValue();
 
-        Assertions.assertEquals(20.0, capturedList.get(0).getDiscountValueInCash());
-        Assertions.assertEquals(20.0, capturedList.get(0).getGeneralDiscountValue());
-        Assertions.assertEquals(0.0, capturedList.get(0).getExtraPaymentValue());
-        Assertions.assertEquals(80.0, capturedList.get(0).getAmountToPayWithoutExtraPayment());
-        Assertions.assertEquals(80.0, capturedList.get(0).getAmountToPay());
+        Assertions.assertEquals(80.0, capturedOrder.getValue());
+        Assertions.assertEquals(80.0, capturedOrder.getBaseValue());
+        Assertions.assertEquals(20.0, capturedOrder.getCashDiscount());
+        Assertions.assertEquals(100.0, capturedOrder.getNetValue());
     }
 
     @Test
-    public void addCashDiscountDiscountWithPercentageDiscountTest(){
-        Order order = new Order();
-        order.setOrderId("orderIdTest");
-        order.setNetValue(100.0);
-        order.setCashDiscount(0.0);
-        order.setPercentageDiscount(10.0);
-        order.setPercentageDiscountCashValue(10.0);
-        order.setExtraPaymentValue(0.0);
-        order.setValue(90.0);
-
-        UserOrderPayment uop = new UserOrderPayment();
-        uop.setUserOrderPaymentId("uopIdTest");
-        uop.setMenuItemsValue(100.0);
-        uop.setExtraPaymentValue(0.0);
-        uop.setDiscountValueInCash(0.0);
-        uop.setDiscountInPercentageInCash(10.0);
-        uop.setBaseForPercentageDiscount(100.0);
-        uop.setGeneralDiscountValue(10.0);
-        uop.setAmountToPay(90.0);
-        uop.setAmountToPayWithoutExtraPayment(90.0);
-
-        List<UserOrderPayment> userOrderPayments = new ArrayList<>();
-        userOrderPayments.add(uop);
+    public void addCashDiscountWithPercentageDiscountTest(){
+        Order order = createTestOrder(100.0, 10.0, 10.0, 0.0, 0.0, 90.0);
 
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
-        Mockito.when(userOrderPaymentRepository.findByOrderOrderId("orderIdTest")).thenReturn(userOrderPayments);
-
-        ArgumentCaptor<List<UserOrderPayment>> userOrderPaymentCaptor = ArgumentCaptor.forClass(List.class);
-
         orderService.addCashDiscount("orderIdTest", "10");
 
-        Mockito.verify(userOrderPaymentRepository).saveAll(userOrderPaymentCaptor.capture());
-        Mockito.verify(orderRepository).save(order);
+        Mockito.verify(orderRepository).save(orderCaptor.capture());
 
-        List<UserOrderPayment> capturedList = userOrderPaymentCaptor.getValue();
-        Assertions.assertEquals(80.0, capturedList.get(0).getAmountToPay());
-        Assertions.assertEquals(80.0, capturedList.get(0).getAmountToPayWithoutExtraPayment());
+        Order capturedOrder = orderCaptor.getValue();
+
+
+        Assertions.assertEquals(100.0, capturedOrder.getNetValue());
+        Assertions.assertEquals(10.0, capturedOrder.getCashDiscount());
+        Assertions.assertEquals(10.0, capturedOrder.getPercentageDiscount());
+        Assertions.assertEquals(9.0, capturedOrder.getPercentageDiscountCashValue());
+        Assertions.assertEquals(81.0, capturedOrder.getValue());
+    }
+
+    @Test
+    public void addExtraPaymentWithOneUserWithPercentageDiscount(){
+        Order order = createTestOrder(100.0, 20.0, 20.0, 0.0, 0.0, 80.0);
+
+        Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
+
+        orderService.addExtraPayment("orderIdTest", "10");
+
+        Mockito.verify(orderRepository).save(orderCaptor.capture());
+
+
+        Order capturedOrder = orderCaptor.getValue();
+
+
+        Assertions.assertEquals("orderIdTest", capturedOrder.getOrderId());
+        Assertions.assertEquals(10.0, capturedOrder.getExtraPaymentValue());
+        Assertions.assertEquals(90.0, capturedOrder.getValue());
+        Assertions.assertEquals(100., capturedOrder.getNetValue());
+        Assertions.assertEquals(20.0, capturedOrder.getPercentageDiscount());
+    }
+
+    //add extraPayment with current extraPayment
+    @Test
+    public void addExtraPaymentWithCurrentExtraPaymentTest(){
+        Order order = createTestOrder(100.0, 0.0, 0.0, 0.0, 10.0, 110.0);
+
+        Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
+         
+        orderService.addExtraPayment("orderIdTest", "25");
+
+        Mockito.verify(orderRepository).save(orderCaptor.capture());
+
+        Order capturedOrder = orderCaptor.getValue();
+
+        Assertions.assertEquals("orderIdTest", capturedOrder.getOrderId());
+        Assertions.assertEquals(25.0, capturedOrder.getExtraPaymentValue());
+        Assertions.assertEquals(125.0, capturedOrder.getValue());
+        Assertions.assertEquals(100.0, capturedOrder.getNetValue());
+    }
+
+    @Test
+    public void addExtraPaymentWithCurrentCashDiscountAndPercentageDiscount(){
+        Order order = createTestOrder(24.0, 10.0, 2.0, 4.0, 0.0, 18.0);
+        order.setBaseValue(20.0);
+
+        Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
+
+        orderService.addExtraPayment("orderIdTest", "6");
+
+        Mockito.verify(orderRepository).save(orderCaptor.capture());
+
+        Order capturedOrder = orderCaptor.getValue();
+
+        Assertions.assertEquals("orderIdTest", capturedOrder.getOrderId());
+        Assertions.assertEquals(6.0, capturedOrder.getExtraPaymentValue());
+        Assertions.assertEquals(24.0, capturedOrder.getValue());
+    }
+
+    @Test
+    public void addCashAndPercentageDiscountsInOne() {
+        String orderId = "orderIdTest";
+        Order order = createTestOrder(24.0, 0.0, 0.0, 0.0, 0.0, 24.0);
+        order.setOrderId(orderId);
+
+        Mockito.when(orderRepository.findByOrderId(orderId)).thenReturn(order);
+
+        orderService.addCashDiscount(orderId, "4");
+
+        Mockito.verify(orderRepository).save(orderCaptor.capture());
+        Order savedAfterCash = orderCaptor.getValue();
+
+        Assertions.assertEquals(24.0, savedAfterCash.getNetValue());
+        Assertions.assertEquals(20.0, savedAfterCash.getBaseValue());
+        Assertions.assertEquals(4.0, savedAfterCash.getCashDiscount());
+        Assertions.assertEquals(20.0, savedAfterCash.getValue());
+
+
+        Mockito.reset(orderRepository);
+        String updatedOrderId = savedAfterCash.getOrderId();
+        Mockito.when(orderRepository.findByOrderId(updatedOrderId)).thenReturn(savedAfterCash);
+
+        orderService.addPercentageDiscount(updatedOrderId, "10");
+
+        Mockito.verify(orderRepository).save(orderCaptor.capture());
+        Order savedAfterPercentage = orderCaptor.getValue();
+
+        Assertions.assertEquals(10.0, savedAfterPercentage.getPercentageDiscount());
+        Assertions.assertEquals(2.0, savedAfterPercentage.getPercentageDiscountCashValue());
+        Assertions.assertEquals(4.0, savedAfterPercentage.getCashDiscount());
+        Assertions.assertEquals(20.0, savedAfterPercentage.getBaseValue());
+        Assertions.assertEquals(18.0, savedAfterPercentage.getValue());
+        Assertions.assertEquals(0.0, savedAfterPercentage.getExtraPaymentValue());
+
+        Mockito.reset(orderRepository);
+        Mockito.when(orderRepository.findByOrderId(savedAfterPercentage.getOrderId())).thenReturn(savedAfterPercentage);
+
+
+        orderService.addExtraPayment("orderIdTest", "6");
+
+        Mockito.verify(orderRepository).save(orderCaptor.capture());
+
+        Order savedAfterExtraPayment = orderCaptor.getValue();
+
+        Assertions.assertEquals("orderIdTest", savedAfterExtraPayment.getOrderId());
+        Assertions.assertEquals(6.0, savedAfterExtraPayment.getExtraPaymentValue());
+        Assertions.assertEquals(24.0, savedAfterExtraPayment.getValue());
+
+        Mockito.reset(orderRepository);
+        Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(savedAfterExtraPayment);
+
+        //CashDiscount2 - cashDiscount = 0
+        orderService.addCashDiscount("orderIdTest", "0");
+
+        Mockito.verify(orderRepository).save(orderCaptor.capture());
+
+        Order savedAfterCashDiscount2 = orderCaptor.getValue();
+
+        Assertions.assertEquals(6.0, savedAfterCashDiscount2.getExtraPaymentValue());
+        Assertions.assertEquals(0.0, savedAfterCashDiscount2.getCashDiscount());
+        Assertions.assertEquals(2.4, savedAfterCashDiscount2.getPercentageDiscountCashValue());
+        Assertions.assertEquals(27.6, savedAfterCashDiscount2.getValue());
+
+
+
+        //wyzerowac wszystko
+        //ustawić rabat got
+        //ustawić rabat proc
+        //ustawic extrapayme
+        //ustawic na 0 gotowkowy
+        //ustawic gotowkowy
     }
 
 }

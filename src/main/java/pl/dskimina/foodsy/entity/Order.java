@@ -34,6 +34,9 @@ public class Order {
     @Column(name = "is_closed")
     private boolean isClosed;
 
+    @Column(name = "base_value")
+    private double baseValue;
+
     @Column(name = "percentage_discount")
     private Double percentageDiscount; //e.g. 10% = 0,1
 
@@ -54,18 +57,8 @@ public class Order {
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @OneToMany(mappedBy = "order")
-    private List<ExtraPayment> extraPayments;
-
     @Column(name = "extra_payment_value")
     private double extraPaymentValue;
-
-    @OneToMany(mappedBy = "order")
-    private List<Discount> discounts;
-
-    @OneToMany(mappedBy = "order")
-    private List<UserOrderPayment> userOrderPayments;
-
 
     public Long getId() {
         return id;
@@ -111,6 +104,14 @@ public class Order {
 
     public boolean getIsClosed(){return isClosed;}
     public void setIsClosed(boolean isClosed){this.isClosed = isClosed;}
+
+    public double getBaseValue() {
+        return baseValue;
+    }
+
+    public void setBaseValue(double baseValue) {
+        this.baseValue = baseValue;
+    }
 
     public Double getPercentageDiscount() {
         return percentageDiscount;
@@ -160,28 +161,6 @@ public class Order {
         this.owner = owner;
     }
 
-    public List<ExtraPayment> getExtraPayments() {
-        return extraPayments;
-    }
-    public void setExtraPayments(List<ExtraPayment> extraPayments) {
-        this.extraPayments = extraPayments;
-    }
-
     public double getExtraPaymentValue(){return extraPaymentValue;}
     public void setExtraPaymentValue(double extraPaymentValue){this.extraPaymentValue = extraPaymentValue;}
-
-    public List<Discount> getDiscounts() {
-        return discounts;
-    }
-    public void setDiscounts(List<Discount> discounts) {
-        this.discounts = discounts;
-    }
-
-    public List<UserOrderPayment> getUserOrderPayments() {
-        return userOrderPayments;
-    }
-
-    public void setUserOrderPayments(List<UserOrderPayment> userOrderPayments) {
-        this.userOrderPayments = userOrderPayments;
-    }
 }

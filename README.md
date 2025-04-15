@@ -1,4 +1,5 @@
 Eat-With-Me to aplikacja wspomagająca organizowanie grupowych zamówień jedzenia w firmach, korporacjach lub zespołach pracowniczych.
+
 Funkcje:
 Tworzenie zamówień do konkretnych restauracji z określeniem czasu, do którego inni mogą dołączać swoje dania.
 Dołączanie użytkowników z wybranymi pozycjami z menu.
@@ -11,7 +12,6 @@ rabaty procentowe,
 dopłaty (np. za dostawę) rozliczane równomiernie.
 
 Zarządzanie:
-użytkownikami,
 produktami,
 restauracjami.
 

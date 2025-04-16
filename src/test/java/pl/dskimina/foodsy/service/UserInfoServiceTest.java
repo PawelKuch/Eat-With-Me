@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.util.Assert;
 import pl.dskimina.foodsy.entity.Order;
 import pl.dskimina.foodsy.entity.User;
 import pl.dskimina.foodsy.entity.data.UserInfo;

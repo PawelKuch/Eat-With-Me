@@ -22,7 +22,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
 
-    public OrderService(OrderRepository orderRepository, ToDataService toDataService, UserRepository userRepository, RestaurantRepository restaurantRepository, OrderItemRepository orderItemRepository) {
+    public OrderService(OrderRepository orderRepository, ToDataService toDataService, UserRepository userRepository, RestaurantRepository restaurantRepository) {
         this.orderRepository = orderRepository;
         this.toDataService = toDataService;
         this.userRepository = userRepository;

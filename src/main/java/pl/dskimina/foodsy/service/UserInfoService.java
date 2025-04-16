@@ -39,28 +39,28 @@ public class UserInfoService {
 
         UserInfo userInfo = new UserInfo();
         double generalOrderValue = orderItemRepository.getOrderItemsValueForOrder(orderId);
-        LOG.warn("generalOrderValue: {}", generalOrderValue);
+        LOG.debug("generalOrderValue: {}", generalOrderValue);
         double orderItemsValue = Math.round(orderItemRepository.getOrderItemsValueForUserAndOrder(orderId, userId) * 100.0) / 100.0;
 
         double percentageDiscountInDecimal = Math.round((order.getPercentageDiscount() / 100.0) * 100.0) / 100.0;
         double percentageDiscount = order.getPercentageDiscount();
         double cashDiscount = Math.round(((orderItemsValue / generalOrderValue) * order.getCashDiscount()) * 100.0) / 100.0;
-        LOG.warn("orderItemsValue: {}", orderItemsValue);
-        LOG.warn("generalOrderValue: {}", generalOrderValue);
-        LOG.warn("order.getCashDiscount(): {}", order.getCashDiscount());
+        LOG.debug("orderItemsValue: {}", orderItemsValue);
+        LOG.debug("generalOrderValue: {}", generalOrderValue);
+        LOG.debug("order.getCashDiscount(): {}", order.getCashDiscount());
         double baseForPercentageDiscount = orderItemsValue - cashDiscount;
         double percentageDiscountInCash = Math.round((baseForPercentageDiscount * percentageDiscountInDecimal) * 100.0) / 100.0;
         double generalDiscountValue = percentageDiscountInCash + cashDiscount;
-        LOG.warn("percentageDiscountInCash: {}", percentageDiscountInCash);
-        LOG.warn("cashDiscount: {}", cashDiscount);
+        LOG.debug("percentageDiscountInCash: {}", percentageDiscountInCash);
+        LOG.debug("cashDiscount: {}", cashDiscount);
         double extraPayment = Math.round((order.getExtraPaymentValue() / howManyUsersInOrder) * 100.0) / 100.0;
-        LOG.warn("order.getExtraPaymentValue(): {}", order.getExtraPaymentValue());
-        LOG.warn("extraPayment: {}", extraPayment);
-        LOG.warn("howManyUsers: {}", howManyUsersInOrder);
+        LOG.debug("order.getExtraPaymentValue(): {}", order.getExtraPaymentValue());
+        LOG.debug("extraPayment: {}", extraPayment);
+        LOG.debug("howManyUsers: {}", howManyUsersInOrder);
         double amountToPayWithoutExtraPayment = Math.round((orderItemsValue - generalDiscountValue) * 100.0) / 100.0;
-        LOG.warn("amountToPayWithoutExtraPayment: {}", amountToPayWithoutExtraPayment);
-        LOG.warn("orderItemsValue: {}", orderItemsValue);
-        LOG.warn("generalDiscountValue: {}", generalDiscountValue);
+        LOG.debug("amountToPayWithoutExtraPayment: {}", amountToPayWithoutExtraPayment);
+        LOG.debug("orderItemsValue: {}", orderItemsValue);
+        LOG.debug("generalDiscountValue: {}", generalDiscountValue);
         double amountToPay = amountToPayWithoutExtraPayment + extraPayment;
 
         userInfo.setFirstName(user.getFirstName());

@@ -60,6 +60,7 @@ public class OrderItemService {
         order.setPercentageDiscountCashValue(newPercentageDiscountValueInCash);
         order.setNetValue(orderItemsValueForOrder);
         order.setValue(newValue);
+        order.setBaseValue(orderItemsValueForOrder);
         orderRepository.save(order);
     }
 
@@ -74,7 +75,6 @@ public class OrderItemService {
             orderItemRepository.delete(orderItem);
             return true;
         } else {
-
             return false;
         }
     }

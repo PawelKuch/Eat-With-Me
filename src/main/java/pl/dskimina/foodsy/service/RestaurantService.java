@@ -75,14 +75,14 @@ public class RestaurantService {
         String phone = restaurantData.getPhone();
         String address = restaurantData.getAddress();
         if(restaurant == null){
-            LOG.warn("restaurant is null");
+            LOG.debug("restaurant is null");
         }else {
             if(name != null && !name.isEmpty()) restaurant.setName(name);
             if(tags != null && !tags.isEmpty()) restaurant.setTags(tags);
             if(email != null && !email.isEmpty()) restaurant.setEmail(email);
             if(address != null && !address.isEmpty()) restaurant.setAddress(address);
             if(phone != null && !phone.isEmpty()) restaurant.setPhone(phone);
-            LOG.info("restaurant has been updated");
+            LOG.debug("restaurant has been updated");
             restaurantRepository.save(restaurant);
         }
     }

@@ -95,11 +95,11 @@ public class OrderController {
                                                        RedirectAttributes ra) {
             if(extraPaymentPrice != null ) {
                 orderService.addExtraPayment(orderId, extraPaymentPrice);
-                LOG.warn("addExtraPaymentMethod is called!");
+                LOG.debug("addExtraPaymentMethod is called!");
             }
             if(cashDiscount != null) {
                orderService.addCashDiscount(orderId, cashDiscount);
-                LOG.warn("addCashDiscountMethod is called!");
+                LOG.debug("addCashDiscountMethod is called!");
             }
             if(percentageDiscount != null) {
                 orderService.addPercentageDiscount(orderId, percentageDiscount);

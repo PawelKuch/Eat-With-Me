@@ -22,7 +22,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
 
-    public OrderService(OrderRepository orderRepository, ToDataService toDataService, UserRepository userRepository, RestaurantRepository restaurantRepository) {
+    public OrderService(OrderRepository orderRepository, ToDataService toDataService, UserRepository userRepository, RestaurantRepository restaurantRepository, OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
         this.toDataService = toDataService;
         this.userRepository = userRepository;
@@ -60,6 +60,7 @@ public class OrderService {
         order.setRestaurant(restaurant);
         order.setIsClosed(false);
         orderRepository.save(order);
+        LOG.debug("debugging");
         return toDataService.convert(order);
     }
 
@@ -76,6 +77,7 @@ public class OrderService {
         if(order.getExtraPaymentValue() != extraPayment){
             double currentExtraPayment = order.getExtraPaymentValue();
             order.setExtraPaymentValue(extraPayment);
+            LOG.debug("extraPayment: {}", extraPayment);
             order.setValue(order.getValue() - currentExtraPayment + extraPayment);
             orderRepository.save(order);
         }
@@ -87,16 +89,16 @@ public class OrderService {
         double newPercentageDiscountDouble = Double.parseDouble(newPercentageDiscountString);
         double newPercentageDiscount = Math.round((newPercentageDiscountDouble / 100.0) * 100.0) / 100.0;
 
-        LOG.warn("Comaprison: order.getPercentageDiscount() VS newPercentageDiscountDouble: {}", order.getPercentageDiscount() + " VS " + newPercentageDiscountDouble);
+        LOG.debug("Comaprison: order.getPercentageDiscount() VS newPercentageDiscountDouble: {}", order.getPercentageDiscount() + " VS " + newPercentageDiscountDouble);
         if(order.getPercentageDiscount() != newPercentageDiscountDouble){
             order.setPercentageDiscount(newPercentageDiscountDouble);
             double percentageDiscountInCash = Math.round((order.getBaseValue() * newPercentageDiscount) * 100.0) / 100.0;
-            LOG.warn("baseValue: {}", order.getBaseValue());
+            LOG.debug("baseValue: {}", order.getBaseValue());
             order.setPercentageDiscountCashValue(percentageDiscountInCash);
-            LOG.warn("percentageDiscountInCash: {}", percentageDiscountInCash);
+            LOG.debug("percentageDiscountInCash: {}", percentageDiscountInCash);
             double generalDiscount = order.getCashDiscount() + percentageDiscountInCash;
-            order.setValue(order.getNetValue() - generalDiscount);
-            LOG.warn("order.getBaseValue(): {}", order.getBaseValue());
+            order.setValue(order.getNetValue() - generalDiscount + order.getExtraPaymentValue());
+            LOG.debug("order.getBaseValue(): {}", order.getBaseValue());
             orderRepository.save(order);
             LOG.debug("order saved");
         }
@@ -106,21 +108,21 @@ public class OrderService {
     public void addCashDiscount(String orderId, String newCashDiscountString){
         Order order = orderRepository.findByOrderId(orderId);
         double newCashDiscount = Double.parseDouble(newCashDiscountString);
-        LOG.warn("Comparison cashDiscount: order.getCashDiscount VS newCashDiscount: {}", order.getCashDiscount() + " VS " + newCashDiscount);
+        LOG.debug("Comparison cashDiscount: order.getCashDiscount VS newCashDiscount: {}", order.getCashDiscount() + " VS " + newCashDiscount);
         if(order.getCashDiscount() != newCashDiscount){
             double baseValue = Math.round((order.getNetValue() - newCashDiscount) * 100.0) / 100.0;
             double updatedPercentageDiscountInCash = Math.round((baseValue * (order.getPercentageDiscount() / 100.0)) * 100.0) / 100.0;
             double currentGeneralDiscount = order.getCashDiscount() + order.getPercentageDiscountCashValue();
             order.setPercentageDiscountCashValue(updatedPercentageDiscountInCash);
             double newGeneralDiscount = order.getPercentageDiscountCashValue() + newCashDiscount;
-            LOG.warn("newCashDiscount: {}", newCashDiscount);
+            LOG.debug("newCashDiscount: {}", newCashDiscount);
             order.setBaseValue(baseValue);
-            LOG.warn("order.getValue() before changing value: {}", order.getValue());
-            order.setValue(order.getValue() + currentGeneralDiscount - newGeneralDiscount);
-            LOG.warn("order.getValue(): {}", order.getValue());
-            LOG.warn("currentGeneralDiscount: {}", currentGeneralDiscount);
-            LOG.warn("newGeneralDiscount: {}", newGeneralDiscount);
-            LOG.warn("order.getCashDiscount(): {}", order.getCashDiscount());
+            LOG.debug("order.getValue() before changing value: {}", order.getValue());
+            order.setValue(order.getNetValue() - newGeneralDiscount + order.getExtraPaymentValue());
+            LOG.debug("order.getValue(): {}", order.getValue());
+            LOG.debug("currentGeneralDiscount: {}", currentGeneralDiscount);
+            LOG.debug("newGeneralDiscount: {}", newGeneralDiscount);
+            LOG.debug("order.getCashDiscount(): {}", order.getCashDiscount());
             order.setCashDiscount(newCashDiscount); // ustawienie nowego rabatu
             orderRepository.save(order);
         }

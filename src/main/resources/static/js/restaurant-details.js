@@ -44,8 +44,7 @@ $(document).ready(function (){
          contentType: false,
          processData: false,
          type: "PUT",
-         success: function (response) {
-
+         success: function () {
             location.reload();
          },
          error: function(xhr, status) {

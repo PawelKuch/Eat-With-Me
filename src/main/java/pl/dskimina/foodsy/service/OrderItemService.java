@@ -1,22 +1,21 @@
 package pl.dskimina.foodsy.service;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pl.dskimina.foodsy.entity.MenuItem;
 import pl.dskimina.foodsy.entity.Order;
 import pl.dskimina.foodsy.entity.OrderItem;
 import pl.dskimina.foodsy.entity.User;
-import pl.dskimina.foodsy.repository.MenuItemRepository;
-import pl.dskimina.foodsy.repository.OrderItemRepository;
-import pl.dskimina.foodsy.repository.OrderRepository;
-import pl.dskimina.foodsy.repository.UserRepository;
+import pl.dskimina.foodsy.repository.*;
 
-import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
 public class OrderItemService {
-
+    private final static Logger LOG = LoggerFactory.getLogger(OrderItemService.class);
     private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
@@ -43,14 +42,25 @@ public class OrderItemService {
         orderItem.setDescription(description);
         orderItem.setPrice(Double.parseDouble(price));
         orderItemRepository.save(orderItem);
+
         setValueForOrder(order);
     }
 
     @Transactional
     public void setValueForOrder(Order order){
-        List<OrderItem> orderItemList = order.getOrderItemList();
-        Double value = orderItemList.stream().mapToDouble(OrderItem::getPrice).sum();
-        order.setValue(value);
+        double cashDiscountValue = order.getCashDiscount();
+        double extraPaymentValueForOrder = order.getExtraPaymentValue();
+        double orderItemsValueForOrder = Objects.requireNonNullElse(orderItemRepository.getOrderItemsValueForOrder(order.getOrderId()), 0.0);
+
+
+        double baseForPercentageDiscount = orderItemsValueForOrder - cashDiscountValue;
+        double newPercentageDiscountValueInCash = Math.round((baseForPercentageDiscount * (order.getPercentageDiscount() / 100)) * 100.0) / 100.0;
+        LOG.debug("newPercentageDiscountValueInCash in setValueForOrder: {}", newPercentageDiscountValueInCash);
+        double newValue = orderItemsValueForOrder - cashDiscountValue - newPercentageDiscountValueInCash + extraPaymentValueForOrder;
+        order.setPercentageDiscountCashValue(newPercentageDiscountValueInCash);
+        order.setNetValue(orderItemsValueForOrder);
+        order.setValue(newValue);
+        order.setBaseValue(orderItemsValueForOrder);
         orderRepository.save(order);
     }
 
@@ -65,7 +75,6 @@ public class OrderItemService {
             orderItemRepository.delete(orderItem);
             return true;
         } else {
-
             return false;
         }
     }

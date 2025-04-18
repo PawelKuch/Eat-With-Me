@@ -96,14 +96,19 @@ public class RestaurantController {
 
     @PutMapping("/{restaurantId}/logo")
     public ResponseEntity<String> updateRestaurantLogo(@PathVariable String restaurantId, @RequestBody MultipartFile image) throws IOException{
-        if(image != null && restaurantService.updateRestaurantLogo(restaurantId, image)){
+        if(image == null){
             return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body("Restaurant logo updated successfully");
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Image is null");
+        }
+        if(!restaurantService.updateRestaurantLogo(restaurantId, image)){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Restaurant update failed");
         }
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Image is null");
+                .status(HttpStatus.OK)
+                .body("Restaurant logo updated successfully");
     }
 
     @DeleteMapping("/{restaurantId}")
@@ -144,7 +149,7 @@ public class RestaurantController {
     @PutMapping("/{restaurantId}/menuItems/{menuItemId}")
     public ResponseEntity<Void> updateMenuItem(@PathVariable String restaurantId, @PathVariable String menuItemId,
                                        @RequestBody MenuItemData menuItemData) {
-        if(menuItemData.getDescription() == null){LOG.warn("menuItemData description is null!");}
+        if(menuItemData.getDescription() == null){LOG.debug("menuItemData description is null!");}
         menuItemService.updateMenuItem(restaurantId, menuItemId, menuItemData.getName(), menuItemData.getDescription(), menuItemData.getPrice());
         return ResponseEntity.ok().build();
     }

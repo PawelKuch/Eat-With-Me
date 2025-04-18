@@ -1,6 +1,8 @@
 package pl.dskimina.foodsy.controllers;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,21 +19,25 @@ import java.util.List;
 @Controller
 @RequestMapping({"/orders", "/"})
 public class OrderController {
+    private final static Logger LOG = LoggerFactory.getLogger(OrderController.class);
     private final OrderService orderService;
     private final OrderItemService orderItemService;
     private final UserService userService;
     private final SessionService sessionService;
     private final RestaurantService restaurantService;
+    private final UserInfoService discountAndExtraPaymentService;
+
 
     public OrderController(OrderService orderService,
-                           OrderItemService orderItemService, UserService userService, SessionService sessionService, RestaurantService restaurantService) {
+                           OrderItemService orderItemService, UserService userService, SessionService sessionService,
+                           RestaurantService restaurantService, UserInfoService discountAndExtraPaymentService) {
         this.orderService = orderService;
         this.orderItemService = orderItemService;
         this.userService = userService;
         this.sessionService = sessionService;
         this.restaurantService = restaurantService;
+        this.discountAndExtraPaymentService = discountAndExtraPaymentService;
     }
-
 
     @ModelAttribute
     public void fillModel(Model modelMap){
@@ -75,22 +81,33 @@ public class OrderController {
         RestaurantData restaurant = order.getRestaurantData();
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("order", order);
+        model.addAttribute("userInfoList", discountAndExtraPaymentService.getUserInfoListForOrder(orderId));
+        model.addAttribute("userAmountForOrder", orderService.getUsersAmountForOrder(orderId));
+
         return "order-summary";
     }
 
     @PostMapping("/{orderId}/summary")
-    public RedirectView setFinalValueAndCloseOrder(@PathVariable String orderId,
-                                                   @RequestParam(value = "cashDiscount", required = false) String cashDiscount,
-                                                   @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
-                                                   @RequestParam(value = "extraPayment", required = false) String extraPayment,
-                                                   RedirectAttributes ra) {
-        if(extraPayment != null) {orderService.addExtraPayment(orderId, extraPayment);}
-        if(cashDiscount != null) {orderService.addCashDiscount(orderId, cashDiscount);}
-        if(percentageDiscount != null) {orderService.addPercentageDiscount(orderId, percentageDiscount);}
-        orderService.closeOrder(orderId);
-        ra.addFlashAttribute("order", orderService.getOrderByOrderId(orderId));
-        return new RedirectView("/orders/" + orderId + "/summary");
-    }
+        public RedirectView setFinalValueOfOrder(@PathVariable String orderId,
+                                                       @RequestParam(value = "cashDiscount", required = false) String cashDiscount,
+                                                       @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
+                                                       @RequestParam(value = "extraPayment", required = false) String extraPaymentPrice,
+                                                       RedirectAttributes ra) {
+            if(extraPaymentPrice != null ) {
+                orderService.addExtraPayment(orderId, extraPaymentPrice);
+                LOG.debug("addExtraPaymentMethod is called!");
+            }
+            if(cashDiscount != null) {
+               orderService.addCashDiscount(orderId, cashDiscount);
+                LOG.debug("addCashDiscountMethod is called!");
+            }
+            if(percentageDiscount != null) {
+                orderService.addPercentageDiscount(orderId, percentageDiscount);
+            }
+
+            ra.addFlashAttribute("order", orderService.getOrderByOrderId(orderId));
+            return new RedirectView("/orders/" + orderId + "/summary");
+        }
 
     @GetMapping("/{orderId}/orderItems")
     public String getOrderItems(@PathVariable("orderId") String orderId, Model model) {
@@ -110,7 +127,6 @@ public class OrderController {
                                         @RequestParam(value = "description", required = false) String description,
                                         @RequestParam(value = "price", required = false) String price) {
         orderItemService.createOrderItem(userId, menuItemId, price, orderId, description);
-
         return new RedirectView("/orders/" + orderId + "/orderItems" );
     }
 

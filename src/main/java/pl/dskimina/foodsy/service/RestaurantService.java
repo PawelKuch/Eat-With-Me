@@ -76,35 +76,36 @@ public class RestaurantService {
         String address = restaurantData.getAddress();
         if(restaurant == null){
             LOG.debug("restaurant is null");
-        }else {
-            if(name != null && !name.isEmpty()) restaurant.setName(name);
-            if(tags != null && !tags.isEmpty()) restaurant.setTags(tags);
-            if(email != null && !email.isEmpty()) restaurant.setEmail(email);
-            if(address != null && !address.isEmpty()) restaurant.setAddress(address);
-            if(phone != null && !phone.isEmpty()) restaurant.setPhone(phone);
-            LOG.debug("restaurant has been updated");
-            restaurantRepository.save(restaurant);
+            return;
         }
+        if(name != null && !name.isEmpty()) restaurant.setName(name);
+        if(tags != null && !tags.isEmpty()) restaurant.setTags(tags);
+        if(email != null && !email.isEmpty()) restaurant.setEmail(email);
+        if(address != null && !address.isEmpty()) restaurant.setAddress(address);
+        if(phone != null && !phone.isEmpty()) restaurant.setPhone(phone);
+        LOG.debug("restaurant has been updated");
+        restaurantRepository.save(restaurant);
+
     }
 
     @Transactional
     public boolean updateRestaurantLogo(String restaurantId, MultipartFile image) throws IOException {
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-        if(restaurant != null) {
-            restaurant.setImage(image.getBytes());
-            restaurantRepository.save(restaurant);
-            return true;
+        if(restaurant == null) {
+            return false;
         }
-        return false;
+        restaurant.setImage(image.getBytes());
+        restaurantRepository.save(restaurant);
+        return true;
     }
 
     public boolean deleteRestaurantByRestaurantId(String restaurantId){
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-        if(restaurant != null){
-            restaurantRepository.delete(restaurant);
-            return true;
+        if(restaurant == null){
+            return false;
         }
-        return false;
+        restaurantRepository.delete(restaurant);
+        return true;
     }
 
 }

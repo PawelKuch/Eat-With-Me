@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
+import pl.dskimina.foodsy.exception.MenuItemNotFoundException;
+import pl.dskimina.foodsy.exception.RestaurantNotFoundException;
 import pl.dskimina.foodsy.service.*;
 
 import java.io.IOException;
@@ -66,7 +68,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/{restaurantId}")
-    public String restaurantDetailsView(Model model, @PathVariable String restaurantId){
+    public String restaurantDetailsView(Model model, @PathVariable String restaurantId) {
         RestaurantData restaurant = restaurantService.getRestaurantByRestaurantId(restaurantId);
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("restaurantMenuItemList", restaurant.getMenuItems());
@@ -95,32 +97,19 @@ public class RestaurantController {
     }
 
     @PutMapping("/{restaurantId}/logo")
-    public ResponseEntity<String> updateRestaurantLogo(@PathVariable String restaurantId, @RequestBody MultipartFile image) throws IOException{
-        if(image == null){
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Image is null");
-        }
-        if(!restaurantService.updateRestaurantLogo(restaurantId, image)){
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Restaurant update failed");
-        }
+    public ResponseEntity<String> updateRestaurantLogo(@PathVariable String restaurantId, @RequestBody MultipartFile image) throws IOException {
+        restaurantService.updateRestaurantLogo(restaurantId, image);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("Restaurant logo updated successfully");
     }
 
     @DeleteMapping("/{restaurantId}")
-    public ResponseEntity<String> deleteRestaurant(@PathVariable String restaurantId){
-        if(restaurantService.deleteRestaurantByRestaurantId(restaurantId)){
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body("Restaurant deleted successfully");
-        }
+    public ResponseEntity<String> deleteRestaurant(@PathVariable String restaurantId) {
+        restaurantService.deleteRestaurantByRestaurantId(restaurantId);
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Restaurant not found");
+                .status(HttpStatus.OK)
+                .body("Restaurant deleted successfully");
     }
 
     @PostMapping("/{restaurantId}/menuItems")
@@ -128,7 +117,7 @@ public class RestaurantController {
                                     @RequestParam("price") double price,
                                     @RequestParam("description") String description,
                                     @RequestParam("category") String category,
-                                    @PathVariable String restaurantId){
+                                    @PathVariable String restaurantId) {
         if(!name.isEmpty()){
             if(description.isEmpty()) description = "";
             menuItemService.addMenuItem(name, category, description, price, restaurantId);
@@ -137,11 +126,9 @@ public class RestaurantController {
     }
 
     @DeleteMapping("/{restaurantId}/menuItems/{menuItemId}")
-    public ResponseEntity<Void> deleteMenuItem(@PathVariable String restaurantId, @PathVariable String menuItemId){
-        if(menuItemService.deleteMenuItemByMenuItemIdAndRestaurantId(restaurantId, menuItemId)){
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> deleteMenuItem(@PathVariable String restaurantId, @PathVariable String menuItemId) {
+        menuItemService.deleteMenuItemByMenuItemIdAndRestaurantId(restaurantId, menuItemId);
+        return ResponseEntity.ok().build();
     }
 
     Logger LOG = LoggerFactory.getLogger(RestaurantController.class);

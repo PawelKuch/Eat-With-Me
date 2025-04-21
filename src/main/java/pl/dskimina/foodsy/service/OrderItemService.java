@@ -8,6 +8,10 @@ import pl.dskimina.foodsy.entity.MenuItem;
 import pl.dskimina.foodsy.entity.Order;
 import pl.dskimina.foodsy.entity.OrderItem;
 import pl.dskimina.foodsy.entity.User;
+import pl.dskimina.foodsy.exception.MenuItemNotFoundException;
+import pl.dskimina.foodsy.exception.OrderItemNotFoundException;
+import pl.dskimina.foodsy.exception.OrderNotFoundException;
+import pl.dskimina.foodsy.exception.UserNotFoundException;
 import pl.dskimina.foodsy.repository.*;
 
 import java.util.Objects;
@@ -29,12 +33,16 @@ public class OrderItemService {
     }
 
     @Transactional
-    public void createOrderItem(String userId, String menuItemId, String price, String orderId, String description){
+    public void createOrderItem(String userId, String menuItemId, String price, String orderId, String description) {
         OrderItem orderItem = new OrderItem();
         orderItem.setOrderItemId(UUID.randomUUID().toString());
         User user = userRepository.findByUserId(userId);
         MenuItem menuItem = menuItemRepository.findByMenuItemId(menuItemId);
         Order order = orderRepository.findByOrderId(orderId);
+
+        if(user == null) throw new UserNotFoundException("Nie znaleziono użytkownika o żądanym id: " + userId);
+        if(menuItem == null) throw new MenuItemNotFoundException("Nie znaleziono pozycji menu o żądanym id: " + menuItemId);
+        if(order == null) throw new OrderNotFoundException("Nie znaleziono zamówienia o żądanym id: " + orderId);
 
         orderItem.setUser(user);
         orderItem.setMenuItem(menuItem);
@@ -65,17 +73,13 @@ public class OrderItemService {
     }
 
     @Transactional
-    public boolean deleteOrderItem(String orderItemId){
+    public void deleteOrderItem(String orderItemId) {
         OrderItem orderItem = orderItemRepository.findByOrderItemId(orderItemId);
-        if(orderItem != null){
-            Order order = orderItem.getOrder();
-            double currentValueOfOrder = order.getValue() - orderItem.getPrice();
-            order.setValue(currentValueOfOrder);
-            orderRepository.save(order);
-            orderItemRepository.delete(orderItem);
-            return true;
-        } else {
-            return false;
-        }
+        if(orderItem == null) throw new OrderItemNotFoundException("Brak pozycji w zamówieniu. ID: " + orderItemId);
+        Order order = orderItem.getOrder();
+        double currentValueOfOrder = order.getValue() - orderItem.getPrice();
+        order.setValue(currentValueOfOrder);
+        orderRepository.save(order);
+        orderItemRepository.delete(orderItem);
     }
 }

@@ -18,7 +18,7 @@ public class InitComponent {
 
 
     @EventListener(classes = ContextRefreshedEvent.class)
-    public void setLogoForStartingRestaurants() throws IOException{
+    public void setLogoForStartingRestaurants() throws IOException {
         byte[] kfcBytes = getBytesImage("./logos/kfclogo.png");
         byte[] mcdBytes = getBytesImage("./logos/mcdonaldlogo.png");
         byte[] bkBytes = getBytesImage("./logos/burgerkinglogo.png");

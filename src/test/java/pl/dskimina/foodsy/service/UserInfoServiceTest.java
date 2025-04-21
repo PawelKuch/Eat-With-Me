@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pl.dskimina.foodsy.entity.Order;
 import pl.dskimina.foodsy.entity.User;
 import pl.dskimina.foodsy.entity.data.UserInfo;
+import pl.dskimina.foodsy.exception.OrderNotFoundException;
 import pl.dskimina.foodsy.repository.OrderItemRepository;
 import pl.dskimina.foodsy.repository.OrderRepository;
 import pl.dskimina.foodsy.repository.UserRepository;
@@ -72,7 +73,7 @@ public class UserInfoServiceTest {
 
 
     @Test
-    public void addCashAndPercentageDiscountsInOne() {
+    public void addCashAndPercentageDiscountsInOne() throws OrderNotFoundException {
         String orderId = "orderIdTest";
         Order order = createTestOrder(24.0, 0.0, 0.0, 0.0, 0.0, 24.0);
         order.setOrderId(orderId);

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import pl.dskimina.foodsy.entity.Order;
 import pl.dskimina.foodsy.entity.User;
 import pl.dskimina.foodsy.entity.data.UserInfo;
+import pl.dskimina.foodsy.exception.OrderNotFoundException;
+import pl.dskimina.foodsy.exception.UserNotFoundException;
 import pl.dskimina.foodsy.repository.OrderItemRepository;
 import pl.dskimina.foodsy.repository.OrderRepository;
 import pl.dskimina.foodsy.repository.UserRepository;
@@ -32,9 +34,13 @@ public class UserInfoService {
         return userIds.stream().map( userId -> getUserInfo(userId, orderId)).toList();
     }
 
-    public UserInfo getUserInfo(String userId, String orderId){
+    public UserInfo getUserInfo(String userId, String orderId) {
         Order order = orderRepository.findByOrderId(orderId);
         User user = userRepository.findByUserId(userId);
+
+        if(order == null) throw new OrderNotFoundException("Nie znaleziono żądanego zamówienia id: " + orderId);
+        if(user == null) throw new UserNotFoundException("Nie znaleziono żądanego użytkownika id: " + userId);
+
         int howManyUsersInOrder = orderRepository.getUsersAmountForOrder(orderId);
 
         UserInfo userInfo = new UserInfo();

@@ -5,11 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.util.Assert;
 import pl.dskimina.foodsy.entity.Order;
 import pl.dskimina.foodsy.entity.Restaurant;
 import pl.dskimina.foodsy.entity.User;
 import pl.dskimina.foodsy.entity.data.OrderData;
+import pl.dskimina.foodsy.exception.OrderNotFoundException;
+import pl.dskimina.foodsy.exception.RestaurantNotFoundException;
+import pl.dskimina.foodsy.exception.UserNotFoundException;
 import pl.dskimina.foodsy.repository.*;
 import java.sql.Date;
 import java.time.LocalDateTime;
@@ -66,7 +68,7 @@ public class OrderServiceTest {
     ArgumentCaptor<Order> orderCaptor;
 
     @Test
-    public void createOrderTest(){
+    public void createOrderTest() throws UserNotFoundException, RestaurantNotFoundException {
         String restaurantId = "restaurantIdTest";
         String userId = "userIdTest";
         String closingDateString = "1999-01-17T22:22";
@@ -115,7 +117,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void addPercentageDiscountWithoutAnyDiscountTest() {
+    public void addPercentageDiscountWithoutAnyDiscountTest() throws OrderNotFoundException {
         Order order = createTestOrder(50.0, 0.0, 0.0, 0.0, 0.0, 50.0);
         order.setBaseValue(50.0);
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
@@ -134,7 +136,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void addPercentageDiscountWithCurrentCashDiscountTest(){
+    public void addPercentageDiscountWithCurrentCashDiscountTest() throws OrderNotFoundException{
         Order order = createTestOrder(100.0, 0.0, 0.0, 20.0, 0.0, 80.0);
         order.setBaseValue(80.0);
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
@@ -155,7 +157,7 @@ public class OrderServiceTest {
 
 
     @Test
-    public void addCashDiscountWithoutAnyDiscount(){
+    public void addCashDiscountWithoutAnyDiscount() throws OrderNotFoundException{
         Order order = createTestOrder(100.0, 0.0, 0.0, 0.0, 0.0, 100.0);
 
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
@@ -173,7 +175,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void addCashDiscountWithPercentageDiscountTest(){
+    public void addCashDiscountWithPercentageDiscountTest() throws OrderNotFoundException{
         Order order = createTestOrder(100.0, 10.0, 10.0, 0.0, 0.0, 90.0);
 
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
@@ -192,7 +194,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void addExtraPaymentWithOneUserWithPercentageDiscount(){
+    public void addExtraPaymentWithOneUserWithPercentageDiscount() throws OrderNotFoundException {
         Order order = createTestOrder(100.0, 20.0, 20.0, 0.0, 0.0, 80.0);
 
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
@@ -214,7 +216,7 @@ public class OrderServiceTest {
 
     //add extraPayment with current extraPayment
     @Test
-    public void addExtraPaymentWithCurrentExtraPaymentTest(){
+    public void addExtraPaymentWithCurrentExtraPaymentTest() throws OrderNotFoundException{
         Order order = createTestOrder(100.0, 0.0, 0.0, 0.0, 10.0, 110.0);
 
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
@@ -232,7 +234,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void addExtraPaymentWithCurrentCashDiscountAndPercentageDiscount(){
+    public void addExtraPaymentWithCurrentCashDiscountAndPercentageDiscount() throws OrderNotFoundException{
         Order order = createTestOrder(24.0, 10.0, 2.0, 4.0, 0.0, 18.0);
         order.setBaseValue(20.0);
 
@@ -250,7 +252,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void addCashAndPercentageDiscountsInOne() {
+    public void addCashAndPercentageDiscountsInOne() throws OrderNotFoundException{
         String orderId = "orderIdTest";
         Order order = createTestOrder(24.0, 0.0, 0.0, 0.0, 0.0, 24.0);
         order.setOrderId(orderId);

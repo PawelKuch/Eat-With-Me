@@ -6,6 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.dskimina.foodsy.entity.*;
 import pl.dskimina.foodsy.entity.data.OrderData;
+import pl.dskimina.foodsy.exception.BadRequestException;
+import pl.dskimina.foodsy.exception.OrderNotFoundException;
+import pl.dskimina.foodsy.exception.RestaurantNotFoundException;
+import pl.dskimina.foodsy.exception.UserNotFoundException;
 import pl.dskimina.foodsy.repository.*;
 
 import java.time.LocalDateTime;
@@ -31,8 +35,10 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderData getOrderByOrderId(String orderId){
+    public OrderData getOrderByOrderId(String orderId) {
         Order order = orderRepository.findByOrderId(orderId);
+        if(order == null) throw new OrderNotFoundException("Nie znaleziono zamówienia o żądanym id: " + orderId);
+
         return toDataService.convert(order);
     }
 
@@ -40,6 +46,11 @@ public class OrderService {
     public OrderData createOrder(String restaurantId, String userId, String closingDateString, String minValueString, String description) {
         Order order = new Order();
         User user = userRepository.findByUserId(userId);
+        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+
+        if(user == null) throw new UserNotFoundException("Nie znaleziono uzytkownika o żądanym id: " + userId);
+        if(restaurant == null) throw new RestaurantNotFoundException("Nie znaleziono restauracji o żądanym id: " + restaurantId);
+
         order.setOrderId(UUID.randomUUID().toString());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         LocalDateTime closingDate = LocalDateTime.parse(closingDateString, formatter);
@@ -56,7 +67,7 @@ public class OrderService {
         List<OrderItem> orderItems = new ArrayList<>();
         order.setOrderItemList(orderItems);
         order.setOwner(user);
-        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+
         order.setRestaurant(restaurant);
         order.setIsClosed(false);
         orderRepository.save(order);
@@ -71,8 +82,11 @@ public class OrderService {
     }
 
     @Transactional
-    public void addExtraPayment(String orderId, String newExtraPaymentString){
+    public void addExtraPayment(String orderId, String newExtraPaymentString) {
         Order order = orderRepository.findByOrderId(orderId);
+        if(newExtraPaymentString == null || newExtraPaymentString.isEmpty() || newExtraPaymentString.isBlank()) throw new BadRequestException("Brak lub niepoprawny format wartości dopłaty!");
+        if(order == null) throw new OrderNotFoundException("Nie znaleziono zamówienia o żądanym id: " + orderId);
+
         double extraPayment = Math.round(Double.parseDouble(newExtraPaymentString) * 100.0) / 100.0;
         if(order.getExtraPaymentValue() != extraPayment){
             double currentExtraPayment = order.getExtraPaymentValue();
@@ -84,8 +98,11 @@ public class OrderService {
     }
 
     @Transactional
-    public void addPercentageDiscount(String orderId, String newPercentageDiscountString){
+    public void addPercentageDiscount(String orderId, String newPercentageDiscountString) {
         Order order = orderRepository.findByOrderId(orderId);
+        if(order == null) throw new OrderNotFoundException("Nie znaleziono zamówienia o żądanym id: " + orderId);
+        if(newPercentageDiscountString == null || newPercentageDiscountString.isEmpty() || newPercentageDiscountString.isBlank()) throw new BadRequestException("Brak lub niepoprawny format wartości rabatu!");
+
         double newPercentageDiscountDouble = Double.parseDouble(newPercentageDiscountString);
         double newPercentageDiscount = Math.round((newPercentageDiscountDouble / 100.0) * 100.0) / 100.0;
 
@@ -105,8 +122,11 @@ public class OrderService {
     }
 
     @Transactional
-    public void addCashDiscount(String orderId, String newCashDiscountString){
+    public void addCashDiscount(String orderId, String newCashDiscountString) {
         Order order = orderRepository.findByOrderId(orderId);
+        if(newCashDiscountString == null || newCashDiscountString.isEmpty() || newCashDiscountString.isBlank()) throw new BadRequestException("Brak lub niepoprawny format wartości rabatu!");
+        if(order == null) throw new OrderNotFoundException("Nie znaleziono zamówienia o żądanym id: " + orderId);
+
         double newCashDiscount = Double.parseDouble(newCashDiscountString);
         LOG.debug("Comparison cashDiscount: order.getCashDiscount VS newCashDiscount: {}", order.getCashDiscount() + " VS " + newCashDiscount);
         if(order.getCashDiscount() != newCashDiscount){

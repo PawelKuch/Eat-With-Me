@@ -12,6 +12,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
+import pl.dskimina.foodsy.exception.*;
 import pl.dskimina.foodsy.service.*;
 import java.util.List;
 
@@ -73,8 +74,6 @@ public class OrderController {
         return "create-order";
     }
 
-
-
     @GetMapping("/{orderId}/summary")
     public String orderSummary(@PathVariable String orderId, Model model) {
         OrderData order = orderService.getOrderByOrderId(orderId);
@@ -83,7 +82,6 @@ public class OrderController {
         model.addAttribute("order", order);
         model.addAttribute("userInfoList", discountAndExtraPaymentService.getUserInfoListForOrder(orderId));
         model.addAttribute("userAmountForOrder", orderService.getUsersAmountForOrder(orderId));
-
         return "order-summary";
     }
 
@@ -93,20 +91,10 @@ public class OrderController {
                                                        @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
                                                        @RequestParam(value = "extraPayment", required = false) String extraPaymentPrice,
                                                        RedirectAttributes ra) {
-            if(extraPaymentPrice != null ) {
-                orderService.addExtraPayment(orderId, extraPaymentPrice);
-                LOG.debug("addExtraPaymentMethod is called!");
-            }
-            if(cashDiscount != null) {
-               orderService.addCashDiscount(orderId, cashDiscount);
-                LOG.debug("addCashDiscountMethod is called!");
-            }
-            if(percentageDiscount != null) {
-                orderService.addPercentageDiscount(orderId, percentageDiscount);
-            }
-
-            ra.addFlashAttribute("order", orderService.getOrderByOrderId(orderId));
-            return new RedirectView("/orders/" + orderId + "/summary");
+        orderService.addExtraPayment(orderId, extraPaymentPrice);
+        orderService.addCashDiscount(orderId, cashDiscount);
+        orderService.addPercentageDiscount(orderId, percentageDiscount);
+        return new RedirectView("/orders/" + orderId + "/summary");
         }
 
     @GetMapping("/{orderId}/orderItems")
@@ -131,12 +119,9 @@ public class OrderController {
     }
 
     @DeleteMapping("/{orderItemId}/orderItems")
-    public ResponseEntity<Void> deleteOrderItem(@PathVariable String orderItemId){
-        if(orderItemService.deleteOrderItem(orderItemId)){
-            return ResponseEntity.ok().build();
-        } else {
-            throw new NullPointerException("OrderItem " + orderItemId + " not found");
-        }
+    public ResponseEntity<Void> deleteOrderItem(@PathVariable String orderItemId) {
+        orderItemService.deleteOrderItem(orderItemId);
+        return ResponseEntity.ok().build();
     }
 
 }

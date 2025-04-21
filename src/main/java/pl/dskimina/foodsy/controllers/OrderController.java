@@ -1,18 +1,13 @@
 package pl.dskimina.foodsy.controllers;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
-import pl.dskimina.foodsy.exception.*;
 import pl.dskimina.foodsy.service.*;
 import java.util.List;
 
@@ -20,7 +15,6 @@ import java.util.List;
 @Controller
 @RequestMapping({"/orders", "/"})
 public class OrderController {
-    private final static Logger LOG = LoggerFactory.getLogger(OrderController.class);
     private final OrderService orderService;
     private final OrderItemService orderItemService;
     private final UserService userService;
@@ -89,8 +83,7 @@ public class OrderController {
         public RedirectView setFinalValueOfOrder(@PathVariable String orderId,
                                                        @RequestParam(value = "cashDiscount", required = false) String cashDiscount,
                                                        @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
-                                                       @RequestParam(value = "extraPayment", required = false) String extraPaymentPrice,
-                                                       RedirectAttributes ra) {
+                                                       @RequestParam(value = "extraPayment", required = false) String extraPaymentPrice) {
         orderService.addExtraPayment(orderId, extraPaymentPrice);
         orderService.addCashDiscount(orderId, cashDiscount);
         orderService.addPercentageDiscount(orderId, percentageDiscount);

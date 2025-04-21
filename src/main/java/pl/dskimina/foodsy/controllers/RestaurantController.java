@@ -13,8 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
-import pl.dskimina.foodsy.exception.MenuItemNotFoundException;
-import pl.dskimina.foodsy.exception.RestaurantNotFoundException;
 import pl.dskimina.foodsy.service.*;
 
 import java.io.IOException;

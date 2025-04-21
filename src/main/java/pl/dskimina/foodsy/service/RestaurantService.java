@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import pl.dskimina.foodsy.entity.Restaurant;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
+import pl.dskimina.foodsy.exception.BadRequestException;
+import pl.dskimina.foodsy.exception.RestaurantNotFoundException;
 import pl.dskimina.foodsy.repository.RestaurantRepository;
 
 import java.io.IOException;
@@ -39,19 +41,18 @@ public class RestaurantService {
     }
 
     @Transactional
-    public void setLogoForRestaurant(String restaurantId, byte[] logoBytes){
+    public void setLogoForRestaurant(String restaurantId, byte[] logoBytes)  {
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-        if(logoBytes == null || restaurant == null){
-            LOG.error("restaurant or logo bytes is null");
-            return;
-        }
+        if(restaurant == null) throw new RestaurantNotFoundException("Nie znaleziono żądanej restauracji id: " + restaurantId);
+        if(logoBytes == null) throw new BadRequestException("Tablica bajtów logo jest pusta!");
         restaurant.setImage(logoBytes);
         restaurantRepository.save(restaurant);
     }
 
     @Transactional
-    public RestaurantData getRestaurantByRestaurantId(String restaurantId){
+    public RestaurantData getRestaurantByRestaurantId(String restaurantId) {
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+        if(restaurant == null) throw new RestaurantNotFoundException("Nie znaleziono żądanej restauracji id: " + restaurantId);
         return toDataService.convert(restaurant);
     }
 
@@ -67,49 +68,39 @@ public class RestaurantService {
     }
 
     @Transactional
-    public Restaurant getRestaurantEntityByRestaurantId(String restaurantId){
-        return restaurantRepository.findByRestaurantId(restaurantId);
-    }
-
-    @Transactional
-    public void updateRestaurant(String restaurantId, RestaurantData restaurantData){
+    public void updateRestaurant(String restaurantId, RestaurantData restaurantData) {
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+        if(restaurant == null) throw new RestaurantNotFoundException("Nie znaleziono żądanej restauracji id: " + restaurantId);
         String name = restaurantData.getName();
         String tags = restaurantData.getTags();
         String email = restaurantData.getEmail();
         String phone = restaurantData.getPhone();
         String address = restaurantData.getAddress();
-        if(restaurant == null){
-            LOG.warn("restaurant is null");
-        }else {
-            if(name != null && !name.isEmpty()) restaurant.setName(name);
-            if(tags != null && !tags.isEmpty()) restaurant.setTags(tags);
-            if(email != null && !email.isEmpty()) restaurant.setEmail(email);
-            if(address != null && !address.isEmpty()) restaurant.setAddress(address);
-            if(phone != null && !phone.isEmpty()) restaurant.setPhone(phone);
-            LOG.info("restaurant has been updated");
-            restaurantRepository.save(restaurant);
-        }
+
+        if(name != null && !name.isEmpty()) restaurant.setName(name);
+        if(tags != null && !tags.isEmpty()) restaurant.setTags(tags);
+        if(email != null && !email.isEmpty()) restaurant.setEmail(email);
+        if(address != null && !address.isEmpty()) restaurant.setAddress(address);
+        if(phone != null && !phone.isEmpty()) restaurant.setPhone(phone);
+        LOG.debug("restaurant has been updated");
+        restaurantRepository.save(restaurant);
+
     }
 
     @Transactional
-    public boolean updateRestaurantLogo(String restaurantId, MultipartFile image) throws IOException {
+    public void  updateRestaurantLogo(String restaurantId, MultipartFile image) throws IOException{
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-        if(restaurant != null) {
-            restaurant.setImage(image.getBytes());
-            restaurantRepository.save(restaurant);
-            return true;
-        }
-        return false;
+        if(restaurant == null) throw new RestaurantNotFoundException("Nie znaleziono żądanej restauracji id: " + restaurantId);
+        if(image == null) throw new BadRequestException("image jest pusty");
+
+        restaurant.setImage(image.getBytes());
+        restaurantRepository.save(restaurant);
     }
 
-    public boolean deleteRestaurantByRestaurantId(String restaurantId){
+    public void deleteRestaurantByRestaurantId(String restaurantId) {
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-        if(restaurant != null){
-            restaurantRepository.delete(restaurant);
-            return true;
-        }
-        return false;
+        if(restaurant == null) throw new RestaurantNotFoundException("Nie znaleziono żądanej restauracji id: " + restaurantId);
+        restaurantRepository.delete(restaurant);
     }
 
 }

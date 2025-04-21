@@ -17,7 +17,6 @@ public class ToDataService {
         menuItemData.setMenuItemId(menuItem.getMenuItemId());
         menuItemData.setName(menuItem.getName());
         menuItemData.setDescription(menuItem.getDescription());
-        menuItemData.setCategory(menuItem.getCategory());
         menuItemData.setPrice(menuItem.getPrice());
         return menuItemData;
     }
@@ -39,11 +38,16 @@ public class ToDataService {
         OrderData orderData = new OrderData();
         orderData.setOrderId(order.getOrderId());
         orderData.setValue(order.getValue());
+        orderData.setNetValue(order.getNetValue());
         orderData.setClosingDateTime(Date.from(order.getClosingDate().toInstant(ZoneOffset.ofHours(+1))));
         orderData.setDescription(order.getDescription());
         orderData.setMinValue(order.getMinValue());
         orderData.setIsClosed(order.getIsClosed());
+        orderData.setCashDiscount(order.getCashDiscount());
+        orderData.setPercentageDiscount(order.getPercentageDiscount());
+        orderData.setPercentageDiscountCashValue(order.getPercentageDiscountCashValue());
         orderData.setOwner(convert(order.getOwner()));
+        orderData.setExtraPaymentValue(order.getExtraPaymentValue());
         orderData.setOrderItemList(order.getOrderItemList().stream().map(this::convert). toList());
         orderData.setRestaurantData(convert(order.getRestaurant()));
         return orderData;

@@ -1,11 +1,9 @@
 package pl.dskimina.foodsy.controllers;
 
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.OrderData;
@@ -22,16 +20,19 @@ public class OrderController {
     private final UserService userService;
     private final SessionService sessionService;
     private final RestaurantService restaurantService;
+    private final UserInfoService discountAndExtraPaymentService;
+
 
     public OrderController(OrderService orderService,
-                           OrderItemService orderItemService, UserService userService, SessionService sessionService, RestaurantService restaurantService) {
+                           OrderItemService orderItemService, UserService userService, SessionService sessionService,
+                           RestaurantService restaurantService, UserInfoService discountAndExtraPaymentService) {
         this.orderService = orderService;
         this.orderItemService = orderItemService;
         this.userService = userService;
         this.sessionService = sessionService;
         this.restaurantService = restaurantService;
+        this.discountAndExtraPaymentService = discountAndExtraPaymentService;
     }
-
 
     @ModelAttribute
     public void fillModel(Model modelMap){
@@ -67,30 +68,27 @@ public class OrderController {
         return "create-order";
     }
 
-
-
     @GetMapping("/{orderId}/summary")
     public String orderSummary(@PathVariable String orderId, Model model) {
         OrderData order = orderService.getOrderByOrderId(orderId);
         RestaurantData restaurant = order.getRestaurantData();
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("order", order);
+        model.addAttribute("userInfoList", discountAndExtraPaymentService.getUserInfoListForOrder(orderId));
+        model.addAttribute("userAmountForOrder", orderService.getUsersAmountForOrder(orderId));
         return "order-summary";
     }
 
     @PostMapping("/{orderId}/summary")
-    public RedirectView setFinalValueAndCloseOrder(@PathVariable String orderId,
-                                                   @RequestParam(value = "cashDiscount", required = false) String cashDiscount,
-                                                   @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
-                                                   @RequestParam(value = "extraPayment", required = false) String extraPayment,
-                                                   RedirectAttributes ra) {
-        if(extraPayment != null) {orderService.addExtraPayment(orderId, extraPayment);}
-        if(cashDiscount != null) {orderService.addCashDiscount(orderId, cashDiscount);}
-        if(percentageDiscount != null) {orderService.addPercentageDiscount(orderId, percentageDiscount);}
-        orderService.closeOrder(orderId);
-        ra.addFlashAttribute("order", orderService.getOrderByOrderId(orderId));
+        public RedirectView setFinalValueOfOrder(@PathVariable String orderId,
+                                                       @RequestParam(value = "cashDiscount", required = false) String cashDiscount,
+                                                       @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
+                                                       @RequestParam(value = "extraPayment", required = false) String extraPaymentPrice) {
+        orderService.addExtraPayment(orderId, extraPaymentPrice);
+        orderService.addCashDiscount(orderId, cashDiscount);
+        orderService.addPercentageDiscount(orderId, percentageDiscount);
         return new RedirectView("/orders/" + orderId + "/summary");
-    }
+        }
 
     @GetMapping("/{orderId}/orderItems")
     public String getOrderItems(@PathVariable("orderId") String orderId, Model model) {
@@ -110,17 +108,13 @@ public class OrderController {
                                         @RequestParam(value = "description", required = false) String description,
                                         @RequestParam(value = "price", required = false) String price) {
         orderItemService.createOrderItem(userId, menuItemId, price, orderId, description);
-
         return new RedirectView("/orders/" + orderId + "/orderItems" );
     }
 
     @DeleteMapping("/{orderItemId}/orderItems")
-    public ResponseEntity<Void> deleteOrderItem(@PathVariable String orderItemId){
-        if(orderItemService.deleteOrderItem(orderItemId)){
-            return ResponseEntity.ok().build();
-        } else {
-            throw new NullPointerException("OrderItem " + orderItemId + " not found");
-        }
+    public ResponseEntity<Void> deleteOrderItem(@PathVariable String orderItemId) {
+        orderItemService.deleteOrderItem(orderItemId);
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -30,8 +30,4 @@ public class UserService {
         User user = userRepository.findByUserId(userId);
         return toDataService.convert(user);
     }
-
-    public User getUserInstanceById(String userId){
-        return userRepository.findByUserId(userId);
-    }
 }

@@ -21,14 +21,14 @@ public class MenuItem {
     @Column(name = "category", nullable = false)
     private String category;
 
-    @Column(name = "description", nullable = true, length = 512)
+    @Column(name = "description", length = 512)
     private String description;
 
     @Column(name = "price", nullable = false)
     private double price;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurant_id", nullable = true)
+    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
     @OneToMany(mappedBy = "menuItem")

@@ -110,7 +110,6 @@
                                         </div>
 
                                         <#list userInfoList as uil>
-                                            ss
                                             <div class="list-group-item d-flex flex-row">
                                                 <div class="d-flex col-2">${uil.firstName} ${uil.lastName}</div>
                                                 <div class="d-flex col-2 justify-content-center">

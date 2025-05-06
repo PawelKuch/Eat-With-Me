@@ -84,9 +84,8 @@ public class OrderController {
                                                        @RequestParam(value = "cashDiscount", required = false) String cashDiscount,
                                                        @RequestParam(value = "percentageDiscount", required = false) String percentageDiscount,
                                                        @RequestParam(value = "extraPayment", required = false) String extraPaymentPrice) {
-        orderService.addExtraPayment(orderId, extraPaymentPrice);
-        orderService.addCashDiscount(orderId, cashDiscount);
-        orderService.addPercentageDiscount(orderId, percentageDiscount);
+
+        orderService.updateOrderPrice(orderId, extraPaymentPrice, percentageDiscount, cashDiscount);
         return new RedirectView("/orders/" + orderId + "/summary");
         }
 

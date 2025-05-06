@@ -122,7 +122,7 @@ public class OrderServiceTest {
         order.setBaseValue(50.0);
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
 
-        orderService.addPercentageDiscount("orderIdTest", "10");
+        orderService.updateOrderPrice("orderIdTest", "0","10", "0");
 
         Mockito.verify(orderRepository).save(orderCaptor.capture());
 
@@ -141,7 +141,7 @@ public class OrderServiceTest {
         order.setBaseValue(80.0);
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
 
-        orderService.addPercentageDiscount("orderIdTest", "10");
+        orderService.updateOrderPrice("orderIdTest", "0","10", "20");
 
         Mockito.verify(orderRepository).save(orderCaptor.capture());
 
@@ -162,7 +162,7 @@ public class OrderServiceTest {
 
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
 
-        orderService.addCashDiscount("orderIdTest", "20");
+        orderService.updateOrderPrice("orderIdTest", "0","0", "20");
 
         Mockito.verify(orderRepository).save(orderCaptor.capture());
 
@@ -179,7 +179,7 @@ public class OrderServiceTest {
         Order order = createTestOrder(100.0, 10.0, 10.0, 0.0, 0.0, 90.0);
 
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
-        orderService.addCashDiscount("orderIdTest", "10");
+        orderService.updateOrderPrice("orderIdTest", "0","10", "10");
 
         Mockito.verify(orderRepository).save(orderCaptor.capture());
 
@@ -199,7 +199,7 @@ public class OrderServiceTest {
 
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
 
-        orderService.addExtraPayment("orderIdTest", "10");
+        orderService.updateOrderPrice("orderIdTest", "10","20", "0");
 
         Mockito.verify(orderRepository).save(orderCaptor.capture());
 
@@ -220,9 +220,8 @@ public class OrderServiceTest {
         Order order = createTestOrder(100.0, 0.0, 0.0, 0.0, 10.0, 110.0);
 
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
-         
-        orderService.addExtraPayment("orderIdTest", "25");
 
+        orderService.updateOrderPrice("orderIdTest", "25","0", "0");
         Mockito.verify(orderRepository).save(orderCaptor.capture());
 
         Order capturedOrder = orderCaptor.getValue();
@@ -240,8 +239,7 @@ public class OrderServiceTest {
 
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(order);
 
-        orderService.addExtraPayment("orderIdTest", "6");
-
+        orderService.updateOrderPrice("orderIdTest", "6","10", "4");
         Mockito.verify(orderRepository).save(orderCaptor.capture());
 
         Order capturedOrder = orderCaptor.getValue();
@@ -259,8 +257,7 @@ public class OrderServiceTest {
 
         Mockito.when(orderRepository.findByOrderId(orderId)).thenReturn(order);
 
-        orderService.addCashDiscount(orderId, "4");
-
+        orderService.updateOrderPrice("orderIdTest", "0","0", "4");
         Mockito.verify(orderRepository).save(orderCaptor.capture());
         Order savedAfterCash = orderCaptor.getValue();
 
@@ -274,8 +271,8 @@ public class OrderServiceTest {
         String updatedOrderId = savedAfterCash.getOrderId();
         Mockito.when(orderRepository.findByOrderId(updatedOrderId)).thenReturn(savedAfterCash);
 
-        orderService.addPercentageDiscount(updatedOrderId, "10");
 
+        orderService.updateOrderPrice("orderIdTest", "0","10", "4");
         Mockito.verify(orderRepository).save(orderCaptor.capture());
         Order savedAfterPercentage = orderCaptor.getValue();
 
@@ -290,8 +287,8 @@ public class OrderServiceTest {
         Mockito.when(orderRepository.findByOrderId(savedAfterPercentage.getOrderId())).thenReturn(savedAfterPercentage);
 
 
-        orderService.addExtraPayment("orderIdTest", "6");
-
+        //orderService.addExtraPayment("orderIdTest", "6");
+        orderService.updateOrderPrice("orderIdTest", "6","10", "4");
         Mockito.verify(orderRepository).save(orderCaptor.capture());
 
         Order savedAfterExtraPayment = orderCaptor.getValue();
@@ -304,8 +301,8 @@ public class OrderServiceTest {
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(savedAfterExtraPayment);
 
         //CashDiscount2 - cashDiscount = 0
-        orderService.addCashDiscount("orderIdTest", "0");
-
+        //orderService.addCashDiscount("orderIdTest", "0");
+        orderService.updateOrderPrice("orderIdTest", "6","10", "0");
         Mockito.verify(orderRepository).save(orderCaptor.capture());
 
         Order savedAfterCashDiscount2 = orderCaptor.getValue();

@@ -41,7 +41,7 @@ public class OrderController {
         modelMap.addAttribute("isActiveOrders", true);
     }
 
-    @GetMapping("/orders/restaurants")
+    @GetMapping("/restaurants")
     public String getRestaurants(Model model){
         model.addAttribute("restaurantList", restaurantService.getRestaurants());
         return "orders-restaurant-list";

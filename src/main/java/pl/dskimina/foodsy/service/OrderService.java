@@ -58,10 +58,7 @@ public class OrderService {
         order.setDescription(description);
         Double minValue = Double.parseDouble(minValueString);
         order.setMinValue(minValue);
-        order.setValue(0.0);
-        order.setNetValue(0.0);
         order.setCashDiscount(0.0);
-        order.setBaseValue(0.0);
         order.setPercentageDiscount(0.0);
         order.setPercentageDiscountCashValue(0.0);
         List<OrderItem> orderItems = new ArrayList<>();
@@ -73,12 +70,6 @@ public class OrderService {
         orderRepository.save(order);
         LOG.debug("debugging");
         return toDataService.convert(order);
-    }
-
-    @Transactional
-    public List<OrderData> getOrders(){
-        List<Order> orders = orderRepository.findAll();
-        return orders.stream().map(toDataService::convert).toList();
     }
 
     @Transactional
@@ -102,8 +93,6 @@ public class OrderService {
         }
 
         if(order.getCashDiscount() != newCashDiscount){
-            double baseValue = Math.round((order.getNetValue() - newCashDiscount) * 100.0) / 100.0;
-            order.setBaseValue(baseValue);
             order.setCashDiscount(newCashDiscount); // ustawienie nowego rabatu
         }
         orderRepository.save(order);

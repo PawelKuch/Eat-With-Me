@@ -14,7 +14,6 @@ import pl.dskimina.foodsy.exception.OrderNotFoundException;
 import pl.dskimina.foodsy.exception.UserNotFoundException;
 import pl.dskimina.foodsy.repository.*;
 
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -50,36 +49,12 @@ public class OrderItemService {
         orderItem.setDescription(description);
         orderItem.setPrice(Double.parseDouble(price));
         orderItemRepository.save(orderItem);
-
-        setValueForOrder(order);
-    }
-
-    @Transactional
-    public void setValueForOrder(Order order){
-        double cashDiscountValue = order.getCashDiscount();
-        double extraPaymentValueForOrder = order.getExtraPaymentValue();
-        double orderItemsValueForOrder = Objects.requireNonNullElse(orderItemRepository.getOrderItemsValueForOrder(order.getOrderId()), 0.0);
-
-
-        double baseForPercentageDiscount = orderItemsValueForOrder - cashDiscountValue;
-        double newPercentageDiscountValueInCash = Math.round((baseForPercentageDiscount * (order.getPercentageDiscount() / 100)) * 100.0) / 100.0;
-        LOG.debug("newPercentageDiscountValueInCash in setValueForOrder: {}", newPercentageDiscountValueInCash);
-        double newValue = orderItemsValueForOrder - cashDiscountValue - newPercentageDiscountValueInCash + extraPaymentValueForOrder;
-        order.setPercentageDiscountCashValue(newPercentageDiscountValueInCash);
-        order.setNetValue(orderItemsValueForOrder);
-        order.setValue(newValue);
-        order.setBaseValue(orderItemsValueForOrder);
-        orderRepository.save(order);
     }
 
     @Transactional
     public void deleteOrderItem(String orderItemId) {
         OrderItem orderItem = orderItemRepository.findByOrderItemId(orderItemId);
         if(orderItem == null) throw new OrderItemNotFoundException("Brak pozycji w zamówieniu. ID: " + orderItemId);
-        Order order = orderItem.getOrder();
-        double currentValueOfOrder = order.getValue() - orderItem.getPrice();
-        order.setValue(currentValueOfOrder);
-        orderRepository.save(order);
         orderItemRepository.delete(orderItem);
     }
 }

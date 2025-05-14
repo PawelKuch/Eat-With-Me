@@ -20,19 +20,23 @@ public class OrderController {
     private final UserService userService;
     private final SessionService sessionService;
     private final RestaurantService restaurantService;
-    private final UserInfoService discountAndExtraPaymentService;
+    private final UserInfoService UserInfoService;
+    private final OrderPriceCalculatingService orderPriceCalculatingService;
 
 
     public OrderController(OrderService orderService,
                            OrderItemService orderItemService, UserService userService, SessionService sessionService,
-                           RestaurantService restaurantService, UserInfoService discountAndExtraPaymentService) {
+                           RestaurantService restaurantService, UserInfoService discountAndExtraPaymentService,
+                           OrderPriceCalculatingService orderPriceCalculatingService) {
         this.orderService = orderService;
         this.orderItemService = orderItemService;
         this.userService = userService;
         this.sessionService = sessionService;
         this.restaurantService = restaurantService;
-        this.discountAndExtraPaymentService = discountAndExtraPaymentService;
+        this.UserInfoService = discountAndExtraPaymentService;
+        this.orderPriceCalculatingService = orderPriceCalculatingService;
     }
+
 
     @ModelAttribute
     public void fillModel(Model modelMap){
@@ -57,7 +61,7 @@ public class OrderController {
 
     @GetMapping
     public String orders(Model model) {
-        List<OrderData> orderList = orderService.getOrders();
+        List<OrderData> orderList = orderPriceCalculatingService.getCalculatedOrders();
         model.addAttribute("orderList", orderList);
         return "orders";
     }
@@ -70,11 +74,11 @@ public class OrderController {
 
     @GetMapping("/{orderId}/summary")
     public String orderSummary(@PathVariable String orderId, Model model) {
-        OrderData order = orderService.getOrderByOrderId(orderId);
+        OrderData order = orderPriceCalculatingService.getCalculatedOrder(orderId);
         RestaurantData restaurant = order.getRestaurantData();
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("order", order);
-        model.addAttribute("userInfoList", discountAndExtraPaymentService.getUserInfoListForOrder(orderId));
+        model.addAttribute("userInfoList", UserInfoService.getUserInfoListForOrder(orderId));
         model.addAttribute("userAmountForOrder", orderService.getUsersAmountForOrder(orderId));
         return "order-summary";
     }
@@ -91,7 +95,7 @@ public class OrderController {
 
     @GetMapping("/{orderId}/orderItems")
     public String getOrderItems(@PathVariable("orderId") String orderId, Model model) {
-        OrderData order = orderService.getOrderByOrderId(orderId);
+        OrderData order = orderPriceCalculatingService.getCalculatedOrder(orderId);
         RestaurantData restaurant = order.getRestaurantData();
         List<MenuItemData> menuItemForRestaurant = restaurant.getMenuItems();
         model.addAttribute("restaurant", restaurant);

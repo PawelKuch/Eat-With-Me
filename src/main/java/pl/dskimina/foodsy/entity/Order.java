@@ -16,12 +16,6 @@ public class Order {
     @Column(name = "order_id", nullable = false)
     private String orderId;
 
-    @Column(name = "order_value")
-    private Double value;
-
-    @Column(name = "net_order_value")
-    private Double netValue;
-
     @Column(name = "order_date")
     private LocalDateTime closingDate;
 
@@ -33,9 +27,6 @@ public class Order {
 
     @Column(name = "is_closed")
     private boolean isClosed;
-
-    @Column(name = "base_value")
-    private double baseValue;
 
     @Column(name = "percentage_discount")
     private Double percentageDiscount; //e.g. 10% = 0,1
@@ -74,16 +65,6 @@ public class Order {
         this.orderId = orderId;
     }
 
-    public Double getValue() {
-        return value;
-    }
-    public void setValue(Double value) {
-        this.value = value;
-    }
-
-    public Double getNetValue(){return netValue;}
-    public void setNetValue(Double netValue){this.netValue = netValue;}
-
     public LocalDateTime getClosingDate() {
         return closingDate;
     }
@@ -104,14 +85,6 @@ public class Order {
 
     public boolean getIsClosed(){return isClosed;}
     public void setIsClosed(boolean isClosed){this.isClosed = isClosed;}
-
-    public double getBaseValue() {
-        return baseValue;
-    }
-
-    public void setBaseValue(double baseValue) {
-        this.baseValue = baseValue;
-    }
 
     public Double getPercentageDiscount() {
         return percentageDiscount;

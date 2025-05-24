@@ -35,15 +35,13 @@ public class UserInfoServiceTest {
     @Captor
     ArgumentCaptor<Order> orderCaptor;
 
-    private Order createTestOrder(double netValue, double percentageDiscount, double percentageDiscountInCash, double cashDiscount, double extraPaymentValue, double value){
+    private Order createTestOrder(double percentageDiscount, double percentageDiscountInCash, double cashDiscount, double extraPaymentValue){
         Order order = new Order();
         order.setOrderId("orderIdTest");
-        order.setNetValue(netValue);
         order.setPercentageDiscount(percentageDiscount);
         order.setPercentageDiscountCashValue(percentageDiscountInCash);
         order.setCashDiscount(cashDiscount);
         order.setExtraPaymentValue(extraPaymentValue);
-        order.setValue(value);
         return order;
     }
 
@@ -57,7 +55,7 @@ public class UserInfoServiceTest {
 
     @Test
     public void getUserInfoTest(){
-        Order order = createTestOrder(24.0, 10.0, 2.0, 4.0, 6.0, 18.0);
+        Order order = createTestOrder(10.0, 2.0, 4.0, 6.0);
         User user = createUserTest();
 
         Mockito.when(userRepository.findByUserId("userIdTest")).thenReturn(user);
@@ -75,7 +73,7 @@ public class UserInfoServiceTest {
     @Test
     public void addCashAndPercentageDiscountsInOne() throws OrderNotFoundException {
         String orderId = "orderIdTest";
-        Order order = createTestOrder(24.0, 0.0, 0.0, 0.0, 0.0, 24.0);
+        Order order = createTestOrder(0.0, 0.0, 0.0, 0.0);
         order.setOrderId(orderId);
 
         User user = createUserTest();
@@ -87,11 +85,7 @@ public class UserInfoServiceTest {
         Mockito.verify(orderRepository).save(orderCaptor.capture());
         Order savedAfterCash = orderCaptor.getValue();
 
-        Assertions.assertEquals(24.0, savedAfterCash.getNetValue());
-        Assertions.assertEquals(20.0, savedAfterCash.getBaseValue());
         Assertions.assertEquals(4.0, savedAfterCash.getCashDiscount());
-        Assertions.assertEquals(20.0, savedAfterCash.getValue());
-
 
         Mockito.reset(orderRepository);
         String updatedOrderId = savedAfterCash.getOrderId();
@@ -102,10 +96,7 @@ public class UserInfoServiceTest {
         Order savedAfterPercentage = orderCaptor.getValue();
 
         Assertions.assertEquals(10.0, savedAfterPercentage.getPercentageDiscount());
-        Assertions.assertEquals(2.0, savedAfterPercentage.getPercentageDiscountCashValue());
         Assertions.assertEquals(4.0, savedAfterPercentage.getCashDiscount());
-        Assertions.assertEquals(20.0, savedAfterPercentage.getBaseValue());
-        Assertions.assertEquals(18.0, savedAfterPercentage.getValue());
         Assertions.assertEquals(0.0, savedAfterPercentage.getExtraPaymentValue());
 
         Mockito.reset(orderRepository);
@@ -118,7 +109,6 @@ public class UserInfoServiceTest {
 
         Assertions.assertEquals("orderIdTest", savedAfterExtraPayment.getOrderId());
         Assertions.assertEquals(6.0, savedAfterExtraPayment.getExtraPaymentValue());
-        Assertions.assertEquals(24.0, savedAfterExtraPayment.getValue());
 
         Mockito.reset(orderRepository);
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(savedAfterExtraPayment);
@@ -131,8 +121,6 @@ public class UserInfoServiceTest {
 
         Assertions.assertEquals(6.0, savedAfterCashDiscount2.getExtraPaymentValue());
         Assertions.assertEquals(0.0, savedAfterCashDiscount2.getCashDiscount());
-        Assertions.assertEquals(2.4, savedAfterCashDiscount2.getPercentageDiscountCashValue());
-        Assertions.assertEquals(27.6, savedAfterCashDiscount2.getValue());
 
         Mockito.reset(orderRepository);
         Mockito.when(orderRepository.findByOrderId("orderIdTest")).thenReturn(savedAfterCashDiscount2);

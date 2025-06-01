@@ -36,22 +36,22 @@
                 <div class="row">
                     <#list orderList as order>
                         <div class="col-2">
-                            ${order.restaurantData.name}
+                            ${order.restaurantName}
                         </div>
                         <div class="col-3">
-                            ${order.closingDateTime?datetime?string("dd-MM-yyyy HH:mm")}
+                            ${order.closingDate?datetime?string("dd-MM-yyyy HH:mm")}
                         </div>
                         <div class="col-2">
-                            ${order.value}
+                            ${order.orderValue}
                         </div>
                         <div class="col-2">
                             <a href="/orders/${order.orderId}/orderItems">Szczegóły</a>
                         </div>
                         <div class="col-1">
-                            <#if order.isClosed>Zamknięte<#else>Otwarte</#if>
+                            <#if order.isClosed()>Zamknięte<#else>Otwarte</#if>
                         </div>
                         <div class="col-2">
-                            <a href="#" id="user-details">${order.owner.firstName} ${order.owner.lastName}</a>
+                            <a href="#" id="user-details">${order.ownerFirstName} ${order.ownerLastName}</a>
                         </div>
                     </#list>
                 </div>

@@ -94,8 +94,6 @@ public class OrderServiceTest {
 
         OrderData convertedOrderData = orderService.createOrder(restaurantId, userId, closingDateString, minOrderValue, description);
 
-        ArgumentCaptor<Order> orderCaptor = ArgumentCaptor.forClass(Order.class);
-
         verify(orderRepository).save(orderCaptor.capture());
         Order capturedOrder = orderCaptor.getValue();
 

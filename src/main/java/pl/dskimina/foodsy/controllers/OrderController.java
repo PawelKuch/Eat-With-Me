@@ -5,11 +5,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
+import pl.dskimina.foodsy.entity.data.ListViewOrderData;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
 import pl.dskimina.foodsy.service.*;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @Controller
@@ -61,7 +65,7 @@ public class OrderController {
 
     @GetMapping
     public String orders(Model model) {
-        List<OrderData> orderList = orderPriceCalculatingService.getCalculatedOrders();
+        List<ListViewOrderData> orderList = orderPriceCalculatingService.getCalculatedOrders();
         model.addAttribute("orderList", orderList);
         return "orders";
     }

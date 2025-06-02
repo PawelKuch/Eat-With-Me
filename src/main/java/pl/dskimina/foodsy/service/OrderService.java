@@ -35,14 +35,6 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderData getOrderByOrderId(String orderId) {
-        Order order = orderRepository.findByOrderId(orderId);
-        if(order == null) throw new OrderNotFoundException("Nie znaleziono zamówienia o żądanym id: " + orderId);
-
-        return toDataService.convert(order);
-    }
-
-    @Transactional
     public OrderData createOrder(String restaurantId, String userId, String closingDateString, String minValueString, String description) {
         Order order = new Order();
         User user = userRepository.findByUserId(userId);
@@ -101,6 +93,14 @@ public class OrderService {
     @Transactional
     public int getUsersAmountForOrder(String orderId){
         return orderRepository.getUsersAmountForOrder(orderId);
+    }
+
+    @Transactional
+    public void closeOrder(String orderId){
+        Order order = orderRepository.findByOrderId(orderId);
+        if(order == null) throw new OrderNotFoundException("Order id " + orderId + " not found!");
+        order.setIsClosed(true);
+        orderRepository.save(order);
     }
 
 }

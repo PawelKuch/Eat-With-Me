@@ -191,7 +191,9 @@
                     </div>
                     <button type="submit" class="btn btn-success">Zapisz</button>
                 </form>
-                <a href="/orders/${orderId}/save"> <button class="btn btn-outline-primary">Zatwierdź zamówienie</button></a>
+                <div class="d-flex justify-content-center">
+                    <a href="/orders/${orderId}/save"> <button class="btn btn-outline-primary">Zatwierdź zamówienie</button></a>
+                </div>
             </div>
         <#else>
             <div class="alert alert-success mt-3 d-flex justify-content-center">Zamówienie zamknięte</div>

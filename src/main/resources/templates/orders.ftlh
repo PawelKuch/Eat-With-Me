@@ -45,7 +45,11 @@
                             ${order.orderValue}
                         </div>
                         <div class="col-2">
-                            <a href="/orders/${order.orderId}/summary">Szczegóły</a>
+                            <#if order.closed>
+                                <a href="/orders/${order.orderId}/summary">Szczegóły</a>
+                            <#else>
+                                <a href="/orders/${order.orderId}/orderItems">Szczegóły</a>
+                            </#if>
                         </div>
                         <div class="col-1">
                             <#if order.isClosed()>Zamknięte<#else>Otwarte</#if>

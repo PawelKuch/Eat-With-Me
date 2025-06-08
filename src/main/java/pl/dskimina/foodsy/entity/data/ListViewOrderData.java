@@ -11,7 +11,7 @@ public class ListViewOrderData {
     private final Date closingDate;
     private final double orderValue;
     private final String description;
-    private final boolean isClosed;
+    private final boolean closed;
     private final String ownerFirstName;
     private final String ownerLastName;
 
@@ -21,7 +21,7 @@ public class ListViewOrderData {
         this.closingDate = Date.from(closingDate.atZone(ZoneId.systemDefault()).toInstant());
         this.orderValue = orderValue;
         this.description = description;
-        this.isClosed = isClosed;
+        this.closed = isClosed;
         this.ownerFirstName = ownerFirstName;
         this.ownerLastName = ownerLastName;
     }
@@ -47,7 +47,7 @@ public class ListViewOrderData {
     }
 
     public boolean isClosed() {
-        return isClosed;
+        return closed;
     }
 
     public String getOwnerFirstName() {

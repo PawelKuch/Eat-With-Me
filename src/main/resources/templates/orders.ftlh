@@ -1,80 +1,83 @@
 <!doctype html>
-<html lang="en">
+<html lang="pl">
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
 
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js" ></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="/static/js/side-navbar.js"></script>
-    <link rel="stylesheet" href="/static/css/order-menu.css">
+    <link rel="stylesheet" href="/static/css/order-menu.css" />
     <title>Menu zamówienia</title>
 </head>
 <body>
 
-<div id="main-container" class="d-flex flex-row">
+<div id="main-container" class="d-flex flex-row min-vh-100">
     <#include "side-navbar.ftlh">
-    <div id="container" class="w-100">
+
+    <div id="container" class="flex-grow-1 p-4">
         <#if orderList?has_content>
-            <div class="d-flex justify-content-start">
-                <a href="/orders/restaurants"><button class="btn btn-dark">Dodaj</button></a>
+            <div class="mb-3">
+                <a href="/orders/restaurants" class="btn btn-dark">
+                    <i class="bi bi-plus-lg me-1"></i> Dodaj
+                </a>
             </div>
-            <div id="orders-containers" class="row d-flex justify-content-center align-items-center">
-                <div class="row col-12">
-                    <div class="col-2 fw-bold"> Restauracja </div>
-                    <div class="col-3 fw-bold"> Data zamknięcia</div>
-                    <div class="col-2 fw-bold"> Wartość</div>
-                    <div class="col-2 fw-bold"> Szczegóły</div>
-                    <div class="col-1 fw-bold"> Status</div>
-                    <div class="col-2 fw-bold"> Właściciel</div>
-                </div>
-                <div class="row">
+
+            <div id="orders-containers">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Restauracja</th>
+                        <th>Data zamknięcia</th>
+                        <th>Wartość</th>
+                        <th>Szczegóły</th>
+                        <th>Status</th>
+                        <th>Właściciel</th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     <#list orderList as order>
-                        <div class="col-2">
-                            ${order.restaurantName}
-                        </div>
-                        <div class="col-3">
-                            ${order.closingDate?datetime?string("dd-MM-yyyy HH:mm")}
-                        </div>
-                        <div class="col-2">
-                            ${order.orderValue}
-                        </div>
-                        <div class="col-2">
-                            <#if order.closed>
-                                <a href="/orders/${order.orderId}/summary">Szczegóły</a>
-                            <#else>
-                                <a href="/orders/${order.orderId}/orderItems">Szczegóły</a>
-                            </#if>
-                        </div>
-                        <div class="col-1">
-                            <#if order.isClosed()>Zamknięte<#else>Otwarte</#if>
-                        </div>
-                        <div class="col-2">
-                            <a href="#" id="user-details">${order.ownerFirstName} ${order.ownerLastName}</a>
-                        </div>
+                        <tr>
+                            <td>${order.restaurantName}</td>
+                            <td>${order.closingDate?datetime?string("dd-MM-yyyy HH:mm")}</td>
+                            <td>${order.orderValue}</td>
+                            <td>
+                                <#if order.closed>
+                                    <a href="/orders/${order.orderId}/summary">Szczegóły</a>
+                                <#else>
+                                    <#if currentUser?has_content>
+                                        <a href="/orders/${order.orderId}/orderItems">Szczegóły</a>
+                                    <#else>
+                                        <a href="/orders/${order.orderId}/summary">Szczegóły</a>
+                                    </#if>
+                                </#if>
+                            </td>
+                            <td>
+                                <#if order.isClosed()>Zamknięte<#else>Otwarte</#if>
+                            </td>
+                            <td>
+                                <a href="#" id="user-details">${order.ownerFirstName} ${order.ownerLastName}</a>
+                            </td>
+                        </tr>
                     </#list>
-                </div>
+                    </tbody>
+                </table>
             </div>
         <#else>
-            <div class="d-flex justify-content-center flex-column align-items-center h-100">
-                <span class="alert alert-warning text-dark">Brak zamówień do wyświetlenia</span>
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                <div class="alert alert-warning text-center w-100">
+                    Brak zamówień do wyświetlenia
+                </div>
                 <#if currentUser?has_content>
-                    <a href="/orders/restaurants" class="text-decoration-none mt-2"><button class="btn btn-dark">Dodaj zamówienie</button></a>
+                    <a href="/orders/restaurants" class="btn btn-dark mt-3">Dodaj zamówienie</a>
                 </#if>
             </div>
         </#if>
     </div>
-
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
-
-
-
+</html>

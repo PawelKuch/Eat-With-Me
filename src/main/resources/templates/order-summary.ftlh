@@ -170,8 +170,11 @@
             </#list>
         </div>
 
-
-        <#if !order.isClosed>
+        <#if !currentUser?has_content>
+            <div class="alert alert-danger mt-3 d-flex justify-content-center">Brak możliwości edycji zamówienia</div>
+        <#elseif order.isClosed>
+            <div class="alert alert-success mt-3 d-flex justify-content-center">Zamówienie zamknięte</div>
+        <#else>
             <div class="mt-5">
                 <h5>Ustaw dodatkowe rabaty lub opłaty</h5>
                 <form action="/orders/${order.orderId}/summary" method="post">
@@ -195,8 +198,6 @@
                     <a href="/orders/${orderId}/save"> <button class="btn btn-outline-primary">Zatwierdź zamówienie</button></a>
                 </div>
             </div>
-        <#else>
-            <div class="alert alert-success mt-3 d-flex justify-content-center">Zamówienie zamknięte</div>
         </#if>
     </div>
 </div>

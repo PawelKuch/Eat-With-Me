@@ -192,10 +192,10 @@
                             <input id="extra-payment" name="extraPayment" type="number" class="form-control" value="${order.extraPaymentValue}">
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-success">Zapisz</button>
+                    <button type="submit" class="btn btn-outline-success">Zapisz</button>
                 </form>
                 <div class="d-flex justify-content-center">
-                    <a href="/orders/${orderId}/save"> <button class="btn btn-outline-primary">Zatwierdź zamówienie</button></a>
+                    <a href="/orders/${orderId}/save"> <button class="btn btn-success">Zatwierdź zamówienie</button></a>
                 </div>
             </div>
         </#if>

@@ -25,21 +25,21 @@
                     <#if menuItemList?has_content>
                         <div id="display-menuItem-container" class="list-group justify-content-center">
                             <#if menuItemList?has_content>
-                                <div class="group-list row justify-content-center fw-bold fs-5">
+                                <div class="group-list row justify-content-between fw-bold fs-5">
                                     <span class="col-3">Danie</span>
                                     <span class="col-3">Opis</span>
                                     <span class="col-1">Cena</span>
-                                    <#if !order.isClosed><span class="col-1">Czynność</span></#if>
+                                    <#if !order.isClosed><span class="col-2">Czynność</span></#if>
                                 </div>
                             <#list menuItemList as menuItem>
-                                <div class="menuItem-tile-${menuItem.menuItemId} list-group-item my-1 mx-1 d-flex justify-content-center">
-                                    <h5 class="col-3 mx-3">${menuItem.name}</h5>
-                                    <div class="menuItem-description col-3">${menuItem.description}</div>
-                                    <div class="menuItem-price col-1">${menuItem.price} zł</div>
-                                    <div data-menu-item-id="${menuItem.menuItemId}" class="col-1 menuItem-actions">
+                                <div class="menuItem-tile-${menuItem.menuItemId} list-group-item my-1 d-flex justify-content-between">
+                                    <h5 class="col-3">${menuItem.name}</h5>
+                                    <div class="menuItem-description col-3 d-flex justify-content-start">${menuItem.description}</div>
+                                    <div class="menuItem-price col-1 d-flex justify-content-end">${menuItem.price} zł</div>
+                                    <div data-menu-item-id="${menuItem.menuItemId}" class="col-2 menuItem-actions d-flex justify-content-center">
                                         <#if !order.isClosed>
                                             <#if currentUser?has_content>
-                                                <button data-bs-toggle="modal" data-bs-target="#add-item-to-order-modal-${menuItem.menuItemId}" class="mx-1 btn btn-dark text-white"><i class="bi bi-basket3-fill"></i></button>
+                                                <button data-bs-toggle="modal" data-bs-target="#add-item-to-order-modal-${menuItem.menuItemId}" class="btn btn-outline-primary"><i class="bi bi-basket3-fill"></i></button>
                                             <#else>
                                                 <div class="mx-1 w-100 d-flex justify-content-end"> - </div>
                                             </#if>
@@ -52,24 +52,17 @@
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <div id="modal-title-div">
-                                                    <h1 class="modal-title fs-5">Dodaj do zamówienia</h1>
+                                                    <h1 class="modal-title fs-5 fw-bold">${menuItem.name}</h1>
                                                 </div>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
                                                 <form class="order-form-${menuItem.menuItemId}" method="post" action="/orders/${orderId}/orderItems">
                                                     <input name="orderId" type="hidden" value="${orderId}">
-                                                    <div class="input-group">
-                                                        <h5>${menuItem.name}</h5>
-                                                        <input name="menuItemId" type="hidden" value="${menuItem.menuItemId}">
-                                                    </div>
-                                                        <#if currentUser?has_content> <input type="hidden" name="userId" value="${currentUser.userId}"></#if>
-                                                    <div class="input-group">
-                                                        <span id="description-span" class="input-group-text mb-2 bg-dark text-white">
-                                                            Dodatkowy <br/> opis
-                                                        </span>
-                                                        <textarea class="mb-2 form-control" cols="60" rows="5" id="description" name="description" placeholder="Dodaj opcjonalnie"></textarea>
-                                                    </div>
+                                                    Dodatkowy opis
+                                                    <input name="menuItemId" type="hidden" value="${menuItem.menuItemId}">
+                                                    <#if currentUser?has_content> <input type="hidden" name="userId" value="${currentUser.userId}"></#if>
+                                                    <textarea class="mb-2 form-control" cols="60" rows="5" id="description" name="description" placeholder="Dodaj opcjonalnie"></textarea>
                                                     <div>
                                                         <div class="row">
                                                             <div class="col-6 d-flex justify-content-start fw-bold">Cena</div>
@@ -81,8 +74,8 @@
                                                 </form>
                                             </div>
                                             <div class="modal-footer">
-                                                <button data-item-id="${menuItem.menuItemId}" class="btn btn-outline-dark mb-3 submit-form-btn" type="submit">Dodaj</button>
-                                                <button type="button" class="btn btn-secondary mb-3" data-bs-dismiss="modal">Zamknij</button>
+                                                <button data-item-id="${menuItem.menuItemId}" class="btn btn-primary mb-3 submit-form-btn" type="submit">Dodaj</button>
+                                                <button type="button" class="btn btn-outline-primary mb-3" data-bs-dismiss="modal">Zamknij</button>
                                             </div>
                                         </div>
                                     </div>
@@ -126,7 +119,7 @@
                             <div class=" col-1">
                                 <#if !order.isClosed>
                                     <#if currentUser?has_content && (orderItem.user.userId == currentUser.userId)>
-                                        <button data-order-item-id="${orderItem.orderItemId}" class="btn btn-dark justify-content-center me-1 delete-btn">
+                                        <button data-order-item-id="${orderItem.orderItemId}" class="btn btn-outline-danger justify-content-center me-1 delete-btn">
                                             <i class="bi bi-trash-fill"></i>
                                         </button>
                                     <#else>
@@ -144,7 +137,7 @@
                     </#if>
                     <#if currentUser.userId == order.owner.userId && !order.isClosed>
                         <div class="d-flex justify-content-end">
-                            <a href="/orders/${order.orderId}/summary"><button class="btn btn-dark mt-3"> Podsumowanie zamówienia </button></a>
+                            <a href="/orders/${order.orderId}/summary"><button class="btn btn-success mt-3"> Podsumowanie zamówienia </button></a>
                         </div>
                     </#if>
                 </div>

@@ -23,8 +23,8 @@
 
     <div id="create-order-container" class="d-flex flex-column w-100 mt-3 align-items-center justify-content-center">
 
-        <div class="order-details d-flex flex-column justify-content-center bg-dark w-50 rounded-3 px-3 py-3">
-            <div class="text-white"><h2>Ustal szczegóły nowego zamówienia</h2></div>
+        <div class="order-details d-flex flex-column justify-content-center border border-primary w-50 rounded-3 px-3 py-3">
+            <div class="text-dark"><h2>Ustal szczegóły nowego zamówienia</h2></div>
             <form id="create-order-form" method="post" action="/orders">
                 <div class="input-group">
                     <span class="input-group-text w-50 mb-2">Data zamknięcia</span>
@@ -40,7 +40,7 @@
                 </div>
 
                 <input name="restaurantId" type="hidden" value="${restaurantId}">
-                <div id="create-order-btn" class="btn btn-outline-secondary text-white"> Utwórz </div>
+                <div id="create-order-btn" class="btn btn-primary text-white"> Utwórz </div>
             </form>
         </div>
         <div id="closing-date-alert-div" class="alert alert-danger mt-3">Data zamknięcia nie może być wcześniejsza od aktualnej!</div>

@@ -50,7 +50,7 @@ public class OrderPriceCalculatingService {
 
     @Transactional
     public List<ListViewOrderData> getCalculatedOrders(){
-        return orderRepository.getListVierOrderData();
+        return orderRepository.getListViewOrderData();
     }
 
 }

@@ -17,11 +17,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT DISTINCT (u.userId) FROM User u JOIN OrderItem oi ON u.userId = oi.user.userId WHERE oi.order.orderId = :orderId")
     List<String> getUsersIdForOrder(@Param("orderId") String orderId);
 
-    @Query("SELECT new pl.dskimina.foodsy.entity.data.ListViewOrderData (o.orderId, r.name, o.closingDate, SUM(oi.price), o.description, o.isClosed, o.owner.firstName, o.owner.lastName) " +
+    @Query("SELECT new pl.dskimina.foodsy.entity.data.ListViewOrderData (o.orderId, r.name, o.closingDate, COALESCE(SUM(oi.price), 0), o.description, o.isClosed, o.owner.firstName, o.owner.lastName) " +
             "FROM Order o " +
-            "JOIN OrderItem oi ON o = oi.order " +
+            "LEFT JOIN OrderItem oi ON o = oi.order " +
             "JOIN Restaurant r ON o.restaurant = r " +
-            "GROUP BY o.orderId, o.closingDate, o.description, o.isClosed, o.owner.firstName, o.owner.lastName")
-    List<ListViewOrderData> getListVierOrderData();
+            "GROUP BY o.orderId, o.closingDate, o.description, o.isClosed, o.owner.firstName, o.owner.lastName, r.name")
+    List<ListViewOrderData> getListViewOrderData();
 
 }

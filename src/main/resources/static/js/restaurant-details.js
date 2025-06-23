@@ -186,6 +186,12 @@ $(document).ready(function (){
       });
 
    });
+
+   let $addMenuItemForm = $("#add-menu-item-form");
+   let $addMenuItemBtn = $("#add-menu-item-btn")
+   $addMenuItemBtn.on('click', function () {
+      $addMenuItemForm.submit();
+   });
 });
 
 

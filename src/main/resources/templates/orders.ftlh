@@ -20,14 +20,14 @@
     <div id="container" class="flex-grow-1 p-4">
         <#if orderList?has_content>
             <div class="mb-3">
-                <a href="/orders/restaurants" class="btn btn-dark">
+                <a href="/orders/restaurants" class="btn btn-primary">
                     <i class="bi bi-plus-lg me-1"></i> Dodaj
                 </a>
             </div>
 
             <div id="orders-containers">
                 <table class="table table-striped table-hover align-middle">
-                    <thead class="table-dark">
+                    <thead class="table-primary">
                     <tr>
                         <th>Restauracja</th>
                         <th>Data zamknięcia</th>
@@ -45,12 +45,13 @@
                             <td>${order.orderValue}</td>
                             <td>
                                 <#if order.closed>
-                                    <a href="/orders/${order.orderId}/summary">Szczegóły</a>
+                                    <button class="btn btn-primary"> <a href="/orders/${order.orderId}/summary" class="text-white"><i class="bi bi-info-circle"></i></a></button>
                                 <#else>
                                     <#if currentUser?has_content>
-                                        <a href="/orders/${order.orderId}/orderItems">Szczegóły</a>
+                                        <button class="btn btn-primary"><a href="/orders/${order.orderId}/orderItems" class="text-white"><i class="bi bi-info-circle"></i>
+                                        </a></button>
                                     <#else>
-                                        <a href="/orders/${order.orderId}/summary">Szczegóły</a>
+                                        <button class="btn btn-primary"> <a href="/orders/${order.orderId}/summary" class="text-white"><i class="bi bi-info-circle"></i></a></button>
                                     </#if>
                                 </#if>
                             </td>
@@ -71,7 +72,7 @@
                     Brak zamówień do wyświetlenia
                 </div>
                 <#if currentUser?has_content>
-                    <a href="/orders/restaurants" class="btn btn-dark mt-3">Dodaj zamówienie</a>
+                    <a href="/orders/restaurants" class="btn btn-outline-primary mt-3">Dodaj zamówienie</a>
                 </#if>
             </div>
         </#if>

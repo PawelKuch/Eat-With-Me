@@ -80,8 +80,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="submit-sign-in-form-button" class="btn btn-dark mb-3">Zaloguj</button>
-                <button type="button" class="btn btn-secondary mb-3" data-bs-dismiss="modal">Zamknij</button>
+                <button id="submit-sign-in-form-button" class="btn btn-success mb-3">Zaloguj</button>
+                <button type="button" class="btn btn-outline-danger mb-3" data-bs-dismiss="modal">Zamknij</button>
             </div>
         </div>
     </div>

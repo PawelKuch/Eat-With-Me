@@ -21,7 +21,7 @@
     <#include "side-navbar.ftlh">
 
     <div id="restaurant-container" class="d-flex px-2 list-group w-100">
-        <button data-bs-toggle="modal" data-bs-target="#create-restaurant-modal" class="btn btn-primary col-2 mt-3"><i class="bi bi-plus-lg me-1"></i> Dodaj restaurację</button>
+        <#if currentUser?has_content><button data-bs-toggle="modal" data-bs-target="#create-restaurant-modal" class="btn btn-primary col-2 mt-3"><i class="bi bi-plus-lg me-1"></i> Dodaj restaurację</button></#if>
             <#list restaurantList as restaurant>
                 <a href="/restaurants/${restaurant.restaurantId}" class="text-decoration-none"><div class="restaurant-tile list-group-item d-flex flex-row align-items-center mt-3" data-restaurant-id="${restaurant.restaurantId}">
                     <div class="col-2"><img src="/restaurants/${restaurant.restaurantId}/logo" alt="${restaurant.name} logo" width="50px" height="50px"></div>

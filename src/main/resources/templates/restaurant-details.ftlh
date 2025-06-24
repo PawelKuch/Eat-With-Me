@@ -49,10 +49,12 @@
                             <h5 class="col-4">${menuItem.name}</h5>
                             <div class="col-4">${menuItem.description}</div>
                             <div class="col-2" >${menuItem.price} zł</div>
-                            <div class="col-2">
-                                <button data-menu-item-id="${menuItem.menuItemId}" class="btn btn-outline-primary change-menu-item-btn"><i class="bi bi-pencil-fill"></i></button>
-                                <button data-menu-item-id="${menuItem.menuItemId}" class="delete-btn btn btn-danger"><i class="bi bi-trash3-fill"></i></button>
-                            </div>
+                            <#if currentUser?has_content>
+                                <div class="col-2">
+                                    <button data-menu-item-id="${menuItem.menuItemId}" class="btn btn-outline-primary change-menu-item-btn"><i class="bi bi-pencil-fill"></i></button>
+                                    <button data-menu-item-id="${menuItem.menuItemId}" class="delete-btn btn btn-danger"><i class="bi bi-trash3-fill"></i></button>
+                                </div>
+                            </#if>
                         </div>
 
                         <form class="my-1 d-none flex-row justify-content-center align-items-center list-group-item update-menu-item-form-${menuItem.menuItemId}">
@@ -69,14 +71,16 @@
                 </div>
             </div>
         </div>
-        <div class="d-flex flex-row justify-content-between w-100 border-top border-dark pt-4 pb-4">
-            <div class="d-flex justify-content-start ms-3"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-menu-item-modal"> <i class="bi bi-plus-lg me-1"></i> Dodaj danie</button></div>
-            <div class="d-flex justify-content-start"><button data-restaurant-id="${restaurant.restaurantId}" id="delete-restaurant-btn" class="btn btn-danger"><i class="bi bi-trash3"></i> Usuń restaurację</button></div>
-            <#if currentUser?has_content>
-                <div class="d-flex justify-content-start"><a href="/orders/new/${restaurant.restaurantId}" class="text-decoration-none"><button class="btn btn-primary"><i class="bi bi-bookmark"></i> Stwórz zamówienie</button></a></div>
-            </#if>
-            <div class="d-flex justify-content-start me-3"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#update-restaurant-modal"><i class="bi bi-pencil-fill"></i> Edytuj szczegóły restauracji</button></div>
-        </div>
+        <#if currentUser?has_content>
+            <div class="d-flex flex-row justify-content-between w-100 border-top border-dark pt-4 pb-4">
+                <div class="d-flex justify-content-start ms-3"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-menu-item-modal"> <i class="bi bi-plus-lg me-1"></i> Dodaj danie</button></div>
+                <div class="d-flex justify-content-start"><button data-restaurant-id="${restaurant.restaurantId}" id="delete-restaurant-btn" class="btn btn-danger"><i class="bi bi-trash3"></i> Usuń restaurację</button></div>
+                <#if currentUser?has_content>
+                    <div class="d-flex justify-content-start"><a href="/orders/new/${restaurant.restaurantId}" class="text-decoration-none"><button class="btn btn-primary"><i class="bi bi-bookmark"></i> Stwórz zamówienie</button></a></div>
+                </#if>
+                <div class="d-flex justify-content-start me-3"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#update-restaurant-modal"><i class="bi bi-pencil-fill"></i> Edytuj szczegóły restauracji</button></div>
+            </div>
+        </#if>
     </div>
 </div>
 

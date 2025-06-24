@@ -19,11 +19,13 @@
 
     <div id="container" class="flex-grow-1 p-4">
         <#if orderList?has_content>
-            <div class="mb-3">
-                <a href="/orders/restaurants" class="btn btn-primary">
-                    <i class="bi bi-plus-lg me-1"></i> Dodaj
-                </a>
-            </div>
+            <#if currentUser?has_content>
+                <div class="mb-3">
+                    <a href="/orders/restaurants" class="btn btn-primary">
+                        <i class="bi bi-plus-lg me-1"></i> Dodaj
+                    </a>
+                </div>
+            </#if>
 
             <div id="orders-containers">
                 <table class="table table-striped table-hover align-middle">

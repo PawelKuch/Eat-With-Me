@@ -23,17 +23,17 @@
             <#if order.orderItemList?has_content>
                 <div class="row fw-bold border-bottom pb-2">
                     <div class="col-4">Danie</div>
-                    <div class="col-4 text-center">Opis</div>
                     <div class="col-3">Użytkownik</div>
+                    <div class="col-4 text-center">Ilość</div>
                     <div class="col-1 text-end">Cena</div>
                 </div>
                 <div class="list-group-flush d-flex flex-column">
-                    <#list order.orderItemList as orderItem>
+                    <#list productSummaryList as productSummary>
                         <div class="list-group-item d-flex flex-row row py-2">
-                            <div class="col-4">${orderItem.menuItem.name}</div>
-                            <div class="col-4 text-center">${orderItem.description}</div>
-                            <div class="col-3">${orderItem.user.firstName} ${orderItem.user.lastName}</div>
-                            <div class="col-1 text-end">${orderItem.menuItem.price} zł</div>
+                            <div class="col-4">${productSummary.productName}</div>
+                            <div class="col-3">${productSummary.userFirstName} ${productSummary.userLastname}</div>
+                            <div class="col-4 text-center">${productSummary.totalQuantity}</div>
+                            <div class="col-1 text-end">${productSummary.totalPrice} zł</div>
                         </div>
                     </#list>
                     <#if order.extraPaymentValue?number gt 0.00>

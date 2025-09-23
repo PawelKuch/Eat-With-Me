@@ -10,6 +10,7 @@ import pl.dskimina.foodsy.entity.data.ListViewOrderData;
 import pl.dskimina.foodsy.entity.data.MenuItemData;
 import pl.dskimina.foodsy.entity.data.OrderData;
 import pl.dskimina.foodsy.entity.data.RestaurantData;
+import pl.dskimina.foodsy.repository.OrderItemRepository;
 import pl.dskimina.foodsy.service.*;
 
 import java.util.ArrayList;
@@ -27,12 +28,13 @@ public class OrderController {
     private final RestaurantService restaurantService;
     private final UserInfoService UserInfoService;
     private final OrderPriceCalculatingService orderPriceCalculatingService;
+    private final OrderItemRepository orderItemRepository;
 
 
     public OrderController(OrderService orderService,
                            OrderItemService orderItemService, UserService userService, SessionService sessionService,
                            RestaurantService restaurantService, UserInfoService discountAndExtraPaymentService,
-                           OrderPriceCalculatingService orderPriceCalculatingService) {
+                           OrderPriceCalculatingService orderPriceCalculatingService, OrderItemRepository orderItemRepository) {
         this.orderService = orderService;
         this.orderItemService = orderItemService;
         this.userService = userService;
@@ -40,6 +42,7 @@ public class OrderController {
         this.restaurantService = restaurantService;
         this.UserInfoService = discountAndExtraPaymentService;
         this.orderPriceCalculatingService = orderPriceCalculatingService;
+        this.orderItemRepository = orderItemRepository;
     }
 
 
@@ -89,6 +92,7 @@ public class OrderController {
         RestaurantData restaurant = order.getRestaurantData();
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("order", order);
+        model.addAttribute("productSummaryList", orderItemRepository.findGroupedItemsByOrder(orderId));
         model.addAttribute("userInfoList", UserInfoService.getUserInfoListForOrder(orderId));
         model.addAttribute("userAmountForOrder", orderService.getUsersAmountForOrder(orderId));
         return "order-summary";
